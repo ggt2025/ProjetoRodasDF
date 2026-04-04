@@ -43,7 +43,7 @@ SELECT
   'urgente',
   tm.id,
   '2026-05-12',
-  'Responsável: Thaís. Alinhar pauta com Giselle antes da reunião.'
+  'Responsável: Thaís (articulação institucional).'
 FROM team_members tm
 WHERE tm.is_active IS NOT FALSE
   AND tm.name ILIKE '%Thaís%'
@@ -54,8 +54,36 @@ LIMIT 1;
 
 -- 5) Ajustar nota de tarefa de currículo (remover ideia de parceria formal com IML)
 UPDATE tasks
-SET notes = 'Detalhar com Cândida (UNB). Módulo sobre violência: convidados técnicos pontuais, sem parceria formal com IML.'
+SET notes = 'Detalhar com Cândida (UNB). Módulo sobre violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'
 WHERE title ILIKE '%Organizar estrutura do curso%';
+
+-- 5b) Giselle: só apoio tecnológico/desenvolvimento — realoca tudo que estava com ela para Thaís (ponte, reunião, curso no painel)
+UPDATE team_members
+SET
+  role = 'apoio_tecnico',
+  notes = 'Apoio tecnológico e desenvolvimento do painel/ferramentas digitais. Sem pontes institucionais nem reuniões de articulação.'
+WHERE name ILIKE '%Giselle%';
+
+UPDATE tasks
+SET notes = replace(replace(notes, 'Alinhar pauta com Giselle antes da reunião.', 'Articulação institucional: Thaís.'),
+                    'Alinhar pauta com Giselle antes da reunião', 'Articulação institucional: Thaís')
+WHERE notes ILIKE '%Giselle%' AND notes ILIKE '%reunião%';
+
+WITH g AS (SELECT id FROM team_members WHERE name ILIKE '%Giselle%' LIMIT 1),
+     th AS (SELECT id FROM team_members WHERE name ILIKE '%Thaís%' LIMIT 1)
+UPDATE tasks t
+SET assigned_to = th.id
+FROM g, th
+WHERE t.assigned_to = g.id AND g.id IS NOT NULL AND th.id IS NOT NULL;
+
+-- MPDFT: contato institucional só Thaís (ajuste manual em `notes` do parceiro se precisar)
+UPDATE partners
+SET contact_person = replace(replace(contact_person, 'Thaís / Giselle', 'Thaís'), 'Giselle / Thaís', 'Thaís')
+WHERE name ILIKE '%MPDFT%';
+
+UPDATE partners
+SET contact_person = 'Thaís'
+WHERE name ILIKE '%MPDFT%' AND contact_person ILIKE '%Giselle%';
 
 -- 6) (Opcional) Remover pessoa “Márcia” ligada ao IML da equipe — descomente se fizer sentido
 -- DELETE FROM team_members WHERE name ILIKE '%Márcia%' AND organization ILIKE '%IML%';
