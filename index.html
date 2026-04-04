@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RODASDF — Painel de Gestão</title>
+<title>RODASDF — Notícias</title>
 <style>
 :root {
     --purple-900:#4c1d95;--purple-800:#5b21b6;--purple-700:#6d28d9;--purple-600:#7c3aed;
@@ -29,8 +29,33 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px;}
 
+/* === PÁGINA PÚBLICA — NOTÍCIAS === */
+#publicHome{min-height:100vh;background:linear-gradient(180deg,var(--purple-50) 0%,var(--gray-100) 45%);}
+.pub-top{background:linear-gradient(135deg,var(--purple-900),var(--purple-700));color:white;box-shadow:var(--shadow-md);}
+.pub-bar{max-width:880px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.pub-brand{font-size:20px;font-weight:800;letter-spacing:-.02em;}
+.pub-brand small{display:block;font-size:12px;font-weight:500;opacity:.85;margin-top:2px;}
+.pub-spacer{flex:1;min-width:8px;}
+.pub-btn-login{background:white;color:var(--purple-800);border:none;padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s;}
+.pub-btn-login:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+.pub-wrap{max-width:880px;margin:0 auto;padding:28px 24px 48px;}
+.pub-h1{font-size:26px;font-weight:800;color:var(--gray-900);margin-bottom:6px;}
+.pub-sub{color:var(--gray-600);font-size:15px;margin-bottom:28px;line-height:1.5;}
+.news-list{display:flex;flex-direction:column;gap:14px;}
+.news-card{background:white;border-radius:var(--radius-lg);padding:22px 24px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);transition:box-shadow .2s;}
+.news-card:hover{box-shadow:var(--shadow);}
+.news-meta{font-size:12px;color:var(--purple-600);font-weight:600;margin-bottom:8px;}
+.news-card h2{font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:10px;line-height:1.35;}
+.news-excerpt{font-size:14px;color:var(--gray-600);line-height:1.6;margin-bottom:12px;}
+.news-body{font-size:14px;color:var(--gray-700);line-height:1.65;display:none;margin-top:12px;padding-top:14px;border-top:1px solid var(--gray-100);white-space:pre-wrap;}
+.news-body.open{display:block;}
+.news-toggle{background:none;border:none;color:var(--purple-600);font-size:13px;font-weight:700;cursor:pointer;padding:0;font-family:inherit;}
+.news-toggle:hover{text-decoration:underline;}
+
 /* === LOGIN SCREEN === */
 #loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,var(--purple-900),var(--purple-700),var(--purple-600));display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.login-back{margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.9);font-size:14px;cursor:pointer;text-decoration:underline;font-family:inherit;}
+.login-back:hover{color:white;}
 .login-card{background:white;border-radius:20px;padding:48px;width:420px;max-width:90vw;box-shadow:var(--shadow-lg);text-align:center;}
 .login-logo{font-size:48px;margin-bottom:8px;}
 .login-card h1{font-size:28px;color:var(--purple-800);margin-bottom:4px;}
@@ -238,12 +263,28 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 </head>
 <body>
 
-<!-- ==================== LOGIN ==================== -->
-<div id="loginScreen">
+<!-- ==================== PÁGINA PÚBLICA — NOTÍCIAS ==================== -->
+<div id="publicHome">
+    <header class="pub-top">
+        <div class="pub-bar">
+            <div class="pub-brand">🔮 RODASDF <small>Rede de Rodas Multidisciplinares para Mulheres</small></div>
+            <div class="pub-spacer"></div>
+            <button type="button" class="pub-btn-login" onclick="openLoginScreen()">Entrar na gestão</button>
+        </div>
+    </header>
+    <main class="pub-wrap">
+        <h1 class="pub-h1">Notícias</h1>
+        <p class="pub-sub">Atualizações do projeto no Distrito Federal. O painel de gestão é restrito à equipe — use o botão <strong>Entrar na gestão</strong> no topo.</p>
+        <div class="news-list" id="publicNewsList"></div>
+    </main>
+</div>
+
+<!-- ==================== LOGIN (ÁREA ADMIN) ==================== -->
+<div id="loginScreen" class="hidden">
     <div class="login-card">
         <div class="login-logo">🔮</div>
-        <h1>RODASDF</h1>
-        <p>Rede de Rodas Multidisciplinares para Mulheres</p>
+        <h1>Acesso à gestão</h1>
+        <p>Equipe RODASDF — conecte ao Supabase ou use a demonstração</p>
         <div class="input-group">
             <label>URL do Supabase</label>
             <input type="text" id="loginUrl" placeholder="https://xxxxx.supabase.co">
@@ -260,6 +301,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
         <div class="login-error" id="loginError"></div>
         <div class="login-divider">ou</div>
         <button class="login-offline" onclick="enterOffline()">Entrar em modo offline (demonstração)</button>
+        <button type="button" class="login-back" onclick="backToPublicHome()">← Voltar às notícias</button>
     </div>
 </div>
 
@@ -436,6 +478,43 @@ const DEMO_COMMENTS = [
     {id:'4',task_id:'5',user_name:'Giselle',content:'QR Code é excelente. Cada roda terá um cartaz com QR fixo da Ouvidoria. Simples e poderoso.',is_system:false,created_at:'2026-04-04T11:00:00'},
 ];
 
+// --- Notícias (página pública inicial; depois podem vir do Supabase) ---
+const PUBLIC_NEWS = [
+    {id:'1',date:'2026-04-02',title:'RODASDF: nasce uma rede de acolhimento para mulheres do DF',excerpt:'Conheça o projeto que capacita facilitadoras para rodas multidisciplinares de acolhimento e promoção de direitos.',body:'O Projeto RODASDF reúne ações permanentes, multidisciplinares e conectadas: cada roda trabalha acolhimento e escuta, psicoeducação em direitos (Lei Maria da Penha, medidas protetivas, rede de proteção) e fortalecimento comunitário.\n\nA rede está em construção — parcerias com MPDFT, UNB e organizações da sociedade civil fortalecem o alcance.'},
+    {id:'2',date:'2026-03-31',title:'Cândida Alves (UNB) confirma parceria para capacitação',excerpt:'Professora titular de Psicologia articula módulo de Psicologia e rede de alunos de pós-graduação.',body:'A parceria com a UNB permite validação de horas e estágio para estudantes que atuarão como facilitadoras em formação, apoiando um dos desafios centrais de projetos voluntários: reter pessoas qualificadas.\n\nPróximos passos incluem carta de intenções e critérios de seleção de alunos.'},
+    {id:'3',date:'2026-03-15',title:'Metodologia em três eixos',excerpt:'Como funcionam as rodas: acolhimento, direitos e fortalecimento em rede.',body:'1) Acolhimento e escuta — espaço seguro baseado em práticas de Psicologia Comunitária.\n2) Psicoeducação de direitos — linguagem acessível sobre proteção e canais de denúncia.\n3) Fortalecimento comunitário — vínculos entre mulheres que permanecem além da roda.'},
+];
+
+function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtNewsDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}
+function renderPublicNews(){
+    const el=document.getElementById('publicNewsList');
+    if(!el)return;
+    el.innerHTML=PUBLIC_NEWS.map(n=>`<article class="news-card" id="news-${n.id}">
+        <div class="news-meta">${fmtNewsDate(n.date)}</div>
+        <h2>${escapeHtml(n.title)}</h2>
+        <p class="news-excerpt">${escapeHtml(n.excerpt)}</p>
+        <button type="button" class="news-toggle" onclick="toggleNewsBody('${n.id}')" id="news-btn-${n.id}">Ler mais</button>
+        <div class="news-body" id="news-body-${n.id}">${escapeHtml(n.body)}</div>
+    </article>`).join('');
+}
+function toggleNewsBody(id){
+    const b=document.getElementById('news-body-'+id),t=document.getElementById('news-btn-'+id);
+    if(!b||!t)return;
+    const open=b.classList.toggle('open');
+    t.textContent=open?'Ler menos':'Ler mais';
+}
+function openLoginScreen(){
+    document.getElementById('publicHome').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+}
+function backToPublicHome(){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('publicHome').classList.remove('hidden');
+    document.getElementById('loginError').textContent='';
+    document.getElementById('btnLogin').disabled=false;
+}
+
 // --- Labels ---
 const PH = {'fase_0_semente':'🌱 Fase 0 — Semente','fase_1_piloto':'🧪 Fase 1 — Piloto','fase_2_enraizamento':'🌳 Fase 2 — Enraizamento','fase_3_rede':'🕸 Fase 3 — Rede','fase_4_expansao':'🚀 Fase 4 — Expansão','fase_5_sustentabilidade':'♻️ Fase 5 — Sustentabilidade'};
 const ST = {'pendente':'Pendente','em_andamento':'Em andamento','aguardando':'Aguardando','concluida':'Concluída','cancelada':'Cancelada'};
@@ -488,6 +567,7 @@ function enterOffline(){
     enterApp();
 }
 function enterApp(){
+    document.getElementById('publicHome').classList.add('hidden');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('appShell').classList.remove('hidden');
     document.getElementById('connDot').classList.toggle('ok',S.connected);
@@ -499,30 +579,30 @@ function enterApp(){
 function doLogout(){
     S.connected=false;S.url='';S.key='';
     document.getElementById('appShell').classList.add('hidden');
-    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('publicHome').classList.remove('hidden');
     document.getElementById('loginError').textContent='';
     document.getElementById('btnLogin').disabled=false;
 }
 
-// Inicialização: restaurar campos; conectar sozinho se já houver credenciais;
-// no Netlify, sem credenciais, abre direto a demonstração (use ?login=1 para forçar o formulário Supabase).
+// Inicialização: página inicial = notícias; credenciais só preenchem o formulário.
+// ?admin=1 — com URL+Key salvos, entra direto no painel (atalho para equipe).
+// ?demo=1 — abre modo demonstração sem passar pelo login.
 (function startup(){
     const u=localStorage.getItem('rdf_url'),k=localStorage.getItem('rdf_key'),n=localStorage.getItem('rdf_name');
     if(u)document.getElementById('loginUrl').value=u;
     if(k)document.getElementById('loginKey').value=k;
     if(n)document.getElementById('loginName').value=n;
 
-    const q=new URLSearchParams(location.search);
-    const forceLogin=q.get('login')==='1'||q.get('supabase')==='1';
+    renderPublicNews();
 
-    if(u&&k&&!forceLogin){
-        doLogin();
+    const q=new URLSearchParams(location.search);
+    if(q.get('demo')==='1'){
+        enterOffline();
         return;
     }
-    const h=location.hostname||'';
-    const onNetlify=h.endsWith('.netlify.app')||h==='netlify.app';
-    if((onNetlify||q.get('demo')==='1')&&!forceLogin){
-        enterOffline();
+    if(q.get('admin')==='1'&&u&&k){
+        doLogin();
     }
 })();
 
