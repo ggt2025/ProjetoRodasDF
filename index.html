@@ -257,6 +257,20 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .tl-today{position:absolute;top:0;bottom:0;width:2px;background:var(--rose-500);z-index:2;pointer-events:none;}
 .tl-today::after{content:'Hoje';position:absolute;top:-18px;left:-14px;font-size:9px;color:var(--rose-500);font-weight:700;}
 
+/* === PROTÓTIPOS (metodologia Natalie) === */
+.proto-src{font-size:13px;color:var(--gray-600);line-height:1.5;margin:0 0 18px;max-width:920px;}
+.proto-toc{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;margin-bottom:20px;padding:12px 14px;background:var(--purple-50);border-radius:10px;border:1px solid var(--purple-100);}
+.proto-toc a{color:var(--purple-700);font-weight:600;text-decoration:none;}
+.proto-toc a:hover{text-decoration:underline;}
+.proto-wrap{max-width:960px;}
+.proto-card{background:white;border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow-sm);scroll-margin-top:88px;}
+.proto-card h3{font-size:16px;font-weight:700;color:var(--purple-800);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--gray-100);}
+.proto-card p{font-size:14px;color:var(--gray-700);line-height:1.55;margin:0 0 12px;}
+.proto-card ul{margin:0 0 12px;padding-left:22px;}
+.proto-card li{font-size:14px;color:var(--gray-700);line-height:1.55;margin:8px 0;}
+.proto-card strong{color:var(--gray-800);}
+.proto-flow{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:16px 18px;font-size:12px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--gray-800);}
+
 /* === TEAM / PARTNERS GRID === */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
 .card{background:white;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow .15s;}
@@ -412,6 +426,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
     <div class="nav-item" data-tab="timeline" onclick="switchTab('timeline')">📅 Cronograma</div>
     <div class="nav-item" data-tab="team" onclick="switchTab('team')">👥 Equipe</div>
     <div class="nav-item" data-tab="partners" onclick="switchTab('partners')">🤝 Parceiros</div>
+    <div class="nav-item" data-tab="prototypes" onclick="switchTab('prototypes')">📑 Protótipos</div>
     <div class="nav-item" data-tab="activity" onclick="switchTab('activity')">🕐 Atividade</div>
     <div class="nav-item hidden" data-tab="admin" id="navAdmin" onclick="switchTab('admin')">⚙ Admin</div>
 </div>
@@ -423,6 +438,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
     <div id="tab-timeline" class="tab-content hidden"></div>
     <div id="tab-team" class="tab-content hidden"></div>
     <div id="tab-partners" class="tab-content hidden"></div>
+    <div id="tab-prototypes" class="tab-content hidden"></div>
     <div id="tab-activity" class="tab-content hidden"></div>
     <div id="tab-admin" class="tab-content hidden"></div>
 </div>
@@ -523,7 +539,7 @@ let S = {
 // --- Offline demo data ---
 const COLORS = { 'Natalie':'#e11d48','Thaís':'#7c3aed','Giselle':'#2563eb','Cândida':'#059669','Laura':'#d97706','Márcia':'#0891b2' };
 const DEMO_TEAM = [
-    {id:'1',name:'Natalie',email:null,organization:'Rede de Rodas do DF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga).'},
+    {id:'1',name:'Natalie',email:null,organization:'Rede de Rodas do DF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga). Autora dos protótipos metodológicos na aba «Protótipos» (triagem, pactuação, fluxo, lista segura, MPP, ex ante).'},
     {id:'2',name:'Thaís',email:null,organization:'MPDFT',role:'coordenadora',expertise:['direito','articulacao_institucional'],avatar_color:'#7c3aed',is_active:true,notes:'Coordenação MPDFT e articulação institucional. Responsável pelo contato com a UNB (Prof.ª Cândida) — confirmação de parceria ainda pendente. Ouvidoria das Mulheres, Secretaria da Mulher (DF).'},
     {id:'3',name:'Giselle',email:'giselle.trevizo@gmail.com',organization:'MPDFT',role:'apoio_tecnico',expertise:['tecnologia','desenvolvimento'],avatar_color:'#2563eb',is_active:true,notes:'Apoio tecnológico e desenvolvimento do painel e ferramentas digitais. Sem pontes institucionais nem reuniões de articulação.'},
     {id:'4',name:'Cândida',email:null,organization:'UNB',role:'docente',expertise:['psicologia'],avatar_color:'#059669',is_active:true,notes:'Professora titular Psicologia UNB (contato via Thaís). Nada confirmado formalmente até o momento.'},
@@ -561,6 +577,67 @@ const DEMO_COMMENTS = [
     {id:'1',task_id:'3',user_name:'Thaís',content:'Primeiro contato enviado à Prof.ª Cândida; aguardando retorno formal. Nada confirmado ainda.',is_system:false,created_at:'2026-04-04T09:00:00'},
     {id:'3',task_id:'6',user_name:'Thaís',content:'Estrutura do curso segue; módulo de Psicologia/UNB só fecha depois da confirmação com a Cândida. Módulo violência: Márcia (psicóloga do IML) pode ajudar pontualmente — sem parceria com o IML. Giselle apoia a parte digital do painel.',is_system:false,created_at:'2026-04-04T10:00:00'},
     {id:'4',task_id:'5',user_name:'Thaís',content:'QR Code é excelente. Cada roda terá um cartaz com QR fixo da Ouvidoria. Simples e poderoso.',is_system:false,created_at:'2026-04-04T11:00:00'},
+];
+
+// --- Protótipos metodológicos (Dra. Natalie) — aba «Protótipos» no painel ---
+const NATALIE_PROTO_SECTIONS=[
+{id:'proto-p1',title:'1. Triagem',html:`<p>A avaliação deve conferir se o desenho inclui um <strong>checklist curto</strong> para detectar:</p><ul>
+<li><strong>monitoramento/coerção</strong> (celular, redes, deslocamento);</li>
+<li><strong>risco imediato</strong>;</li>
+<li><strong>possibilidade de alguém acionar ajuda por ela</strong> (coerente com a ideia de rede de terceiros).</li>
+</ul>`},
+{id:'proto-p2',title:'2. Método de pactuação',html:`<ul>
+<li>levantar riscos típicos do território <strong>(sem registrar detalhes sensíveis)</strong>;</li>
+<li>escolher <strong>2–4 práticas testáveis no mês</strong> (piloto interno);</li>
+<li>revisar em roda o que funcionou / não funcionou <strong>(aprendizagem)</strong>;</li>
+<li>adotar <strong>«linhas vermelhas»</strong>: não expor, não registrar endereços, não criar evidência capturável.</li>
+</ul>`},
+{id:'proto-p3',title:'3. Passo a passo',html:`<div class="proto-flow" role="region" aria-label="Fluxo operacional">(1) JANELA FIXA SEMANAL – CHEGADA ESPONTÂNEA (território X)
+        ↓
+(2) ACOLHIMENTO DISCRETO (sem BO, sem exigência documental)
+        ↓
+(3) TRIAGEM RÁPIDA DE RISCO (5–10 min) + consentimento
+        ├ Vermelho (iminente) → Protocolo Crise + encaminhamento seguro
+        ├ Amarelo (moderado) → prioridade de vaga + plano de segurança imediato
+        └ Verde (baixo) → agendar/entrar em turma + trilha de autonomia
+        ↓
+(4) ALOCAÇÃO EM TURMA (até 12 pessoas)
+        ├ Há vaga? → entra na roda semanal
+        └ Sem vaga → «lista segura» + retorno programado
+        ↓
+(5) RODA SEMANAL (grupo ≤12) + pacto de sigilo
+        ↓
+(6) MPP ou MPU (módulo adaptável) + Plano de autonomia (renda/cuidado/rede)
+        ↓
+(7) ENCAMINHAMENTOS CONSENTIDOS + SEGUIMENTO EM JANELA</div>`},
+{id:'proto-p4',title:'4. Procedimento mínimo de «lista segura» (gestão de demanda > 12)',html:`<p>A avaliação deve exigir que o desenho <strong>proíba práticas de alto risco</strong> (ex.: lista nominal completa) e adote:</p><ul>
+<li><strong>registro mínimo</strong> (alcunha ou primeiro nome) e forma de retorno escolhida pela mulher (ou retorno presencial em dia fixo);</li>
+<li><strong>priorização por risco</strong> (triagem) e vulnerabilidade;</li>
+<li><strong>gatilho de expansão</strong>: se a janela «estoura» por 2–3 semanas seguidas → abre 2ª turma semanal.</li>
+</ul>`},
+{id:'proto-p5',title:'5. Procedimento de triagem rápida (instrumento e decisão)',html:`<p>A avaliação <em>ex ante</em> valida se existe um <strong>checklist curto</strong> para:</p><ul>
+<li><strong>risco iminente</strong> (ameaça imediata, perseguição, lesão, expulsão);</li>
+<li><strong>monitoramento/coerção</strong> (celular, redes, deslocamento);</li>
+<li><strong>possibilidade de acionamento por terceiros</strong> (parente/vizinha/parceira de roda).</li>
+</ul>`},
+{id:'proto-p6',title:'6. Procedimento da MPP (método de pactuação — não lista fixa)',html:`<p>Como a MPP é <strong>customizada por território</strong>, o que precisa constar no modelo é o <strong>método</strong>:</p><ul>
+<li>mapear riscos recorrentes do território <strong>(sem registrar detalhes identificáveis)</strong>;</li>
+<li>escolher <strong>2–4 práticas testáveis por mês</strong> (ex.: rede de acionamento por terceiros; cuidado infantil solidário; rota de fuga; fundo/banco de alimentos);</li>
+<li>revisar e ajustar mensalmente (<strong>«aprendizado iterativo»</strong>);</li>
+<li><strong>«linhas vermelhas»</strong>: não criar evidências capturáveis; não expor endereços; não exigir que a vítima denuncie para participar.</li>
+</ul>`},
+{id:'proto-p7',title:'7. Como será realizada a conclusão? (como o ex ante «fecha»)',html:`<p>A conclusão será um <strong>parecer ex ante</strong> com decisão e condições, <strong>não</strong> um resultado de impacto.</p>
+<p><strong>Estrutura da conclusão (4 blocos)</strong></p><ul>
+<li><strong>Juízo de pertinência</strong> (problema, público, território).</li>
+<li><strong>Juízo de coerência</strong> (modelo lógico / teoria da mudança / indicadores).</li>
+<li><strong>Juízo de segurança e ética</strong> (Do No Harm: entrada, fila, registros, sigilo, crise).</li>
+<li><strong>Juízo de viabilidade</strong> (capacidade do equipamento, equipe, articulação, gestão de demanda).</li>
+</ul>`},
+{id:'proto-p8',title:'8. Decisão ex ante (padrão)',html:`<ul>
+<li><strong>GO (piloto)</strong>: POP completo + salvaguardas + rede formalizada + indicadores mínimos.</li>
+<li><strong>GO com condições</strong>: iniciar só após ajustes obrigatórios (ex.: lista segura, expansão de turmas, protocolo crise).</li>
+<li><strong>NO-GO ainda</strong>: risco de exposição alto (fila identificável, registro indevido) ou ausência de fluxo de crise/encaminhamento.</li>
+</ul>`}
 ];
 
 // --- Notícias (página pública inicial; depois podem vir do Supabase) ---
@@ -1048,6 +1125,7 @@ function renderTab(t){
         case 'timeline':el.innerHTML=renderTimeline();break;
         case 'team':el.innerHTML=renderTeamTab();break;
         case 'partners':el.innerHTML=renderPartnersTab();break;
+        case 'prototypes':el.innerHTML=renderPrototypesTab();break;
         case 'activity':el.innerHTML=renderActivityTab();break;
         case 'admin':el.innerHTML=renderAdmin();break;
     }
@@ -1305,6 +1383,16 @@ function renderPartnersTab(){
             <div class="card-note">${escapeHtml(p.notes||'')}</div></div>`;
     });
     return h+'</div>';
+}
+
+// --- PROTÓTIPOS (Dra. Natalie) ---
+function renderPrototypesTab(){
+    const toc=NATALIE_PROTO_SECTIONS.map(s=>'<a href="#'+s.id+'">'+escapeHtml(s.title)+'</a>').join(' · ');
+    const cards=NATALIE_PROTO_SECTIONS.map(s=>'<section class="proto-card" id="'+s.id+'"><h3>'+escapeHtml(s.title)+'</h3>'+s.html+'</section>').join('');
+    return `<div class="section-hdr"><h2 class="section-title">Protótipos metodológicos</h2></div>
+    <p class="proto-src">Referência elaborada pela <strong>Dra. Natalie</strong> para avaliação <em>ex ante</em> e desenho operacional das rodas. Complementa — não substitui — normas institucionais, POPs do MPDFT/parceiros e adaptações locais a cada território.</p>
+    <nav class="proto-toc" aria-label="Índice dos protótipos">${toc}</nav>
+    <div class="proto-wrap">${cards}</div>`;
 }
 
 // --- ACTIVITY (comentários + activity_log do Supabase) ---
