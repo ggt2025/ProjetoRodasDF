@@ -54,14 +54,18 @@ LIMIT 1;
 
 -- 5) Ajustar nota de tarefa de currículo (Márcia/IML só referência técnica; sem parceria com o órgão)
 UPDATE tasks
-SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: eventual apoio técnico pontual (ex.: Márcia, psicóloga do IML) — sem parceria institucional com o IML; nada fechado com o órgão. Apoio técnico ao material digital: Giselle.'
+SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: eventual apoio técnico pontual (ex.: Márcia, psicóloga do IML) — sem parceria institucional com o IML; nada fechado com o órgão. Giselle: material digital do painel e participação na capacitação (módulos acordados).'
 WHERE title ILIKE '%Organizar estrutura do curso%';
 
--- 5b) Giselle: só apoio tecnológico/desenvolvimento — realoca tudo que estava com ela para Thaís (ponte, reunião, curso no painel)
+UPDATE tasks
+SET notes = 'Fase 1 — jun/2026. Depende do currículo (Fase 0). Logística e condução institucional: Thaís. Giselle participa da capacitação (conteúdo/presença conforme currículo) e apoio aos materiais digitais.'
+WHERE title ILIKE '%turma de capacitação%' OR title ILIKE '%capacitação (piloto)%';
+
+-- 5b) Giselle: apoio ao painel + capacitação — realoca tarefas de ponte/reunião que estavam com ela para Thaís
 UPDATE team_members
 SET
   role = 'apoio_tecnico',
-  notes = 'Apoio tecnológico e desenvolvimento do painel/ferramentas digitais. Sem pontes institucionais nem reuniões de articulação.'
+  notes = 'Apoio tecnológico ao painel/ferramentas digitais; participação na capacitação (turma piloto e módulos acordados no currículo). Sem pontes institucionais nem reuniões de articulação.'
 WHERE name ILIKE '%Giselle%';
 
 UPDATE tasks
