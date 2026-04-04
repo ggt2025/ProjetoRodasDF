@@ -494,7 +494,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 // ============================================
 
 // --- CONFIG SUPABASE (Dashboard → Settings → API) — preencha UMA vez; não aparece na tela de login ---
-// Crie usuários em Authentication → Users. Em Authentication → URL coloque a URL do site (ex.: Netlify).
+// Authentication → URL: Site URL e Redirect URLs devem incluir a URL onde o site roda (ex.: https://xxx.netlify.app e http://localhost:3000).
 // RLS: ideal = políticas para authenticated (JWT). Se o projeto ainda usar só anon, o app tenta Bearer anon após falha com JWT.
 const RODASDF_SUPABASE_URL = 'https://enhecoxzwkwfjdcjvrnr.supabase.co';
 const RODASDF_SUPABASE_ANON_KEY = 'sb_publishable_hJJVmdQ9RM0KNQJz-8pJgQ_4Eb4cs2g';
@@ -593,7 +593,16 @@ function rodasdfApplyAuthTokens(tok){
     S.accessToken=tok.access_token;
     S.restBearer=tok.access_token;
     S.connected=true;
-    var sec=tok.expires_in||3600;
+    var sec=tok.expires_in;
+    if(sec==null||sec===undefined){
+        if(tok.expires_at){
+            sec=Math.max(60,parseInt(tok.expires_at,10)-Math.floor(Date.now()/1000));
+        }else{
+            sec=3600;
+        }
+    }else{
+        sec=parseInt(sec,10)||3600;
+    }
     var exp=Date.now()+sec*1000-90000;
     localStorage.setItem(RODASDF_AUTH_SESSION_KEY,JSON.stringify({
         access_token:tok.access_token,
@@ -639,6 +648,30 @@ async function rodasdfRestoreSession(){
         return true;
     }
     return rodasdfRefreshSession();
+}
+
+/** Depois de confirmar e-mail (cadastro / magic link), o Supabase redireciona com #access_token=...&refresh_token=... */
+function rodasdfConsumeAuthHash(){
+    if(!rodasdfConfigOk())return false;
+    var raw=location.hash;
+    if(!raw||raw.length<15||raw.indexOf('access_token')<0)return false;
+    var q=raw.charAt(0)==='#'?raw.slice(1):raw;
+    var params=new URLSearchParams(q);
+    var at=params.get('access_token');
+    if(!at)return false;
+    var rt=params.get('refresh_token')||'';
+    var ea=params.get('expires_at');
+    var ei=params.get('expires_in');
+    var body={access_token:at,refresh_token:rt};
+    if(ei)body.expires_in=parseInt(ei,10);
+    if(ea)body.expires_at=parseInt(ea,10);
+    rodasdfApplyAuthTokens(body);
+    try{
+        history.replaceState(null,document.title,location.pathname+(location.search||''));
+    }catch(e1){
+        try{location.hash='';}catch(e2){}
+    }
+    return true;
 }
 
 function fmtNewsDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}
@@ -868,9 +901,28 @@ function doLogout(){
     document.getElementById('btnLogin').disabled=false;
 }
 
-// Inicialização: notícias primeiro. ?demo=1 = demonstração. ?admin=1 = abre painel se já houver sessão Auth.
+// Inicialização: retorno do e-mail (#access_token) → entra no painel. ?demo=1 = demo. ?admin=1 = sessão salva.
 (function startup(){
     ['rdf_url','rdf_key','rdf_name'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+    if(rodasdfConsumeAuthHash()){
+        renderPublicNews();
+        (async function(){
+            try{
+                S.loadError=false;
+                await loadData();
+                enterApp();
+            }catch(e){
+                console.error(e);
+                rodasdfClearAuthSession();
+                document.getElementById('publicHome').classList.remove('hidden');
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appShell').classList.add('hidden');
+                var le=document.getElementById('loginError');
+                if(le)le.textContent='Sessão confirmada, mas falhou ao carregar dados. Tente Entrar na gestão.';
+            }
+        })();
+        return;
+    }
     renderPublicNews();
     var q=new URLSearchParams(location.search);
     if(q.get('demo')==='1'){
