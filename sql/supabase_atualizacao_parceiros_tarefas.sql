@@ -52,6 +52,39 @@ WHERE tm.is_active IS NOT FALSE
   )
 LIMIT 1;
 
+-- 4b) Thaís — contato com Adalgiza (Núcleo de Gênero, MPDFT)
+INSERT INTO tasks (title, description, phase, status, priority, assigned_to, due_date, notes)
+SELECT
+  'Falar com Adalgiza — Núcleo de Gênero (MPDFT)',
+  'Articular com Adalgiza do Núcleo de Gênero do MPDFT: apresentar a Rede de Rodas do DF, alinhar capacitação, encaminhamentos e visão de gênero no projeto.',
+  'fase_0_semente',
+  'pendente',
+  'alta',
+  tm.id,
+  '2026-05-11',
+  'Responsável: Thaís. Fase 0 — maio/2026.'
+FROM team_members tm
+WHERE tm.is_active IS NOT FALSE
+  AND tm.name ILIKE '%Thaís%'
+  AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.title ILIKE '%Adalgiza%')
+LIMIT 1;
+
+INSERT INTO partners (name, type, contact_person, status, contribution, receives, notes)
+SELECT
+  'Núcleo de Gênero — MPDFT',
+  'institucional',
+  'Adalgiza (interlocução: Thaís)',
+  'pendente',
+  'Políticas de gênero, alinhamento institucional com rodas e capacitação',
+  'Integração com rede de proteção e projeto',
+  'Thaís articula contato com Adalgiza. Fase 0 — maio/2026.'
+WHERE NOT EXISTS (SELECT 1 FROM partners p WHERE p.name ILIKE '%Núcleo de Gênero%');
+
+UPDATE team_members
+SET notes = trim(both E'\n' from coalesce(notes, '') || E'\nContato com Adalgiza (Núcleo de Gênero, MPDFT) — articulação: Thaís.')
+WHERE name ILIKE '%Thaís%'
+  AND (notes IS NULL OR notes NOT ILIKE '%Adalgiza%');
+
 -- 5) Ajustar nota de tarefa de currículo (Márcia/IML só referência técnica; sem parceria com o órgão)
 UPDATE tasks
 SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: eventual apoio técnico pontual (ex.: Márcia, psicóloga do IML) — sem parceria institucional com o IML; nada fechado com o órgão. Giselle: material digital do painel e participação na capacitação (módulos acordados).'
