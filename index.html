@@ -6,7 +6,7 @@
 <meta name="description" content="RODASDF — Rede de Rodas Multidisciplinares para Mulheres no DF. Notícias do projeto e painel de gestão para a equipe.">
 <meta name="theme-color" content="#5b21b6">
 <meta name="color-scheme" content="light">
-<title>RODASDF — Notícias</title>
+<title>RODASDF — Rede de Rodas para Mulheres (DF)</title>
 <style>
 :root {
     --purple-900:#4c1d95;--purple-800:#5b21b6;--purple-700:#6d28d9;--purple-600:#7c3aed;
@@ -438,19 +438,19 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 
 <script>
 // ============================================
-// RODASDF APP v2 — Full Interactive
+// RODASDF APP v3 — produção (notícias + Auth + painel)
 // ============================================
 
 // --- CONFIG SUPABASE (Dashboard → Settings → API) — preencha UMA vez; não aparece na tela de login ---
 // Crie usuários em Authentication → Users. Em Authentication → URL coloque a URL do site (ex.: Netlify).
-// Tabelas precisam de RLS permitindo leitura/escrita para authenticated (JWT deste login), não só anon.
+// RLS: ideal = políticas para authenticated (JWT). Se o projeto ainda usar só anon, o app tenta Bearer anon após falha com JWT.
 const RODASDF_SUPABASE_URL = 'https://SEU_PROJETO.supabase.co';
 const RODASDF_SUPABASE_ANON_KEY = 'COLE_AQUI_SUA_CHAVE_ANON_PUBLICA';
 const RODASDF_AUTH_SESSION_KEY = 'rdf_sb_auth_session';
 
 // --- State ---
 let S = {
-    connected: false, url: '', accessToken: '',
+    connected: false, url: '', accessToken: '', restBearer: '',
     user: { name: 'Demo', role: 'admin', color: '#7c3aed' },
     team: [], partners: [], tasks: [], comments: [], activity: [],
     filter: 'all', activeTab: 'dashboard',
@@ -535,6 +535,7 @@ function rodasdfApplyAuthTokens(tok){
     var base=normalizeSupabaseUrl(RODASDF_SUPABASE_URL);
     S.url=base;
     S.accessToken=tok.access_token;
+    S.restBearer=tok.access_token;
     S.connected=true;
     var sec=tok.expires_in||3600;
     var exp=Date.now()+sec*1000-90000;
@@ -549,6 +550,7 @@ function rodasdfApplyAuthTokens(tok){
 function rodasdfClearAuthSession(){
     localStorage.removeItem(RODASDF_AUTH_SESSION_KEY);
     S.accessToken='';
+    S.restBearer='';
 }
 async function rodasdfRefreshSession(){
     var raw=localStorage.getItem(RODASDF_AUTH_SESSION_KEY);
@@ -574,6 +576,7 @@ async function rodasdfRestoreSession(){
     if(s.access_token&&Date.now()<s.expires_at){
         S.url=normalizeSupabaseUrl(RODASDF_SUPABASE_URL);
         S.accessToken=s.access_token;
+        S.restBearer=s.access_token;
         S.connected=true;
         var pl=parseJwtPayload(s.access_token);
         S.user.name=(pl.user_metadata&&pl.user_metadata.name)||(pl.email&&pl.email.split('@')[0])||'Equipe';
@@ -637,12 +640,13 @@ const PR = {'baixa':'Baixa','media':'Média','alta':'Alta','urgente':'Urgente'};
 const PT = {'institucional':'🏛 Institucional','academico':'🎓 Acadêmico','ong_parceira':'🤝 ONG Parceira','governamental':'🏗 Governamental','abrigo':'🏠 Abrigo'};
 const RL = {'coordenadora':'Coordenadora','facilitadora':'Facilitadora','docente':'Docente','voluntaria':'Voluntária','parceira_externa':'Parceira Externa'};
 
-// --- API helpers (JWT do usuário + apikey anon — exige RLS para role authenticated) ---
+// --- API: header Authorization usa restBearer (JWT; se 401 no carregamento, tenta anon — RLS legado) ---
 function supabaseRestHeaders(extra){
-    if(!S.accessToken)throw new Error('Sem sessão');
+    var b=S.restBearer||S.accessToken;
+    if(!b)throw new Error('Sem sessão');
     return Object.assign({
         apikey:RODASDF_SUPABASE_ANON_KEY,
-        Authorization:'Bearer '+S.accessToken
+        Authorization:'Bearer '+b
     },extra||{});
 }
 async function parseJsonBody(r){
@@ -707,6 +711,7 @@ function enterOffline(){
     S.connected=false;
     S.url='';
     S.accessToken='';
+    S.restBearer='';
     S.loadError=false;
     S.user={name:'Demo',role:'admin',color:'#7c3aed'};
     S.team=[...DEMO_TEAM];S.partners=[...DEMO_PARTNERS];S.tasks=[...DEMO_TASKS];S.comments=[...DEMO_COMMENTS];S.activity=[];
@@ -734,7 +739,7 @@ function enterApp(){
 }
 function doLogout(){
     rodasdfClearAuthSession();
-    S.connected=false;S.url='';S.accessToken='';S.loadError=false;
+    S.connected=false;S.url='';S.accessToken='';S.restBearer='';S.loadError=false;
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('publicHome').classList.remove('hidden');
@@ -767,20 +772,35 @@ function doLogout(){
 })();
 
 // --- Data loading ---
+async function loadDataFetchCore(){
+    S.team=await api('team_members','select=*&order=name&is_active=eq.true');
+    if(!Array.isArray(S.team))S.team=[];
+    S.partners=await api('partners','select=*&order=name');
+    if(!Array.isArray(S.partners))S.partners=[];
+    S.tasks=await api('tasks','select=*&order=due_date.asc.nullslast');
+    if(!Array.isArray(S.tasks))S.tasks=[];
+    S.comments=await api('comments','select=*&order=created_at.asc');
+    if(!Array.isArray(S.comments))S.comments=[];
+    try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');if(!Array.isArray(S.activity))S.activity=[];}catch(e){S.activity=[];}
+}
 async function loadData(){
     if(!S.connected)return;
     S.loadError=false;
+    S.restBearer=S.accessToken||S.restBearer;
     try{
-        S.team=await api('team_members','select=*&order=name&is_active=eq.true');
-        if(!Array.isArray(S.team))S.team=[];
-        S.partners=await api('partners','select=*&order=name');
-        if(!Array.isArray(S.partners))S.partners=[];
-        S.tasks=await api('tasks','select=*&order=due_date.asc.nullslast');
-        if(!Array.isArray(S.tasks))S.tasks=[];
-        S.comments=await api('comments','select=*&order=created_at.asc');
-        if(!Array.isArray(S.comments))S.comments=[];
-        try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');if(!Array.isArray(S.activity))S.activity=[];}catch(e){S.activity=[];}
+        await loadDataFetchCore();
     }catch(e){
+        var canAnon=S.accessToken&&RODASDF_SUPABASE_ANON_KEY&&S.restBearer!==RODASDF_SUPABASE_ANON_KEY;
+        if(canAnon){
+            try{
+                S.restBearer=RODASDF_SUPABASE_ANON_KEY;
+                await loadDataFetchCore();
+                console.info('[RODASDF] Dados carregados com Bearer anon (políticas RLS antigas).');
+                return;
+            }catch(e2){
+                console.error('Load error (fallback anon):',e2);
+            }
+        }
         console.error('Load error:',e);
         S.loadError=true;
     }
