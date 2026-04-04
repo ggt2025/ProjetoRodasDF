@@ -4,7 +4,7 @@
 -- Ajuste nomes de colunas se o seu schema for diferente.
 -- ============================================================
 
--- 1) IML não é parceiro institucional — apenas IMS (piloto)
+-- 1) IML não é parceiro institucional (nada fechado com o órgão). Márcia = psicóloga do IML, só referência técnica possível.
 DELETE FROM partners
 WHERE name ILIKE 'IML'
    OR trim(name) ILIKE 'IML';
@@ -52,9 +52,9 @@ WHERE tm.is_active IS NOT FALSE
   )
 LIMIT 1;
 
--- 5) Ajustar nota de tarefa de currículo (IML + dependência de confirmação UNB)
+-- 5) Ajustar nota de tarefa de currículo (Márcia/IML só referência técnica; sem parceria com o órgão)
 UPDATE tasks
-SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'
+SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: eventual apoio técnico pontual (ex.: Márcia, psicóloga do IML) — sem parceria institucional com o IML; nada fechado com o órgão. Apoio técnico ao material digital: Giselle.'
 WHERE title ILIKE '%Organizar estrutura do curso%';
 
 -- 5b) Giselle: só apoio tecnológico/desenvolvimento — realoca tudo que estava com ela para Thaís (ponte, reunião, curso no painel)
@@ -114,8 +114,16 @@ SET assigned_to = th.id
 FROM th, ca
 WHERE t.assigned_to = ca.id AND ca.id IS NOT NULL AND th.id IS NOT NULL;
 
--- 6) (Opcional) Remover pessoa “Márcia” ligada ao IML da equipe — descomente se fizer sentido
--- DELETE FROM team_members WHERE name ILIKE '%Márcia%' AND organization ILIKE '%IML%';
+-- 5d) Márcia — psicóloga do IML (pessoa de referência); não implica parceria institucional com o IML
+INSERT INTO team_members (name, organization, role, avatar_color, is_active, notes)
+SELECT
+  'Márcia',
+  'IML',
+  'docente',
+  '#0891b2',
+  true,
+  'Psicóloga no IML (Instituto de Medicina Legal). Possível contribuição técnica pontual no módulo de violência. Não há parceria institucional com o IML — o projeto não tem vínculo com o órgão.'
+WHERE NOT EXISTS (SELECT 1 FROM team_members WHERE name ILIKE '%Márcia%');
 
 -- ============================================================
 -- RLS — painel HTML conectado (usuário autenticado + fallback anon)
