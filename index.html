@@ -504,12 +504,26 @@ function doLogout(){
     document.getElementById('btnLogin').disabled=false;
 }
 
-// Auto-login
-(function(){
+// Inicialização: restaurar campos; conectar sozinho se já houver credenciais;
+// no Netlify, sem credenciais, abre direto a demonstração (use ?login=1 para forçar o formulário Supabase).
+(function startup(){
     const u=localStorage.getItem('rdf_url'),k=localStorage.getItem('rdf_key'),n=localStorage.getItem('rdf_name');
     if(u)document.getElementById('loginUrl').value=u;
     if(k)document.getElementById('loginKey').value=k;
     if(n)document.getElementById('loginName').value=n;
+
+    const q=new URLSearchParams(location.search);
+    const forceLogin=q.get('login')==='1'||q.get('supabase')==='1';
+
+    if(u&&k&&!forceLogin){
+        doLogin();
+        return;
+    }
+    const h=location.hostname||'';
+    const onNetlify=h.endsWith('.netlify.app')||h==='netlify.app';
+    if((onNetlify||q.get('demo')==='1')&&!forceLogin){
+        enterOffline();
+    }
 })();
 
 // --- Data loading ---
