@@ -232,7 +232,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .tl-wrap{background:white;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);overflow-x:auto;}
 .tl-grid{position:relative;min-width:900px;}
 .tl-months{display:flex;margin-left:260px;border-bottom:1px solid var(--gray-200);margin-bottom:8px;}
-.tl-month{width:100px;text-align:center;padding:6px;font-size:11px;font-weight:600;color:var(--gray-400);}
+.tl-month{flex:0 0 auto;text-align:center;padding:6px 4px;font-size:11px;font-weight:600;color:var(--gray-400);}
 .tl-month.now{color:var(--purple-600);border-bottom:2px solid var(--purple-600);}
 .tl-phase-label{font-size:10px;font-weight:700;color:var(--purple-500);text-transform:uppercase;letter-spacing:.7px;padding:8px 0 2px;}
 .tl-row{display:flex;align-items:center;margin-bottom:4px;}
@@ -243,7 +243,17 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .tl-bar.f0{background:linear-gradient(90deg,var(--purple-500),var(--purple-400));}
 .tl-bar.f1{background:linear-gradient(90deg,var(--blue-500),var(--blue-400));}
 .tl-bar.f2{background:linear-gradient(90deg,var(--green-500),var(--green-400));}
-.tl-bar.done{opacity:.4;}
+.tl-bar.f3{background:linear-gradient(90deg,#6366f1,#818cf8);}
+.tl-bar.f4{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.tl-bar.f5{background:linear-gradient(90deg,#64748b,#94a3b8);}
+.tl-bar.done{opacity:.45;text-decoration:line-through;}
+.tl-intro{font-size:13px;color:var(--gray-600);line-height:1.45;margin:0 0 12px;max-width:920px;}
+.tl-legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:11px;}
+.tl-leg{padding:3px 10px;border-radius:6px;font-weight:600;color:white;}
+.tl-leg.f0{background:var(--purple-500);}.tl-leg.f1{background:var(--blue-500);}.tl-leg.f2{background:var(--green-500);}
+.tl-leg.f3{background:#6366f1;}.tl-leg.done{background:var(--gray-400);text-decoration:line-through;}
+.tl-nodue-list{margin:0 0 16px;padding-left:20px;font-size:13px;color:var(--gray-700);line-height:1.6;}
+.news-loading{color:var(--gray-500);padding:20px;font-size:14px;}
 .tl-today{position:absolute;top:0;bottom:0;width:2px;background:var(--rose-500);z-index:2;pointer-events:none;}
 .tl-today::after{content:'Hoje';position:absolute;top:-18px;left:-14px;font-size:9px;color:var(--rose-500);font-weight:700;}
 
@@ -316,7 +326,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
     </header>
     <main class="pub-wrap" id="publicMain" role="main">
         <h1 class="pub-h1">Notícias</h1>
-        <p class="pub-sub">Atualizações do projeto no Distrito Federal. O painel de gestão é restrito à equipe — use <strong>Entrar na gestão</strong> no topo.</p>
+        <p class="pub-sub">Atualizações do projeto no Distrito Federal (fonte: <strong>Supabase</strong> — tabela <code>public_news</code>, se existir; senão texto estático). O painel de gestão é restrito à equipe — use <strong>Entrar na gestão</strong> no topo.</p>
         <div class="news-list" id="publicNewsList" aria-live="polite"></div>
     </main>
     <footer class="pub-footer" role="contentinfo">
@@ -446,6 +456,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
             <div class="field"><label>Responsável</label><select id="nt-assign"></select></div>
             <div class="field"><label>Prazo</label><input type="date" id="nt-due"></div>
         </div>
+        <div class="field"><label>Início previsto (opcional)</label><input type="date" id="nt-start" title="Aparece no cronograma como início da barra; se vazio, usa 3 semanas antes do prazo."></div>
         <div class="field"><label>Notas</label><textarea id="nt-notes" style="min-height:50px;"></textarea></div>
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeModal('addTask')">Cancelar</button>
@@ -461,7 +472,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
         <div class="field"><label>Email</label><input type="text" id="nm-email"></div>
         <div class="field"><label>Organização</label><input type="text" id="nm-org"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="field"><label>Papel</label><select id="nm-role"><option value="coordenadora">Coordenadora</option><option value="facilitadora">Facilitadora</option><option value="docente">Docente</option><option value="voluntaria">Voluntária</option><option value="parceira_externa">Parceira Externa</option></select></div>
+            <div class="field"><label>Papel</label><select id="nm-role"><option value="coordenadora">Coordenadora</option><option value="facilitadora">Facilitadora</option><option value="docente">Docente</option><option value="voluntaria">Voluntária</option><option value="parceira_externa">Parceira Externa</option><option value="apoio_tecnico">Apoio técnico</option></select></div>
             <div class="field"><label>Cor do avatar</label><input type="color" id="nm-color" value="#7c3aed" style="height:38px;"></div>
         </div>
         <div class="field"><label>Notas</label><textarea id="nm-notes" style="min-height:50px;"></textarea></div>
@@ -531,7 +542,7 @@ const DEMO_TASKS = [
     {id:'3',title:'Falar com Cândida (UNB)',description:'Thaís conduz o contato com a Prof.ª Cândida (UNB) para apresentar o projeto e negociar parceria acadêmica.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-05-15',notes:'Aguardando resposta/confirmação da UNB. Nada fechado até o momento.'},
     {id:'4',title:'Apresentar projeto à Secretaria da Mulher (DF)',description:'Agendar e realizar apresentação institucional da Rede de Rodas do DF junto à Secretaria da Mulher do Distrito Federal (articulação GDF/MPDFT conforme calendário).',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-05-12',notes:'Responsável: Thaís (articulação institucional).'},
     {id:'5',title:'Falar com Ouvidora das Mulheres do MPDFT',description:'Canal fixo de denúncias via QR Code nas rodas.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-05-09',notes:'QR obrigatório em toda roda.'},
-    {id:'6',title:'Organizar estrutura do curso',description:'Currículo 40h, selecionar docentes, cronograma.',phase:'fase_0_semente',status:'em_andamento',priority:'urgente',assigned_to:'2',due_date:'2026-05-30',notes:'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'},
+    {id:'6',title:'Organizar estrutura do curso',description:'Currículo 40h, selecionar docentes, cronograma.',phase:'fase_0_semente',status:'em_andamento',priority:'urgente',assigned_to:'2',start_date:'2026-04-01',due_date:'2026-05-30',notes:'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'},
     {id:'7',title:'Alinhar rede de alunos UNB com Cândida',description:'Após retorno da UNB: captação de estudantes de pós-graduação.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-05-30',notes:'Responsável pelo contato: Thaís. Depende de confirmação da parceria e carta de intenções.'},
     {id:'8',title:'Elaborar palestras de Direito',description:'Lei Maria da Penha, medidas protetivas, rede DF.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-05-30',notes:'Integrar com Módulo 3. Conteúdo jurídico sob coordenação MPDFT (Thaís).'},
     {id:'9',title:'Reunião de alinhamento — equipe fundadora',description:'Alinhar visão, responsabilidades e cronograma.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-04-25',notes:'Presencial no MPDFT. Condução: Thaís.'},
@@ -672,16 +683,47 @@ function rodasdfConsumeAuthHash(){
 }
 
 function fmtNewsDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}
+/** Notícias públicas: tenta REST Supabase (anon) na tabela public_news; fallback = PUBLIC_NEWS. */
+async function fetchPublicNewsFromSupabase(){
+    if(!rodasdfConfigOk())return null;
+    const base=normalizeSupabaseUrl(RODASDF_SUPABASE_URL);
+    const r=await fetch(base+'/rest/v1/public_news?select=id,published_on,title,excerpt,body&is_published=eq.true&order=published_on.desc.nullslast',{
+        headers:{apikey:RODASDF_SUPABASE_ANON_KEY,Authorization:'Bearer '+RODASDF_SUPABASE_ANON_KEY}
+    });
+    if(r.status===404)return null;
+    if(!r.ok)return null;
+    return await parseJsonBody(r);
+}
+async function loadPublicNewsAndRender(){
+    const el=document.getElementById('publicNewsList');
+    if(el)el.innerHTML='<p class="news-loading" role="status">Carregando notícias…</p>';
+    let rows=null;
+    try{rows=await fetchPublicNewsFromSupabase();}catch(e){rows=null;}
+    if(Array.isArray(rows)&&rows.length){
+        window.RODASDF_PUBLIC_NEWS_LIST=rows.map(function(r){
+            var d=r.published_on||r.date||'';
+            if(d&&typeof d==='string'&&d.length>10)d=d.slice(0,10);
+            return{id:String(r.id),date:d,title:r.title||'',excerpt:r.excerpt||'',body:r.body||''};
+        });
+    }else{
+        window.RODASDF_PUBLIC_NEWS_LIST=PUBLIC_NEWS.map(function(n){return{id:n.id,date:n.date,title:n.title,excerpt:n.excerpt,body:n.body};});
+    }
+    renderPublicNews();
+}
 function renderPublicNews(){
     const el=document.getElementById('publicNewsList');
     if(!el)return;
-    el.innerHTML=PUBLIC_NEWS.map(n=>`<article class="news-card" id="news-${n.id}">
+    const list=window.RODASDF_PUBLIC_NEWS_LIST||PUBLIC_NEWS;
+    el.innerHTML=list.map(n=>{
+        const sid=String(n.id).replace(/[^a-zA-Z0-9_-]/g,'_');
+        return `<article class="news-card" id="news-${sid}" data-news-id="${escapeAttr(n.id)}">
         <div class="news-meta">${fmtNewsDate(n.date)}</div>
         <h2>${brandNameHtml()}<span class="news-title-sep"> — </span>${escapeHtml(n.title)}</h2>
         <p class="news-excerpt">${escapeHtml(n.excerpt)}</p>
-        <button type="button" class="news-toggle" onclick="toggleNewsBody('${n.id}')" id="news-btn-${n.id}">Ler mais</button>
-        <div class="news-body" id="news-body-${n.id}">${escapeHtml(n.body)}</div>
-    </article>`).join('');
+        <button type="button" class="news-toggle" onclick="toggleNewsBody('${sid}')" id="news-btn-${sid}">Ler mais</button>
+        <div class="news-body" id="news-body-${sid}">${escapeHtml(n.body)}</div>
+    </article>`;
+    }).join('');
 }
 function toggleNewsBody(id){
     const b=document.getElementById('news-body-'+id),t=document.getElementById('news-btn-'+id);
@@ -732,6 +774,7 @@ function backToPublicHome(){
     document.getElementById('btnSignup').disabled=false;
     showLoginPane();
     window.scrollTo(0,0);
+    loadPublicNewsAndRender();
 }
 
 // --- Labels ---
@@ -739,7 +782,7 @@ const PH = {'fase_0_semente':'🌱 Fase 0 — Semente','fase_1_piloto':'🧪 Fas
 const ST = {'pendente':'Pendente','em_andamento':'Em andamento','aguardando':'Aguardando','concluida':'Concluída','cancelada':'Cancelada'};
 const PR = {'baixa':'Baixa','media':'Média','alta':'Alta','urgente':'Urgente'};
 const PT = {'institucional':'🏛 Institucional','academico':'🎓 Acadêmico','ong_parceira':'🤝 ONG Parceira','governamental':'🏗 Governamental','abrigo':'🏠 Abrigo'};
-const RL = {'coordenadora':'Coordenadora','facilitadora':'Facilitadora','docente':'Docente','voluntaria':'Voluntária','parceira_externa':'Parceira Externa'};
+const RL = {'coordenadora':'Coordenadora','facilitadora':'Facilitadora','docente':'Docente','voluntaria':'Voluntária','parceira_externa':'Parceira Externa','apoio_tecnico':'Apoio técnico'};
 
 // --- API: header Authorization usa restBearer (JWT; se 401 no carregamento, tenta anon — RLS legado) ---
 function supabaseRestHeaders(extra){
@@ -896,13 +939,14 @@ function doLogout(){
     document.getElementById('publicHome').classList.remove('hidden');
     document.getElementById('loginError').textContent='';
     document.getElementById('btnLogin').disabled=false;
+    loadPublicNewsAndRender();
 }
 
 // Inicialização: retorno do e-mail (#access_token) → entra no painel. ?demo=1 = demo. ?admin=1 = sessão salva.
 (function startup(){
     ['rdf_url','rdf_key','rdf_name'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
     if(rodasdfConsumeAuthHash()){
-        renderPublicNews();
+        loadPublicNewsAndRender();
         (async function(){
             try{
                 S.loadError=false;
@@ -920,7 +964,7 @@ function doLogout(){
         })();
         return;
     }
-    renderPublicNews();
+    loadPublicNewsAndRender();
     var q=new URLSearchParams(location.search);
     if(q.get('demo')==='1'){
         enterOffline();
@@ -1013,8 +1057,9 @@ function renderDashboard(){
     const total=S.tasks.length,done=S.tasks.filter(t=>t.status==='concluida').length,
         prog=S.tasks.filter(t=>t.status==='em_andamento').length,
         overdue=S.tasks.filter(t=>t.status!=='concluida'&&t.due_date&&new Date(t.due_date+'T12:00:00')<new Date()).length;
-    const phases=['fase_0_semente','fase_1_piloto','fase_2_enraizamento'];
-    let phaseHtml=phases.map(p=>{
+    const phaseOrder=['fase_0_semente','fase_1_piloto','fase_2_enraizamento','fase_3_rede','fase_4_expansao','fase_5_sustentabilidade'];
+    const phases=phaseOrder.filter(p=>S.tasks.some(t=>t.phase===p));
+    let phaseHtml=(phases.length?phases:['fase_0_semente']).map(p=>{
         const pt=S.tasks.filter(t=>t.phase===p),pd=pt.filter(t=>t.status==='concluida').length;
         const pct=pt.length?Math.round(pd/pt.length*100):0;
         return `<div class="phase" onclick="S.filter='${p}';switchTab('tasks')">
@@ -1053,8 +1098,13 @@ function renderTasks(){
     if(f!=='all'){list=list.filter(t=>t.phase===f||t.status===f||t.assigned_to===f);}
     const ord={urgente:0,alta:1,media:2,baixa:3};
     list.sort((a,b)=>{if((a.status==='concluida')!==(b.status==='concluida'))return a.status==='concluida'?1:-1;return(ord[a.priority]??2)-(ord[b.priority]??2);});
-    const filters=['all','fase_0_semente','fase_1_piloto','fase_2_enraizamento','pendente','em_andamento','concluida'];
-    const fLabels={'all':'Todos','fase_0_semente':'Fase 0','fase_1_piloto':'Fase 1','fase_2_enraizamento':'Fase 2','pendente':'Pendentes','em_andamento':'Em Andamento','concluida':'Concluídas'};
+    const phaseOrder=['fase_0_semente','fase_1_piloto','fase_2_enraizamento','fase_3_rede','fase_4_expansao','fase_5_sustentabilidade'];
+    const basePh=['fase_0_semente','fase_1_piloto','fase_2_enraizamento'];
+    const extraPh=phaseOrder.filter(p=>!basePh.includes(p)&&S.tasks.some(t=>t.phase===p));
+    const phasesWithData=[...basePh,...extraPh];
+    const filters=['all',...phasesWithData,'pendente','em_andamento','concluida'];
+    const fLabels=Object.assign({'all':'Todos','pendente':'Pendentes','em_andamento':'Em Andamento','concluida':'Concluídas'},
+        Object.fromEntries(phasesWithData.map(p=>[p,PH[p]||p])));
     return `<div class="section-hdr">
         <h2 class="section-title">Encaminhamentos (${list.length})</h2>
         <div class="filters">${filters.map(k=>`<button type="button" class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';renderTab('tasks')">${fLabels[k]}</button>`).join('')}
@@ -1067,8 +1117,11 @@ function renderTasks(){
 async function toggleDone(id){
     const t=S.tasks.find(x=>x.id===id);if(!t)return;
     const ns=t.status==='concluida'?'pendente':'concluida';
-    t.status=ns;if(ns==='concluida')t.completed_at=new Date().toISOString().slice(0,10);else t.completed_at=null;
-    if(S.connected)try{await apiPatch('tasks',id,{status:ns});}catch(e){console.error(e);}
+    const day=ns==='concluida'?new Date().toISOString().slice(0,10):null;
+    t.status=ns;t.completed_at=day;
+    if(S.connected)try{
+        await apiPatch('tasks',id,ns==='concluida'?{status:ns,completed_at:day}:{status:ns,completed_at:null});
+    }catch(e){console.error(e);}
     renderTab(S.activeTab);
 }
 
@@ -1085,6 +1138,7 @@ function openTaskPanel(id){
                 <div class="field"><label>Prioridade</label><select onchange="updateTask('${t.id}','priority',this.value)">${Object.entries(PR).map(([k,v])=>`<option value="${k}" ${t.priority===k?'selected':''}>${v}</option>`).join('')}</select></div>
                 <div class="field"><label>Responsável</label><select onchange="updateTask('${t.id}','assigned_to',this.value)">${S.team.map(m=>`<option value="${escapeAttr(m.id)}" ${t.assigned_to===m.id?'selected':''}>${escapeHtml(m.name)} (${escapeHtml(m.organization||'')})</option>`).join('')}</select></div>
                 <div class="field"><label>Prazo</label><input type="date" value="${t.due_date||''}" onchange="updateTask('${t.id}','due_date',this.value)"></div>
+                <div class="field" style="grid-column:span 2"><label>Início previsto (cronograma)</label><input type="date" value="${t.start_date||''}" title="Início da barra no cronograma; vazio = 3 semanas antes do prazo" onchange="updateTask('${t.id}','start_date',this.value)"></div>
                 <div class="field" style="grid-column:span 2"><label>Fase</label><select onchange="updateTask('${t.id}','phase',this.value)">${Object.entries(PH).map(([k,v])=>`<option value="${k}" ${t.phase===k?'selected':''}>${v}</option>`).join('')}</select></div>
             </div>
             <div class="field"><label>Descrição</label><textarea onblur="updateTask('${t.id}','description',this.value)">${escapeHtml(t.description||'')}</textarea></div>
@@ -1115,6 +1169,7 @@ function closePanel(){
 
 async function updateTask(id,field,val){
     const t=S.tasks.find(x=>x.id===id);if(!t)return;
+    if((field==='due_date'||field==='start_date')&&(!val||val===''))val=null;
     t[field]=val;
     if(S.connected)try{await apiPatch('tasks',id,{[field]:val});}catch(e){console.error(e);}
 }
@@ -1129,35 +1184,100 @@ async function addComment(tid){
     setTimeout(()=>{const cl=document.getElementById('commentsList');if(cl)cl.scrollTop=cl.scrollHeight;},100);
 }
 
-// --- TIMELINE ---
+// --- TIMELINE (escala real: início → prazo; dados do Supabase) ---
+function tlTimelineRange(){
+    const pad=12*864e5;
+    let minT=Infinity,maxT=-Infinity;
+    S.tasks.forEach(t=>{
+        if(!t.due_date)return;
+        const due=new Date(t.due_date+'T12:00:00').getTime();
+        let st=t.start_date?new Date(t.start_date+'T12:00:00').getTime():due-21*864e5;
+        if(st>due)st=due-7*864e5;
+        minT=Math.min(minT,st,due);
+        maxT=Math.max(maxT,due);
+    });
+    if(!isFinite(minT)){
+        const y=new Date().getFullYear();
+        minT=new Date(y,3,1,12,0,0,0).getTime();
+        maxT=new Date(y,11,31,12,0,0,0).getTime();
+    }
+    minT-=pad;maxT+=pad;
+    const d0=new Date(minT);
+    const rangeA=new Date(d0.getFullYear(),d0.getMonth(),1,12,0,0,0).getTime();
+    const d1=new Date(maxT);
+    const rangeB=new Date(d1.getFullYear(),d1.getMonth()+1,0,12,0,0,0).getTime()+43200000;
+    const totalMs=Math.max(rangeB-rangeA,30*864e5);
+    const months=[];
+    for(let t=rangeA;t<=rangeB;){
+        const dd=new Date(t);
+        months.push({t,label:dd.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'})});
+        t=new Date(dd.getFullYear(),dd.getMonth()+1,1,12,0,0,0).getTime();
+    }
+    const cw=Math.min(108,Math.max(68,Math.floor(960/Math.max(months.length,1))));
+    const tw=months.length*cw;
+    return{rangeA,rangeB,totalMs,months,cw,tw};
+}
+function tlBarPhaseClass(p){
+    const n=parseInt((String(p||'').match(/fase_(\d)/)||[,0])[1],10)||0;
+    if(n<=0)return'f0';
+    if(n===1)return'f1';
+    if(n===2)return'f2';
+    if(n===3)return'f3';
+    if(n===4)return'f4';
+    return'f5';
+}
 function renderTimeline(){
-    const months=['Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    const cw=100,tw=months.length*cw;
-    const y0=new Date(2026,3,1);
-    const now=new Date();
-    const todayPx=((now-y0)/(months.length*30*864e5))*tw;
-    const curM=now.getMonth()-3;
-    let h=`<div class="tl-wrap"><div class="tl-grid" style="min-width:${260+tw}px;position:relative;">`;
-    h+=`<div class="tl-months">${months.map((m,i)=>`<div class="tl-month${i===curM?' now':''}" style="width:${cw}px">${m}</div>`).join('')}</div>`;
-    const byPhase={};S.tasks.forEach(t=>{(byPhase[t.phase]=byPhase[t.phase]||[]).push(t);});
-    Object.keys(byPhase).sort().forEach(p=>{
-        h+=`<div class="tl-phase-label">${PH[p]}</div>`;
-        byPhase[p].forEach(t=>{
+    const{rangeA,rangeB,totalMs,months,cw,tw}=tlTimelineRange();
+    function pos(ms){return((ms-rangeA)/totalMs)*tw;}
+    const nowMs=Date.now();
+    const todayPx=pos(nowMs);
+    let h='<div class="tl-wrap">';
+    h+='<p class="tl-intro">Visualização alimentada pelas <strong>tarefas</strong> do Supabase (prazo obrigatório na barra; <strong>início previsto</strong> opcional — senão usa 3 semanas antes do prazo). Toque numa tarefa na lista para editar datas.</p>';
+    h+='<div class="tl-legend-row"><span class="tl-leg f0">Fase 0</span><span class="tl-leg f1">Fase 1</span><span class="tl-leg f2">Fase 2</span><span class="tl-leg f3">Fases 3–5</span><span class="tl-leg done">Concluída</span></div>';
+    h+=`<div class="tl-grid" style="min-width:${260+tw}px;position:relative;">`;
+    h+=`<div class="tl-months" style="margin-left:260px;width:${tw}px;">${months.map(mo=>{
+        const d=new Date(mo.t);
+        const isNow=new Date().getMonth()===d.getMonth()&&new Date().getFullYear()===d.getFullYear();
+        return`<div class="tl-month${isNow?' now':''}" style="width:${cw}px">${mo.label}</div>`;
+    }).join('')}</div>`;
+    const byPhase={};
+    S.tasks.forEach(t=>{
+        const ph=t.phase||'fase_0_semente';
+        (byPhase[ph]=byPhase[ph]||[]).push(t);
+    });
+    const phaseKeys=Object.keys(byPhase).sort();
+    phaseKeys.forEach(p=>{
+        h+=`<div class="tl-phase-label">${PH[p]||p}</div>`;
+        [...byPhase[p]].sort((a,b)=>(a.due_date||'').localeCompare(b.due_date||'')).forEach(t=>{
             if(!t.due_date)return;
+            const due=new Date(t.due_date+'T12:00:00').getTime();
+            let st=t.start_date?new Date(t.start_date+'T12:00:00').getTime():due-21*864e5;
+            if(st>due)st=due-7*864e5;
+            st=Math.max(rangeA,Math.min(st,due));
+            const end=Math.min(rangeB,Math.max(due,st+864e5));
+            const lPx=pos(st);
+            const wPx=Math.max(pos(end)-lPx,12);
             const m=member(t.assigned_to);
-            const due=new Date(t.due_date+'T12:00:00');
-            const s0=Math.max(0,(new Date(2026,3,4)-y0)/(864e5));
-            const s1=Math.max(s0+7,(due-y0)/(864e5));
-            const lPx=(s0/(months.length*30))*tw;
-            const wPx=Math.max(40,((s1-s0)/(months.length*30))*tw);
-            const fc=p.includes('0')?'f0':p.includes('1')?'f1':'f2';
+            const fc=tlBarPhaseClass(p);
             const dn=t.status==='concluida'?' done':'';
-            h+=`<div class="tl-row"><div class="tl-label" title="${escapeAttr(t.title)}"><span style="color:${m.avatar_color};font-weight:600;">${escapeHtml(m.name)}:</span> ${escapeHtml(t.title)}</div>
-                <div class="tl-bars" style="width:${tw}px"><div class="tl-bar ${fc}${dn}" style="left:${lPx}px;width:${wPx}px" title="${escapeAttr(fmtDate(t.due_date))}">${escapeHtml(t.title.slice(0,35))}</div></div></div>`;
+            const tip=(t.start_date?fmtDate(t.start_date)+' → ':'… → ')+fmtDate(t.due_date)+(t.priority==='urgente'?' · urgente':'');
+            const tit=(t.title||'').length>40?(t.title||'').slice(0,40)+'…':(t.title||'');
+            h+=`<div class="tl-row"><div class="tl-label" title="${escapeAttr(t.title)}"><span style="color:${m.avatar_color};font-weight:600;">${escapeHtml(m.name)}</span> · ${escapeHtml(tit)}</div>`;
+            h+=`<div class="tl-bars" style="width:${tw}px"><div class="tl-bar ${fc}${dn}" style="left:${lPx}px;width:${wPx}px" title="${escapeAttr(tip)}">${escapeHtml((t.title||'').slice(0,26))}</div></div></div>`;
         });
     });
-    if(todayPx>0&&todayPx<tw)h+=`<div class="tl-today" style="left:${260+todayPx}px;top:30px;bottom:0;"></div>`;
-    h+=`</div></div>`;return h;
+    const nodue=S.tasks.filter(t=>!t.due_date);
+    if(nodue.length){
+        h+='<div class="tl-phase-label">Sem prazo cadastrado</div><ul class="tl-nodue-list">';
+        nodue.forEach(t=>{
+            const m=member(t.assigned_to);
+            h+=`<li><span style="color:${m.avatar_color};font-weight:600;">${escapeHtml(m.name)}</span> — ${escapeHtml(t.title)} <span class="badge ${t.status}">${escapeHtml(ST[t.status]||'')}</span> <button type="button" class="admin-btn edit" style="margin-left:6px" onclick="openTaskPanel('${escapeAttr(t.id)}')">Definir prazo</button></li>`;
+        });
+        h+='</ul>';
+    }
+    if(todayPx>=-2&&todayPx<=tw+2)h+=`<div class="tl-today" style="left:${260+Math.max(0,Math.min(tw,todayPx))}px;top:26px;bottom:10px;"></div>`;
+    h+='</div></div>';
+    return h;
 }
 
 // --- TEAM ---
@@ -1186,10 +1306,17 @@ function renderPartnersTab(){
     return h+'</div>';
 }
 
-// --- ACTIVITY ---
+// --- ACTIVITY (comentários + activity_log do Supabase) ---
 function renderActivityTab(){
-    if(!S.activity.length&&!S.comments.length)return'<p style="color:var(--gray-400);padding:20px;">Nenhuma atividade registrada ainda. As atividades aparecem quando você edita tarefas, muda status ou adiciona comentários.</p>';
-    const items=[...S.comments.map(c=>({type:'comment',time:c.created_at,who:c.user_name,text:c.content,sys:c.is_system,taskId:c.task_id}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,40);
+    const logRows=Array.isArray(S.activity)?S.activity:[];
+    const fromLog=logRows.map(a=>{
+        const who=a.user_name||a.actor_name||a.actor||'Sistema';
+        const text=a.description||a.action||a.message||a.detail||(a.entity_type?String(a.entity_type)+': alteração':JSON.stringify(a).slice(0,120));
+        return{type:'log',time:a.created_at,who:String(who),text:String(text),sys:true,taskId:a.task_id};
+    });
+    const fromComm=S.comments.map(c=>({type:'comment',time:c.created_at,who:c.user_name,text:c.content,sys:c.is_system,taskId:c.task_id}));
+    const items=[...fromLog,...fromComm].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,60);
+    if(!items.length)return'<p style="color:var(--gray-400);padding:20px;">Nenhuma atividade registrada ainda. Comentários e o log <code>activity_log</code> (se existir no Supabase) aparecem aqui.</p>';
     let h=`<div class="section-hdr"><h2 class="section-title">🕐 Atividade Recente</h2></div><div class="admin-section">`;
     items.forEach(i=>{
         const task=S.tasks.find(t=>t.id===i.taskId);
@@ -1229,6 +1356,7 @@ function renderAdmin(){
     // Stats
     const totalComments=S.comments.filter(c=>!c.is_system).length;
     h+=`<div class="admin-section"><h3>📊 Estatísticas</h3>
+        <p style="font-size:12px;color:var(--gray-500);margin:-6px 0 12px;">Cronograma: coluna opcional <code>start_date</code> em <code>tasks</code>. Notícias públicas: tabela <code>public_news</code> (veja <code>sql/supabase_schema_noticias_cronograma.sql</code>).</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;font-size:14px;">
         <div><strong>${S.tasks.length}</strong> tarefas</div>
         <div><strong>${S.team.length}</strong> membros</div>
@@ -1271,7 +1399,7 @@ function openModal(name){
     if(name==='addTask'){
         document.getElementById('nt-phase').innerHTML=Object.entries(PH).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
         document.getElementById('nt-assign').innerHTML=S.team.map(m=>`<option value="${escapeAttr(m.id)}">${escapeHtml(m.name)} (${escapeHtml(m.organization||'')})</option>`).join('');
-        document.getElementById('nt-title').value='';document.getElementById('nt-desc').value='';document.getElementById('nt-due').value='';document.getElementById('nt-notes').value='';
+        document.getElementById('nt-title').value='';document.getElementById('nt-desc').value='';document.getElementById('nt-due').value='';document.getElementById('nt-start').value='';document.getElementById('nt-notes').value='';
     }
     if(name==='addMember'){document.getElementById('nm-name').value='';document.getElementById('nm-email').value='';document.getElementById('nm-org').value='';document.getElementById('nm-notes').value='';}
     if(name==='addPartner'){document.getElementById('np-name').value='';document.getElementById('np-contact').value='';document.getElementById('np-contrib').value='';document.getElementById('np-receives').value='';document.getElementById('np-notes').value='';}
@@ -1283,7 +1411,8 @@ function closeModalIfBackdrop(ev,name){if(ev.target===ev.currentTarget)closeModa
 async function createTask(){
     const title=document.getElementById('nt-title').value.trim();
     if(!title){alert('Título obrigatório.');return;}
-    const data={title,description:document.getElementById('nt-desc').value.trim(),phase:document.getElementById('nt-phase').value,priority:document.getElementById('nt-priority').value,assigned_to:document.getElementById('nt-assign').value,due_date:document.getElementById('nt-due').value||null,notes:document.getElementById('nt-notes').value.trim(),status:'pendente'};
+    const sd=document.getElementById('nt-start').value.trim();
+    const data={title,description:document.getElementById('nt-desc').value.trim(),phase:document.getElementById('nt-phase').value,priority:document.getElementById('nt-priority').value,assigned_to:document.getElementById('nt-assign').value,due_date:document.getElementById('nt-due').value||null,start_date:sd||null,notes:document.getElementById('nt-notes').value.trim(),status:'pendente'};
     if(S.connected){try{const r=await apiPost('tasks',data);if(r&&r.length)S.tasks.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.tasks.push(data);}}
     else{data.id='l_'+Date.now();data.created_at=new Date().toISOString();S.tasks.push(data);}
     closeModal('addTask');renderTab(S.activeTab);
