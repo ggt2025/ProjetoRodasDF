@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="RODASDF — Rede de Rodas Multidisciplinares para Mulheres no DF. Notícias do projeto e painel de gestão para a equipe.">
+<meta name="theme-color" content="#5b21b6">
+<meta name="color-scheme" content="light">
 <title>RODASDF — Notícias</title>
 <style>
 :root {
@@ -51,6 +54,17 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 .news-body.open{display:block;}
 .news-toggle{background:none;border:none;color:var(--purple-600);font-size:13px;font-weight:700;cursor:pointer;padding:0;font-family:inherit;}
 .news-toggle:hover{text-decoration:underline;}
+.pub-footer{max-width:880px;margin:0 auto;padding:32px 24px 40px;border-top:1px solid var(--gray-200);color:var(--gray-500);font-size:13px;text-align:center;line-height:1.5;}
+.pub-footer strong{color:var(--gray-700);}
+@media(max-width:640px){
+    .pub-bar{flex-direction:column;align-items:stretch;}
+    .pub-spacer{display:none;}
+    .pub-btn-login{width:100%;text-align:center;}
+    .pub-h1{font-size:22px;}
+    .login-card{padding:28px 20px;max-height:min(92vh,calc(100vh - 32px));overflow-y:auto;}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbtn:focus-visible,.news-toggle:focus-visible,.fab:focus-visible,.panel-close:focus-visible{outline:2px solid var(--purple-500);outline-offset:2px;}
 
 /* === LOGIN SCREEN === */
 #loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,var(--purple-900),var(--purple-700),var(--purple-600));display:flex;align-items:center;justify-content:center;flex-direction:column;}
@@ -265,18 +279,22 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 
 <!-- ==================== PÁGINA PÚBLICA — NOTÍCIAS ==================== -->
 <div id="publicHome">
-    <header class="pub-top">
+    <header class="pub-top" role="banner">
         <div class="pub-bar">
             <div class="pub-brand">🔮 RODASDF <small>Rede de Rodas Multidisciplinares para Mulheres</small></div>
             <div class="pub-spacer"></div>
-            <button type="button" class="pub-btn-login" onclick="openLoginScreen()">Entrar na gestão</button>
+            <button type="button" class="pub-btn-login" onclick="openLoginScreen()" aria-label="Abrir login da equipe">Entrar na gestão</button>
         </div>
     </header>
-    <main class="pub-wrap">
+    <main class="pub-wrap" id="publicMain" role="main">
         <h1 class="pub-h1">Notícias</h1>
-        <p class="pub-sub">Atualizações do projeto no Distrito Federal. O painel de gestão é restrito à equipe — use o botão <strong>Entrar na gestão</strong> no topo.</p>
-        <div class="news-list" id="publicNewsList"></div>
+        <p class="pub-sub">Atualizações do projeto no Distrito Federal. O painel de gestão é restrito à equipe — use <strong>Entrar na gestão</strong> no topo.</p>
+        <div class="news-list" id="publicNewsList" aria-live="polite"></div>
     </main>
+    <footer class="pub-footer" role="contentinfo">
+        <strong>RODASDF</strong> · Distrito Federal · 2026<br>
+        Site estático hospedado com segurança básica. Equipe: login com credenciais Supabase ou modo demonstração.
+    </footer>
 </div>
 
 <!-- ==================== LOGIN (ÁREA ADMIN) ==================== -->
@@ -286,21 +304,21 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
         <h1>Acesso à gestão</h1>
         <p>Equipe RODASDF — conecte ao Supabase ou use a demonstração</p>
         <div class="input-group">
-            <label>URL do Supabase</label>
-            <input type="text" id="loginUrl" placeholder="https://xxxxx.supabase.co">
+            <label for="loginUrl">URL do Supabase</label>
+            <input type="url" id="loginUrl" placeholder="https://xxxxx.supabase.co" autocomplete="url" inputmode="url" autocapitalize="none" spellcheck="false">
         </div>
         <div class="input-group">
-            <label>Anon Key</label>
-            <input type="password" id="loginKey" placeholder="eyJhbGciOi...">
+            <label for="loginKey">Anon Key</label>
+            <input type="password" id="loginKey" placeholder="eyJhbGciOi..." autocomplete="current-password" autocapitalize="none" spellcheck="false">
         </div>
         <div class="input-group">
-            <label>Seu nome</label>
-            <input type="text" id="loginName" placeholder="Ex: Giselle">
+            <label for="loginName">Seu nome</label>
+            <input type="text" id="loginName" placeholder="Ex: Giselle" autocomplete="name">
         </div>
-        <button class="btn-login" id="btnLogin" onclick="doLogin()">Entrar</button>
+        <button class="btn-login" id="btnLogin" type="button" onclick="doLogin()">Entrar no painel</button>
         <div class="login-error" id="loginError"></div>
         <div class="login-divider">ou</div>
-        <button class="login-offline" onclick="enterOffline()">Entrar em modo offline (demonstração)</button>
+        <button type="button" class="login-offline" onclick="enterOffline()">Modo demonstração (sem Supabase)</button>
         <button type="button" class="login-back" onclick="backToPublicHome()">← Voltar às notícias</button>
     </div>
 </div>
@@ -365,9 +383,9 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 </div>
 
 <!-- ==================== MODALS ==================== -->
-<div class="modal-bg" id="modal-addTask">
-    <div class="modal">
-        <h2>➕ Nova Tarefa</h2>
+<div class="modal-bg" id="modal-addTask" onclick="closeModalIfBackdrop(event,'addTask')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-addTask-title" onclick="event.stopPropagation()">
+        <h2 id="modal-addTask-title">➕ Nova Tarefa</h2>
         <div class="field"><label>Título *</label><input type="text" id="nt-title"></div>
         <div class="field"><label>Descrição</label><textarea id="nt-desc"></textarea></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -386,8 +404,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
     </div>
 </div>
 
-<div class="modal-bg" id="modal-addMember">
-    <div class="modal">
+<div class="modal-bg" id="modal-addMember" onclick="closeModalIfBackdrop(event,'addMember')">
+    <div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
         <h2>➕ Novo Membro</h2>
         <div class="field"><label>Nome *</label><input type="text" id="nm-name"></div>
         <div class="field"><label>Email</label><input type="text" id="nm-email"></div>
@@ -404,8 +422,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
     </div>
 </div>
 
-<div class="modal-bg" id="modal-addPartner">
-    <div class="modal">
+<div class="modal-bg" id="modal-addPartner" onclick="closeModalIfBackdrop(event,'addPartner')">
+    <div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
         <h2>➕ Novo Parceiro</h2>
         <div class="field"><label>Nome *</label><input type="text" id="np-name"></div>
         <div class="field"><label>Tipo</label><select id="np-type"><option value="institucional">Institucional</option><option value="academico">Acadêmico</option><option value="ong_parceira">ONG Parceira</option><option value="governamental">Governamental</option><option value="abrigo">Abrigo</option></select></div>
@@ -430,7 +448,8 @@ let S = {
     connected: false, url: '', key: '',
     user: { name: 'Demo', role: 'admin', color: '#7c3aed' },
     team: [], partners: [], tasks: [], comments: [], activity: [],
-    filter: 'all', activeTab: 'dashboard'
+    filter: 'all', activeTab: 'dashboard',
+    loadError: false
 };
 
 // --- Offline demo data ---
@@ -486,6 +505,14 @@ const PUBLIC_NEWS = [
 ];
 
 function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escapeAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function normalizeSupabaseUrl(url){
+    let u=String(url||'').trim();
+    if(!u)return'';
+    u=u.replace(/\/+$/,'');
+    if(!/^https?:\/\//i.test(u))u='https://'+u.replace(/^\/+/,'');
+    return u.replace(/\/+$/,'');
+}
 function fmtNewsDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}
 function renderPublicNews(){
     const el=document.getElementById('publicNewsList');
@@ -507,12 +534,15 @@ function toggleNewsBody(id){
 function openLoginScreen(){
     document.getElementById('publicHome').classList.add('hidden');
     document.getElementById('loginScreen').classList.remove('hidden');
+    window.scrollTo(0,0);
+    setTimeout(function(){var el=document.getElementById('loginUrl');if(el)el.focus();},100);
 }
 function backToPublicHome(){
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('publicHome').classList.remove('hidden');
     document.getElementById('loginError').textContent='';
     document.getElementById('btnLogin').disabled=false;
+    window.scrollTo(0,0);
 }
 
 // --- Labels ---
@@ -523,17 +553,25 @@ const PT = {'institucional':'🏛 Institucional','academico':'🎓 Acadêmico','
 const RL = {'coordenadora':'Coordenadora','facilitadora':'Facilitadora','docente':'Docente','voluntaria':'Voluntária','parceira_externa':'Parceira Externa'};
 
 // --- API helpers ---
+async function parseJsonBody(r){
+    const t=await r.text();
+    if(!t||!t.trim())return[];
+    try{return JSON.parse(t);}catch(e){return[];}
+}
 async function api(table,params=''){
     const r=await fetch(`${S.url}/rest/v1/${table}?${params}`,{headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`}});
-    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+    if(!r.ok)throw new Error(r.status===401?'Não autorizado (401)':r.status===404?'Não encontrado (404)':`HTTP ${r.status}`);
+    return parseJsonBody(r);
 }
 async function apiPost(table,data){
     const r=await fetch(`${S.url}/rest/v1/${table}`,{method:'POST',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(data)});
-    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return parseJsonBody(r);
 }
 async function apiPatch(table,id,data){
     const r=await fetch(`${S.url}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(data)});
-    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return parseJsonBody(r);
 }
 async function apiDel(table,id){
     await fetch(`${S.url}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`}});
@@ -541,7 +579,8 @@ async function apiDel(table,id){
 
 // --- Login ---
 async function doLogin(){
-    const url=document.getElementById('loginUrl').value.trim();
+    const raw=document.getElementById('loginUrl').value.trim();
+    const url=normalizeSupabaseUrl(raw);
     const key=document.getElementById('loginKey').value.trim();
     const name=document.getElementById('loginName').value.trim()||'Admin';
     const err=document.getElementById('loginError');
@@ -550,18 +589,21 @@ async function doLogin(){
     err.textContent='Conectando...';
     try{
         const r=await fetch(`${url}/rest/v1/team_members?select=id&limit=1`,{headers:{'apikey':key,'Authorization':`Bearer ${key}`}});
-        if(!r.ok)throw new Error(`HTTP ${r.status}`);
+        if(!r.ok)throw new Error(r.status===401?'Chave ou URL inválida (401)':`HTTP ${r.status}`);
         S.url=url;S.key=key;S.connected=true;
         S.user.name=name;
+        S.loadError=false;
         localStorage.setItem('rdf_url',url);
         localStorage.setItem('rdf_key',key);
         localStorage.setItem('rdf_name',name);
+        document.getElementById('loginUrl').value=url;
         await loadData();
         enterApp();
     }catch(e){err.textContent='Erro: '+e.message;document.getElementById('btnLogin').disabled=false;}
 }
 function enterOffline(){
     S.connected=false;
+    S.loadError=false;
     S.user={name:'Demo',role:'admin',color:'#7c3aed'};
     S.team=[...DEMO_TEAM];S.partners=[...DEMO_PARTNERS];S.tasks=[...DEMO_TASKS];S.comments=[...DEMO_COMMENTS];S.activity=[];
     enterApp();
@@ -570,14 +612,24 @@ function enterApp(){
     document.getElementById('publicHome').classList.add('hidden');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('appShell').classList.remove('hidden');
-    document.getElementById('connDot').classList.toggle('ok',S.connected);
-    document.getElementById('connText').textContent=S.connected?'Conectado':'Offline';
+    const dot=document.getElementById('connDot'),txt=document.getElementById('connText');
+    if(!S.connected){
+        dot.classList.remove('ok');
+        txt.textContent='Demonstração';
+    }else if(S.loadError){
+        dot.classList.remove('ok');
+        txt.textContent='Erro ao carregar';
+    }else{
+        dot.classList.add('ok');
+        txt.textContent='Conectado';
+    }
     document.getElementById('userName').textContent=S.user.name;
     document.getElementById('userAvatar').textContent=initials(S.user.name);
+    window.scrollTo(0,0);
     renderTab('dashboard');
 }
 function doLogout(){
-    S.connected=false;S.url='';S.key='';
+    S.connected=false;S.url='';S.key='';S.loadError=false;
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('publicHome').classList.remove('hidden');
@@ -590,7 +642,7 @@ function doLogout(){
 // ?demo=1 — abre modo demonstração sem passar pelo login.
 (function startup(){
     const u=localStorage.getItem('rdf_url'),k=localStorage.getItem('rdf_key'),n=localStorage.getItem('rdf_name');
-    if(u)document.getElementById('loginUrl').value=u;
+    if(u)document.getElementById('loginUrl').value=normalizeSupabaseUrl(u);
     if(k)document.getElementById('loginKey').value=k;
     if(n)document.getElementById('loginName').value=n;
 
@@ -609,13 +661,21 @@ function doLogout(){
 // --- Data loading ---
 async function loadData(){
     if(!S.connected)return;
+    S.loadError=false;
     try{
         S.team=await api('team_members','select=*&order=name&is_active=eq.true');
+        if(!Array.isArray(S.team))S.team=[];
         S.partners=await api('partners','select=*&order=name');
+        if(!Array.isArray(S.partners))S.partners=[];
         S.tasks=await api('tasks','select=*&order=due_date.asc.nullslast');
+        if(!Array.isArray(S.tasks))S.tasks=[];
         S.comments=await api('comments','select=*&order=created_at.asc');
-        try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');}catch(e){S.activity=[];}
-    }catch(e){console.error('Load error:',e);}
+        if(!Array.isArray(S.comments))S.comments=[];
+        try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');if(!Array.isArray(S.activity))S.activity=[];}catch(e){S.activity=[];}
+    }catch(e){
+        console.error('Load error:',e);
+        S.loadError=true;
+    }
 }
 
 // --- Helpers ---
@@ -681,8 +741,8 @@ function taskCard(t){
     const m=member(t.assigned_to),isDone=t.status==='concluida',cc=taskComments(t.id).filter(c=>!c.is_system).length;
     return `<div class="tcard p-${t.priority}" onclick="openTaskPanel('${t.id}')">
         <div class="tchk ${isDone?'done':''}" onclick="event.stopPropagation();toggleDone('${t.id}')">${isDone?'✓':''}</div>
-        <div class="tinfo"><h3 class="${isDone?'struck':''}">${t.title}</h3><p>${PH[t.phase]||t.phase}</p></div>
-        <div class="tperson"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><span class="av-name">${m.name}</span></div>
+        <div class="tinfo"><h3 class="${isDone?'struck':''}">${escapeHtml(t.title)}</h3><p>${escapeHtml(PH[t.phase]||t.phase||'')}</p></div>
+        <div class="tperson"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><span class="av-name">${escapeHtml(m.name)}</span></div>
         <span class="badge ${t.status}">${ST[t.status]||t.status}</span>
         <span class="tdate ${dueCls(t.due_date,t.status)}">${fmtDate(t.due_date)}</span>
         <span class="tcomments">${cc?'💬'+cc:''}</span>
@@ -699,8 +759,8 @@ function renderTasks(){
     const fLabels={'all':'Todos','fase_0_semente':'Fase 0','fase_1_piloto':'Fase 1','fase_2_enraizamento':'Fase 2','pendente':'Pendentes','em_andamento':'Em Andamento','concluida':'Concluídas'};
     return `<div class="section-hdr">
         <h2 class="section-title">Encaminhamentos (${list.length})</h2>
-        <div class="filters">${filters.map(k=>`<button class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';renderTab('tasks')">${fLabels[k]}</button>`).join('')}
-        ${S.team.map(m=>`<button class="fbtn ${f===m.id?'on':''}" onclick="S.filter='${m.id}';renderTab('tasks')" style="border-color:${m.avatar_color}55">${m.name}</button>`).join('')}
+        <div class="filters">${filters.map(k=>`<button type="button" class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';renderTab('tasks')">${fLabels[k]}</button>`).join('')}
+        ${S.team.map(m=>`<button type="button" class="fbtn ${f===m.id?'on':''}" onclick="S.filter='${m.id}';renderTab('tasks')" style="border-color:${m.avatar_color}55">${escapeHtml(m.name)}</button>`).join('')}
         </div></div>
     <div class="tasks">${list.map(taskCard).join('')||'<p style="color:var(--gray-400);padding:20px;">Nenhuma tarefa encontrada.</p>'}</div>`;
 }
@@ -725,24 +785,24 @@ function openTaskPanel(id){
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                 <div class="field"><label>Status</label><select onchange="updateTask('${t.id}','status',this.value)">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${t.status===k?'selected':''}>${v}</option>`).join('')}</select></div>
                 <div class="field"><label>Prioridade</label><select onchange="updateTask('${t.id}','priority',this.value)">${Object.entries(PR).map(([k,v])=>`<option value="${k}" ${t.priority===k?'selected':''}>${v}</option>`).join('')}</select></div>
-                <div class="field"><label>Responsável</label><select onchange="updateTask('${t.id}','assigned_to',this.value)">${S.team.map(m=>`<option value="${m.id}" ${t.assigned_to===m.id?'selected':''}>${m.name} (${m.organization})</option>`).join('')}</select></div>
+                <div class="field"><label>Responsável</label><select onchange="updateTask('${t.id}','assigned_to',this.value)">${S.team.map(m=>`<option value="${escapeAttr(m.id)}" ${t.assigned_to===m.id?'selected':''}>${escapeHtml(m.name)} (${escapeHtml(m.organization||'')})</option>`).join('')}</select></div>
                 <div class="field"><label>Prazo</label><input type="date" value="${t.due_date||''}" onchange="updateTask('${t.id}','due_date',this.value)"></div>
                 <div class="field" style="grid-column:span 2"><label>Fase</label><select onchange="updateTask('${t.id}','phase',this.value)">${Object.entries(PH).map(([k,v])=>`<option value="${k}" ${t.phase===k?'selected':''}>${v}</option>`).join('')}</select></div>
             </div>
-            <div class="field"><label>Descrição</label><textarea onblur="updateTask('${t.id}','description',this.value)">${t.description||''}</textarea></div>
-            <div class="field"><label>Notas</label><textarea onblur="updateTask('${t.id}','notes',this.value)">${t.notes||''}</textarea></div>
+            <div class="field"><label>Descrição</label><textarea onblur="updateTask('${t.id}','description',this.value)">${escapeHtml(t.description||'')}</textarea></div>
+            <div class="field"><label>Notas</label><textarea onblur="updateTask('${t.id}','notes',this.value)">${escapeHtml(t.notes||'')}</textarea></div>
         </div>
         <div class="panel-section">
             <div class="panel-section-title">💬 Comentários (${cc.length})</div>
             <div class="comments-list" id="commentsList">${cc.map(c=>`
                 <div class="comment ${c.is_system?'system':''}">
-                    <div class="comment-head"><span class="comment-author">${c.user_name}</span><span class="comment-date">${fmtDateTime(c.created_at)}</span></div>
-                    <div class="comment-body">${c.content}</div>
+                    <div class="comment-head"><span class="comment-author">${escapeHtml(c.user_name)}</span><span class="comment-date">${fmtDateTime(c.created_at)}</span></div>
+                    <div class="comment-body">${escapeHtml(c.content)}</div>
                 </div>`).join('')||'<p style="color:var(--gray-400);font-size:13px;">Nenhum comentário ainda.</p>'}
             </div>
             <div class="comment-input">
                 <textarea id="newComment" placeholder="Escreva um comentário..."></textarea>
-                <button onclick="addComment('${t.id}')">Enviar</button>
+                <button type="button" onclick="addComment('${t.id}')">Enviar</button>
             </div>
         </div>
         <div style="font-size:10px;color:var(--gray-400);margin-top:12px;">ID: ${t.id}${t.completed_at?' · Concluída: '+fmtDate(t.completed_at):''} · Criada: ${fmtDateTime(t.created_at)}</div>`;
@@ -794,8 +854,8 @@ function renderTimeline(){
             const wPx=Math.max(40,((s1-s0)/(months.length*30))*tw);
             const fc=p.includes('0')?'f0':p.includes('1')?'f1':'f2';
             const dn=t.status==='concluida'?' done':'';
-            h+=`<div class="tl-row"><div class="tl-label" title="${t.title}"><span style="color:${m.avatar_color};font-weight:600;">${m.name}:</span> ${t.title}</div>
-                <div class="tl-bars" style="width:${tw}px"><div class="tl-bar ${fc}${dn}" style="left:${lPx}px;width:${wPx}px" title="${fmtDate(t.due_date)}">${t.title.slice(0,35)}</div></div></div>`;
+            h+=`<div class="tl-row"><div class="tl-label" title="${escapeAttr(t.title)}"><span style="color:${m.avatar_color};font-weight:600;">${escapeHtml(m.name)}:</span> ${escapeHtml(t.title)}</div>
+                <div class="tl-bars" style="width:${tw}px"><div class="tl-bar ${fc}${dn}" style="left:${lPx}px;width:${wPx}px" title="${escapeAttr(fmtDate(t.due_date))}">${escapeHtml(t.title.slice(0,35))}</div></div></div>`;
         });
     });
     if(todayPx>0&&todayPx<tw)h+=`<div class="tl-today" style="left:${260+todayPx}px;top:30px;bottom:0;"></div>`;
@@ -807,10 +867,10 @@ function renderTeamTab(){
     let h=`<div class="section-hdr"><h2 class="section-title">Equipe (${S.team.length})</h2><button class="admin-btn add" onclick="openModal('addMember')">+ Novo Membro</button></div><div class="grid">`;
     S.team.forEach(m=>{
         const mt=S.tasks.filter(t=>t.assigned_to===m.id),done=mt.filter(t=>t.status==='concluida').length,pend=mt.filter(t=>t.status!=='concluida').length;
-        h+=`<div class="card"><div class="card-hdr"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><div><div class="nm">${m.name}</div><div class="org">${m.organization} · ${RL[m.role]||m.role}</div></div></div>
-            <div class="card-note">${m.notes||''}</div>
+        h+=`<div class="card"><div class="card-hdr"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><div><div class="nm">${escapeHtml(m.name)}</div><div class="org">${escapeHtml(m.organization||'')} · ${escapeHtml(RL[m.role]||m.role||'')}</div></div></div>
+            <div class="card-note">${escapeHtml(m.notes||'')}</div>
             <div class="card-stats">${pend} pendente${pend!==1?'s':''} · ${done} concluída${done!==1?'s':''}</div>
-            <div class="card-tasks">${mt.filter(t=>t.status!=='concluida').slice(0,5).map(t=>`<div class="card-task"><span>${t.title.slice(0,40)}${t.title.length>40?'...':''}</span><span class="mini-badge badge ${t.priority}">${PR[t.priority]}</span></div>`).join('')}</div></div>`;
+            <div class="card-tasks">${mt.filter(t=>t.status!=='concluida').slice(0,5).map(t=>`<div class="card-task"><span>${escapeHtml(t.title.slice(0,40))}${t.title.length>40?'...':''}</span><span class="mini-badge badge ${t.priority}">${escapeHtml(PR[t.priority]||'')}</span></div>`).join('')}</div></div>`;
     });
     return h+'</div>';
 }
@@ -819,11 +879,11 @@ function renderTeamTab(){
 function renderPartnersTab(){
     let h=`<div class="section-hdr"><h2 class="section-title">Parceiros (${S.partners.length})</h2><button class="admin-btn add" onclick="openModal('addPartner')">+ Novo Parceiro</button></div><div class="grid">`;
     S.partners.forEach(p=>{
-        h+=`<div class="card"><div class="card-hdr"><div><div class="nm">${p.name}</div><div class="org">${PT[p.type]||p.type} · ${p.contact_person||'—'}</div></div></div>
-            <div style="margin-bottom:8px"><span class="badge ${p.status}">${ST[p.status]}</span></div>
-            <div class="card-note"><strong>Oferece:</strong> ${p.contribution||'—'}</div>
-            <div class="card-note"><strong>Recebe:</strong> ${p.receives||'—'}</div>
-            <div class="card-note">${p.notes||''}</div></div>`;
+        h+=`<div class="card"><div class="card-hdr"><div><div class="nm">${escapeHtml(p.name)}</div><div class="org">${escapeHtml(PT[p.type]||p.type||'')} · ${escapeHtml(p.contact_person||'—')}</div></div></div>
+            <div style="margin-bottom:8px"><span class="badge ${p.status}">${escapeHtml(ST[p.status]||p.status||'')}</span></div>
+            <div class="card-note"><strong>Oferece:</strong> ${escapeHtml(p.contribution||'—')}</div>
+            <div class="card-note"><strong>Recebe:</strong> ${escapeHtml(p.receives||'—')}</div>
+            <div class="card-note">${escapeHtml(p.notes||'')}</div></div>`;
     });
     return h+'</div>';
 }
@@ -837,9 +897,9 @@ function renderActivityTab(){
         const task=S.tasks.find(t=>t.id===i.taskId);
         const tn=task?task.title:'—';
         h+=`<div class="activity-item ${i.sys?'system':''}">
-            <div style="display:flex;justify-content:space-between"><strong>${i.who}</strong><span class="activity-time">${fmtDateTime(i.time)}</span></div>
-            <div style="color:var(--gray-600)">${i.text}</div>
-            <div style="font-size:11px;color:var(--gray-400)">em: ${tn}</div></div>`;
+            <div style="display:flex;justify-content:space-between"><strong>${escapeHtml(i.who)}</strong><span class="activity-time">${fmtDateTime(i.time)}</span></div>
+            <div style="color:var(--gray-600)">${escapeHtml(i.text)}</div>
+            <div style="font-size:11px;color:var(--gray-400)">em: ${escapeHtml(tn)}</div></div>`;
     });
     return h+'</div>';
 }
@@ -851,7 +911,7 @@ function renderAdmin(){
     h+=`<div class="admin-section"><h3>👤 Usuários do App</h3>
         <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Gerencie quem acessa o painel. Em produção, integre com Supabase Auth.</p>
         <table class="admin-table"><thead><tr><th>Nome</th><th>Email</th><th>Papel</th><th>Ações</th></tr></thead><tbody>
-        <tr><td>${S.user.name}</td><td>—</td><td><span class="badge em_andamento">Admin</span></td><td>—</td></tr>
+        <tr><td>${escapeHtml(S.user.name)}</td><td>—</td><td><span class="badge em_andamento">Admin</span></td><td>—</td></tr>
         </tbody></table></div>`;
     // Team
     h+=`<div class="admin-section"><h3>👥 Membros da Equipe</h3>
@@ -859,14 +919,14 @@ function renderAdmin(){
         <table class="admin-table"><thead><tr><th>Nome</th><th>Organização</th><th>Papel</th><th>Tarefas</th><th>Ações</th></tr></thead><tbody>
         ${S.team.map(m=>{
             const tc=S.tasks.filter(t=>t.assigned_to===m.id).length;
-            return `<tr><td><span style="display:inline-flex;align-items:center;gap:6px;"><span class="av" style="background:${m.avatar_color};width:22px;height:22px;font-size:9px;">${initials(m.name)}</span>${m.name}</span></td><td>${m.organization}</td><td>${RL[m.role]||m.role}</td><td>${tc}</td><td><button class="admin-btn edit" onclick="editMember('${m.id}')">Editar</button></td></tr>`;
+            return `<tr><td><span style="display:inline-flex;align-items:center;gap:6px;"><span class="av" style="background:${m.avatar_color};width:22px;height:22px;font-size:9px;">${initials(m.name)}</span>${escapeHtml(m.name)}</span></td><td>${escapeHtml(m.organization||'')}</td><td>${escapeHtml(RL[m.role]||m.role||'')}</td><td>${tc}</td><td><button type="button" class="admin-btn edit" onclick="editMember('${m.id}')">Editar</button></td></tr>`;
         }).join('')}
         </tbody></table></div>`;
     // Partners
     h+=`<div class="admin-section"><h3>🤝 Parceiros</h3>
         <button class="admin-btn add" onclick="openModal('addPartner')" style="margin-bottom:12px;">+ Novo Parceiro</button>
         <table class="admin-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Contato</th><th>Status</th></tr></thead><tbody>
-        ${S.partners.map(p=>`<tr><td>${p.name}</td><td>${PT[p.type]||p.type}</td><td>${p.contact_person||'—'}</td><td><span class="badge ${p.status}">${ST[p.status]}</span></td></tr>`).join('')}
+        ${S.partners.map(p=>`<tr><td>${escapeHtml(p.name)}</td><td>${escapeHtml(PT[p.type]||p.type||'')}</td><td>${escapeHtml(p.contact_person||'—')}</td><td><span class="badge ${p.status}">${escapeHtml(ST[p.status]||p.status||'')}</span></td></tr>`).join('')}
         </tbody></table></div>`;
     // Stats
     const totalComments=S.comments.filter(c=>!c.is_system).length;
@@ -891,12 +951,12 @@ function editMember(id){
     const m=S.team.find(x=>x.id===id);if(!m)return;
     document.getElementById('panelTitle').textContent='Editar: '+m.name;
     document.getElementById('panelBody').innerHTML=`
-        <div class="field"><label>Nome</label><input type="text" id="em-name" value="${m.name}"></div>
-        <div class="field"><label>Organização</label><input type="text" id="em-org" value="${m.organization||''}"></div>
-        <div class="field"><label>Email</label><input type="text" id="em-email" value="${m.email||''}"></div>
+        <div class="field"><label>Nome</label><input type="text" id="em-name" value="${escapeAttr(m.name)}"></div>
+        <div class="field"><label>Organização</label><input type="text" id="em-org" value="${escapeAttr(m.organization||'')}"></div>
+        <div class="field"><label>Email</label><input type="text" id="em-email" value="${escapeAttr(m.email||'')}"></div>
         <div class="field"><label>Papel</label><select id="em-role">${Object.entries(RL).map(([k,v])=>`<option value="${k}" ${m.role===k?'selected':''}>${v}</option>`).join('')}</select></div>
         <div class="field"><label>Cor</label><input type="color" id="em-color" value="${m.avatar_color||'#7c3aed'}" style="height:38px;"></div>
-        <div class="field"><label>Notas</label><textarea id="em-notes">${m.notes||''}</textarea></div>
+        <div class="field"><label>Notas</label><textarea id="em-notes">${escapeHtml(m.notes||'')}</textarea></div>
         <div class="modal-actions"><button class="btn btn-primary" onclick="saveMember('${m.id}')">Salvar</button></div>`;
     document.getElementById('panelOverlay').classList.add('open');
     document.getElementById('detailPanel').classList.add('open');
@@ -912,7 +972,7 @@ async function saveMember(id){
 function openModal(name){
     if(name==='addTask'){
         document.getElementById('nt-phase').innerHTML=Object.entries(PH).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
-        document.getElementById('nt-assign').innerHTML=S.team.map(m=>`<option value="${m.id}">${m.name} (${m.organization})</option>`).join('');
+        document.getElementById('nt-assign').innerHTML=S.team.map(m=>`<option value="${escapeAttr(m.id)}">${escapeHtml(m.name)} (${escapeHtml(m.organization||'')})</option>`).join('');
         document.getElementById('nt-title').value='';document.getElementById('nt-desc').value='';document.getElementById('nt-due').value='';document.getElementById('nt-notes').value='';
     }
     if(name==='addMember'){document.getElementById('nm-name').value='';document.getElementById('nm-email').value='';document.getElementById('nm-org').value='';document.getElementById('nm-notes').value='';}
@@ -920,6 +980,7 @@ function openModal(name){
     document.getElementById('modal-'+name).classList.add('open');
 }
 function closeModal(name){document.getElementById('modal-'+name).classList.remove('open');}
+function closeModalIfBackdrop(ev,name){if(ev.target===ev.currentTarget)closeModal(name);}
 
 async function createTask(){
     const title=document.getElementById('nt-title').value.trim();
@@ -949,6 +1010,17 @@ async function createPartner(){
 }
 
 function toggleUserMenu(){}
+
+document.addEventListener('keydown',function(ev){
+    if(ev.key!=='Escape')return;
+    var login=document.getElementById('loginScreen');
+    if(login&&!login.classList.contains('hidden')){backToPublicHome();return;}
+    if(document.getElementById('detailPanel').classList.contains('open')){closePanel();return;}
+    ['addTask','addMember','addPartner'].forEach(function(n){
+        var m=document.getElementById('modal-'+n);
+        if(m&&m.classList.contains('open'))closeModal(n);
+    });
+});
 </script>
 </body>
 </html>
