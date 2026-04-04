@@ -510,30 +510,28 @@ let S = {
 };
 
 // --- Offline demo data ---
-const COLORS = { 'Natalie':'#e11d48','Thaís':'#7c3aed','Giselle':'#2563eb','Cândida':'#059669','Laura':'#d97706','Márcia':'#0891b2' };
+const COLORS = { 'Natalie':'#e11d48','Thaís':'#7c3aed','Giselle':'#2563eb','Cândida':'#059669','Laura':'#d97706' };
 const DEMO_TEAM = [
     {id:'1',name:'Natalie',email:null,organization:'Rede de Rodas do DF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga).'},
-    {id:'2',name:'Thaís',email:null,organization:'MPDFT',role:'coordenadora',expertise:['direito','articulacao_institucional'],avatar_color:'#7c3aed',is_active:true,notes:'Coordenação MPDFT. Contatos: Cândida (UNB), Márcia (IML), Ouvidora das Mulheres.'},
+    {id:'2',name:'Thaís',email:null,organization:'MPDFT',role:'coordenadora',expertise:['direito','articulacao_institucional'],avatar_color:'#7c3aed',is_active:true,notes:'Coordenação MPDFT. Contatos: Cândida (UNB), Ouvidoria das Mulheres, Secretaria da Mulher (DF).'},
     {id:'3',name:'Giselle',email:'giselle.trevizo@gmail.com',organization:'MPDFT',role:'coordenadora',expertise:['direito','formacao'],avatar_color:'#2563eb',is_active:true,notes:'Organização do curso, palestrante de Direito. Coordenação pedagógica.'},
     {id:'4',name:'Cândida',email:null,organization:'UNB',role:'docente',expertise:['psicologia'],avatar_color:'#059669',is_active:true,notes:'Professora titular Psicologia UNB. CONFIRMADA.'},
     {id:'5',name:'Laura',email:null,organization:'A confirmar',role:'docente',expertise:['psicologia'],avatar_color:'#d97706',is_active:true,notes:'Psicóloga. Contato via Natalie. Aguardando confirmação.'},
-    {id:'6',name:'Márcia',email:null,organization:'IML',role:'parceira_externa',expertise:['medicina_legal'],avatar_color:'#0891b2',is_active:true,notes:'Contato no IML. Thaís articulação.'},
 ];
 const DEMO_PARTNERS = [
     {id:'1',name:'MPDFT',type:'institucional',contact_person:'Thaís / Giselle',status:'em_andamento',contribution:'Espaço físico, apoio técnico, co-certificação, legitimidade institucional',receives:'Ampliação rede de proteção, dados de mapeamento',notes:'Parceiro principal.'},
     {id:'2',name:'Instituto Mãos Solidárias (IMS)',type:'ong_parceira',contact_person:'—',status:'pendente',contribution:'Casas sociais com mulheres; espaço para rodas-piloto',receives:'Rodas de acolhimento para beneficiárias',notes:'Local do piloto.'},
     {id:'3',name:'UNB — Pós-graduação Psicologia',type:'academico',contact_person:'Cândida',status:'em_andamento',contribution:'Estudantes facilitadoras; validação de horas; rede de alunos',receives:'Campo de prática; dados para pesquisa',notes:'Cândida confirmou.'},
-    {id:'4',name:'IML',type:'institucional',contact_person:'Márcia',status:'pendente',contribution:'Apoio técnico pericial; módulo sobre violência física',receives:'Fortalecimento rede de encaminhamento',notes:'Contato via Thaís.'},
-    {id:'5',name:'Ouvidoria das Mulheres — MPDFT',type:'institucional',contact_person:'Ouvidora (a identificar)',status:'pendente',contribution:'Canal fixo de denúncias via QR Code nas rodas',receives:'Denúncias qualificadas; capilaridade',notes:'QR Code obrigatório em toda roda.'},
-    {id:'6',name:'Abrigos de mulheres do DF',type:'abrigo',contact_person:'—',status:'pendente',contribution:'Acesso às mulheres abrigadas; espaço para rodas',receives:'Rodas regulares',notes:'Mapear na Fase 2.'},
+    {id:'4',name:'Ouvidoria das Mulheres — MPDFT',type:'institucional',contact_person:'Ouvidora (a identificar)',status:'pendente',contribution:'Canal fixo de denúncias via QR Code nas rodas',receives:'Denúncias qualificadas; capilaridade',notes:'QR Code obrigatório em toda roda.'},
+    {id:'5',name:'Abrigos de mulheres do DF',type:'abrigo',contact_person:'—',status:'pendente',contribution:'Acesso às mulheres abrigadas; espaço para rodas',receives:'Rodas regulares',notes:'Mapear na Fase 2.'},
 ];
 const DEMO_TASKS = [
     {id:'1',title:'Constituir ONG — estatuto e CNPJ',description:'Redigir estatuto social, registrar em cartório, obter CNPJ.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'1',due_date:'2026-05-15',notes:'Modelo de estatuto para associação civil sem fins lucrativos.'},
     {id:'2',title:'Falar com Laura (psicóloga)',description:'Natalie entra em contato com Laura para convidar como docente.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-04-18',notes:'Confirmar até final de abril.'},
     {id:'3',title:'Falar com Cândida (UNB)',description:'Thaís formalizou contato com Cândida da UNB.',phase:'fase_0_semente',status:'concluida',priority:'alta',assigned_to:'2',due_date:'2026-04-11',completed_at:'2026-04-08',notes:'CONCLUÍDO — Cândida topou.'},
-    {id:'4',title:'Falar com Márcia (IML)',description:'Thaís articula com Márcia do IML para parceria.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-05-09',notes:'IML pode contribuir com módulo sobre violência física.'},
+    {id:'4',title:'Apresentar projeto à Secretaria da Mulher (DF)',description:'Agendar e realizar apresentação institucional da Rede de Rodas do DF junto à Secretaria da Mulher do Distrito Federal (articulação GDF/MPDFT conforme calendário).',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-05-12',notes:'Responsável: Thaís. Alinhar pauta com Giselle antes da reunião.'},
     {id:'5',title:'Falar com Ouvidora das Mulheres do MPDFT',description:'Canal fixo de denúncias via QR Code nas rodas.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-05-09',notes:'QR obrigatório em toda roda.'},
-    {id:'6',title:'Organizar estrutura do curso',description:'Currículo 40h, selecionar docentes, cronograma.',phase:'fase_0_semente',status:'em_andamento',priority:'urgente',assigned_to:'3',due_date:'2026-05-30',notes:'Detalhar com Cândida e integrar IML.'},
+    {id:'6',title:'Organizar estrutura do curso',description:'Currículo 40h, selecionar docentes, cronograma.',phase:'fase_0_semente',status:'em_andamento',priority:'urgente',assigned_to:'3',due_date:'2026-05-30',notes:'Detalhar com Cândida (UNB). Módulo de violência: convidados técnicos pontuais, sem parceria formal com IML.'},
     {id:'7',title:'Alinhar rede de alunos UNB com Cândida',description:'Captação de estudantes de pós-graduação.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'4',due_date:'2026-05-30',notes:'Depende de carta de intenções.'},
     {id:'8',title:'Elaborar palestras de Direito',description:'Lei Maria da Penha, medidas protetivas, rede DF.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'3',due_date:'2026-05-30',notes:'Integrar com Módulo 3.'},
     {id:'9',title:'Reunião de alinhamento — equipe fundadora',description:'Alinhar visão, responsabilidades e cronograma.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'3',due_date:'2026-04-25',notes:'Presencial no MPDFT.'},
