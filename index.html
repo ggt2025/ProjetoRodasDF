@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RODASDF — Painel de Gestão</title>
+<style>
+:root {
+    --purple-900:#4c1d95;--purple-800:#5b21b6;--purple-700:#6d28d9;--purple-600:#7c3aed;
+    --purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;--purple-200:#ddd6fe;
+    --purple-100:#ede9fe;--purple-50:#f5f3ff;
+    --rose-600:#e11d48;--rose-500:#f43f5e;--rose-100:#ffe4e6;
+    --amber-600:#d97706;--amber-500:#f59e0b;--amber-100:#fef3c7;
+    --green-600:#059669;--green-500:#10b981;--green-100:#d1fae5;
+    --blue-600:#2563eb;--blue-500:#3b82f6;--blue-100:#dbeafe;
+    --cyan-600:#0891b2;--cyan-100:#cffafe;
+    --gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;
+    --gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;
+    --gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#ffffff;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+    --shadow:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg:0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.05);
+    --radius:10px;--radius-lg:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--gray-100);color:var(--gray-900);line-height:1.6;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px;}
+
+/* === LOGIN SCREEN === */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,var(--purple-900),var(--purple-700),var(--purple-600));display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.login-card{background:white;border-radius:20px;padding:48px;width:420px;max-width:90vw;box-shadow:var(--shadow-lg);text-align:center;}
+.login-logo{font-size:48px;margin-bottom:8px;}
+.login-card h1{font-size:28px;color:var(--purple-800);margin-bottom:4px;}
+.login-card p{color:var(--gray-500);font-size:14px;margin-bottom:32px;}
+.login-card .input-group{margin-bottom:16px;text-align:left;}
+.login-card label{font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;}
+.login-card input{width:100%;padding:12px 16px;border:2px solid var(--gray-200);border-radius:var(--radius);font-size:15px;transition:border-color .2s;font-family:inherit;}
+.login-card input:focus{outline:none;border-color:var(--purple-500);}
+.login-card .btn-login{width:100%;padding:14px;background:var(--purple-600);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:8px;}
+.login-card .btn-login:hover{background:var(--purple-700);}
+.login-card .btn-login:disabled{opacity:.5;cursor:not-allowed;}
+.login-error{color:var(--rose-600);font-size:13px;margin-top:8px;min-height:20px;}
+.login-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--gray-400);font-size:13px;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--gray-200);}
+.login-offline{padding:12px 24px;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:var(--radius);cursor:pointer;font-size:14px;transition:background .2s;display:inline-block;}
+.login-offline:hover{background:rgba(255,255,255,.25);}
+
+/* === HEADER === */
+.header{background:linear-gradient(135deg,var(--purple-900),var(--purple-700));color:white;padding:0 32px;display:flex;align-items:center;height:60px;box-shadow:var(--shadow-md);position:sticky;top:0;z-index:50;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.header h1{font-size:20px;font-weight:700;}
+.header h1 span{font-weight:300;opacity:.7;font-size:14px;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.conn-badge{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;background:rgba(255,255,255,.12);border-radius:16px;}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:#f59e0b;}
+.conn-dot.ok{background:#10b981;box-shadow:0 0 6px #10b98188;}
+.user-menu{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:20px;transition:background .2s;}
+.user-menu:hover{background:rgba(255,255,255,.15);}
+.user-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;border:2px solid rgba(255,255,255,.5);}
+.user-name{font-size:13px;font-weight:500;}
+.header-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:white;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;display:flex;align-items:center;gap:4px;}
+.header-btn:hover{background:rgba(255,255,255,.25);}
+
+/* === NAV TABS === */
+.nav{background:white;border-bottom:1px solid var(--gray-200);padding:0 32px;display:flex;gap:0;position:sticky;top:60px;z-index:40;overflow-x:auto;}
+.nav-item{padding:12px 18px;font-size:13px;font-weight:500;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;user-select:none;}
+.nav-item:hover{color:var(--purple-600);background:var(--purple-50);}
+.nav-item.active{color:var(--purple-700);border-bottom-color:var(--purple-600);font-weight:600;}
+
+/* === MAIN === */
+.main{padding:24px 32px;max-width:1440px;margin:0 auto;}
+@media(max-width:768px){.main{padding:16px;}.header{padding:0 16px;}.nav{padding:0 12px;}}
+
+/* === STAT CARDS === */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;}
+.stat{background:white;border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-sm);border-left:4px solid var(--purple-500);transition:transform .15s;}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.stat .lbl{font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+.stat .val{font-size:28px;font-weight:800;color:var(--purple-700);margin:2px 0;}
+.stat .sub{font-size:12px;color:var(--gray-400);}
+.stat.green{border-left-color:var(--green-500);}.stat.green .val{color:var(--green-600);}
+.stat.amber{border-left-color:var(--amber-500);}.stat.amber .val{color:var(--amber-600);}
+.stat.rose{border-left-color:var(--rose-500);}.stat.rose .val{color:var(--rose-600);}
+.stat.blue{border-left-color:var(--blue-500);}.stat.blue .val{color:var(--blue-600);}
+
+/* === PHASE BARS === */
+.phases{margin-bottom:24px;}
+.phase{background:white;border-radius:var(--radius);padding:14px 18px;margin-bottom:6px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all .15s;}
+.phase:hover{box-shadow:var(--shadow);}
+.phase-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.phase-name{font-weight:600;font-size:13px;}
+.phase-pct{font-size:12px;color:var(--purple-600);font-weight:700;}
+.phase-track{background:var(--gray-200);border-radius:4px;height:6px;overflow:hidden;}
+.phase-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple-600),var(--purple-400));transition:width .6s ease;}
+
+/* === SECTION === */
+.section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.section-title{font-size:17px;font-weight:700;}
+.filters{display:flex;gap:6px;flex-wrap:wrap;}
+.fbtn{padding:5px 14px;border-radius:18px;font-size:12px;border:1px solid var(--gray-200);background:white;cursor:pointer;transition:all .15s;color:var(--gray-600);font-weight:500;}
+.fbtn:hover,.fbtn.on{background:var(--purple-600);color:white;border-color:var(--purple-600);}
+
+/* === TASK CARDS === */
+.tasks{display:flex;flex-direction:column;gap:6px;}
+.tcard{background:white;border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:36px 1fr 130px 110px 90px 60px;align-items:center;gap:10px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
+.tcard:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+.tcard.p-urgente{border-left-color:var(--rose-500);}.tcard.p-alta{border-left-color:var(--amber-500);}
+.tcard.p-media{border-left-color:var(--blue-400);}.tcard.p-baixa{border-left-color:var(--gray-300);}
+.tchk{width:20px;height:20px;border-radius:50%;border:2px solid var(--gray-300);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;flex-shrink:0;}
+.tchk:hover{border-color:var(--green-500);background:var(--green-100);}
+.tchk.done{background:var(--green-500);border-color:var(--green-500);color:white;}
+.tinfo h3{font-size:13px;font-weight:600;margin-bottom:1px;}.tinfo p{font-size:11px;color:var(--gray-500);}
+.tinfo h3.struck{text-decoration:line-through;color:var(--gray-400);}
+.tperson{display:flex;align-items:center;gap:6px;}
+.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0;}
+.av-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.badge{padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;text-align:center;white-space:nowrap;}
+.badge.pendente{background:var(--gray-100);color:var(--gray-600);}
+.badge.em_andamento{background:var(--blue-100);color:var(--blue-600);}
+.badge.aguardando{background:var(--amber-100);color:var(--amber-600);}
+.badge.concluida{background:var(--green-100);color:var(--green-600);}
+.badge.cancelada{background:var(--rose-100);color:var(--rose-600);}
+.badge.urgente{background:var(--rose-100);color:var(--rose-600);}
+.badge.alta{background:var(--amber-100);color:var(--amber-600);}
+.badge.media{background:var(--blue-100);color:var(--blue-600);}
+.badge.baixa{background:var(--gray-100);color:var(--gray-500);}
+.tdate{font-size:11px;color:var(--gray-500);text-align:center;}
+.tdate.overdue{color:var(--rose-600);font-weight:600;}
+.tdate.soon{color:var(--amber-600);font-weight:500;}
+.tcomments{font-size:11px;color:var(--gray-400);text-align:center;}
+@media(max-width:900px){.tcard{grid-template-columns:30px 1fr;}.tperson,.tdate,.tcomments,.tcard .badge{display:none;}}
+
+/* === SLIDE PANEL === */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.open{opacity:1;pointer-events:auto;}
+.panel{position:fixed;top:0;right:-560px;width:540px;max-width:95vw;height:100%;background:white;z-index:101;box-shadow:-8px 0 30px rgba(0,0,0,.12);overflow-y:auto;transition:right .3s ease;display:flex;flex-direction:column;}
+.panel.open{right:0;}
+.panel-head{padding:20px 24px 16px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;position:sticky;top:0;background:white;z-index:1;}
+.panel-head h2{font-size:18px;font-weight:700;padding-right:40px;line-height:1.3;}
+.panel-close{background:none;border:none;font-size:22px;color:var(--gray-400);cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background .15s;}
+.panel-close:hover{background:var(--gray-100);color:var(--gray-700);}
+.panel-body{padding:20px 24px;flex:1;}
+.panel-section{margin-bottom:20px;}
+.panel-section-title{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.field select,.field input[type="date"],.field input[type="text"]{width:100%;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;transition:border-color .15s;background:white;}
+.field select:focus,.field input:focus,.field textarea:focus{outline:none;border-color:var(--purple-400);}
+.field textarea{width:100%;min-height:70px;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;transition:border-color .15s;}
+
+/* Comments */
+.comments-list{max-height:300px;overflow-y:auto;margin-bottom:12px;}
+.comment{padding:10px 0;border-bottom:1px solid var(--gray-100);}
+.comment:last-child{border-bottom:none;}
+.comment-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.comment-author{font-size:12px;font-weight:600;color:var(--purple-700);}
+.comment-date{font-size:10px;color:var(--gray-400);}
+.comment-body{font-size:13px;color:var(--gray-700);line-height:1.5;}
+.comment.system .comment-author{color:var(--gray-400);font-weight:500;}
+.comment.system .comment-body{color:var(--gray-400);font-style:italic;font-size:12px;}
+.comment-input{display:flex;gap:8px;}
+.comment-input textarea{flex:1;min-height:40px;height:40px;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;resize:none;}
+.comment-input button{padding:8px 16px;background:var(--purple-600);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.comment-input button:hover{background:var(--purple-700);}
+
+/* === TIMELINE === */
+.tl-wrap{background:white;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);overflow-x:auto;}
+.tl-grid{position:relative;min-width:900px;}
+.tl-months{display:flex;margin-left:260px;border-bottom:1px solid var(--gray-200);margin-bottom:8px;}
+.tl-month{width:100px;text-align:center;padding:6px;font-size:11px;font-weight:600;color:var(--gray-400);}
+.tl-month.now{color:var(--purple-600);border-bottom:2px solid var(--purple-600);}
+.tl-phase-label{font-size:10px;font-weight:700;color:var(--purple-500);text-transform:uppercase;letter-spacing:.7px;padding:8px 0 2px;}
+.tl-row{display:flex;align-items:center;margin-bottom:4px;}
+.tl-label{width:260px;font-size:11px;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+.tl-bars{position:relative;flex:1;height:22px;}
+.tl-bar{position:absolute;height:18px;border-radius:4px;top:2px;font-size:9px;color:white;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.tl-bar:hover{opacity:.85;}
+.tl-bar.f0{background:linear-gradient(90deg,var(--purple-500),var(--purple-400));}
+.tl-bar.f1{background:linear-gradient(90deg,var(--blue-500),var(--blue-400));}
+.tl-bar.f2{background:linear-gradient(90deg,var(--green-500),var(--green-400));}
+.tl-bar.done{opacity:.4;}
+.tl-today{position:absolute;top:0;bottom:0;width:2px;background:var(--rose-500);z-index:2;pointer-events:none;}
+.tl-today::after{content:'Hoje';position:absolute;top:-18px;left:-14px;font-size:9px;color:var(--rose-500);font-weight:700;}
+
+/* === TEAM / PARTNERS GRID === */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.card{background:white;border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow .15s;}
+.card:hover{box-shadow:var(--shadow);}
+.card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.card-hdr .av{width:42px;height:42px;font-size:15px;}
+.card-hdr .nm{font-size:15px;font-weight:700;}
+.card-hdr .org{font-size:12px;color:var(--gray-500);}
+.card-note{font-size:12px;color:var(--gray-500);margin-bottom:10px;line-height:1.4;}
+.card-stats{font-size:12px;font-weight:600;margin-bottom:8px;color:var(--gray-700);}
+.card-tasks{font-size:12px;}
+.card-task{padding:5px 0;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center;}
+.card-task:last-child{border-bottom:none;}
+.mini-badge{padding:2px 8px;border-radius:8px;font-size:9px;font-weight:600;}
+
+/* === ADMIN === */
+.admin-section{background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:16px;}
+.admin-section h3{font-size:15px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--gray-200);}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+.admin-table th{text-align:left;padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-500);border-bottom:2px solid var(--gray-200);font-weight:600;}
+.admin-table td{padding:8px 10px;border-bottom:1px solid var(--gray-100);}
+.admin-table tr:hover td{background:var(--gray-50);}
+.admin-btn{padding:4px 10px;border-radius:6px;font-size:11px;border:none;cursor:pointer;font-weight:600;transition:all .15s;}
+.admin-btn.edit{background:var(--blue-100);color:var(--blue-600);}.admin-btn.edit:hover{background:var(--blue-600);color:white;}
+.admin-btn.del{background:var(--rose-100);color:var(--rose-600);}.admin-btn.del:hover{background:var(--rose-600);color:white;}
+.admin-btn.add{background:var(--purple-600);color:white;padding:8px 16px;font-size:13px;border-radius:8px;}.admin-btn.add:hover{background:var(--purple-700);}
+.activity-item{padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:13px;}
+.activity-item:last-child{border-bottom:none;}
+.activity-time{font-size:11px;color:var(--gray-400);}
+
+/* === MODALS === */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:var(--radius-lg);padding:32px;width:500px;max-width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.2);position:relative;}
+.modal h2{font-size:20px;font-weight:700;margin-bottom:20px;}
+.modal .field{margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit;}
+.btn-primary{background:var(--purple-600);color:white;}.btn-primary:hover{background:var(--purple-700);}
+.btn-secondary{background:var(--gray-100);color:var(--gray-700);}.btn-secondary:hover{background:var(--gray-200);}
+.btn-danger{background:var(--rose-100);color:var(--rose-600);}.btn-danger:hover{background:var(--rose-500);color:white;}
+
+/* FAB */
+.fab{position:fixed;bottom:28px;right:28px;width:54px;height:54px;border-radius:50%;background:var(--purple-600);color:white;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,.4);transition:all .2s;z-index:50;display:flex;align-items:center;justify-content:center;}
+.fab:hover{background:var(--purple-700);transform:scale(1.05);}
+
+.hidden{display:none!important;}
+.fade-in{animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo">🔮</div>
+        <h1>RODASDF</h1>
+        <p>Rede de Rodas Multidisciplinares para Mulheres</p>
+        <div class="input-group">
+            <label>URL do Supabase</label>
+            <input type="text" id="loginUrl" placeholder="https://xxxxx.supabase.co">
+        </div>
+        <div class="input-group">
+            <label>Anon Key</label>
+            <input type="password" id="loginKey" placeholder="eyJhbGciOi...">
+        </div>
+        <div class="input-group">
+            <label>Seu nome</label>
+            <input type="text" id="loginName" placeholder="Ex: Giselle">
+        </div>
+        <button class="btn-login" id="btnLogin" onclick="doLogin()">Entrar</button>
+        <div class="login-error" id="loginError"></div>
+        <div class="login-divider">ou</div>
+        <button class="login-offline" onclick="enterOffline()">Entrar em modo offline (demonstração)</button>
+    </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="appShell" class="hidden">
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <h1>🔮 RODASDF <span>Painel de Gestão</span></h1>
+    </div>
+    <div class="header-right">
+        <div class="conn-badge">
+            <div class="conn-dot" id="connDot"></div>
+            <span id="connText">Offline</span>
+        </div>
+        <div class="user-menu" onclick="toggleUserMenu()">
+            <div class="user-avatar" id="userAvatar" style="background:var(--purple-600)">AD</div>
+            <span class="user-name" id="userName">Admin</span>
+        </div>
+        <button class="header-btn" id="btnAdmin" onclick="switchTab('admin')">⚙ Admin</button>
+        <button class="header-btn" onclick="doLogout()">Sair</button>
+    </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+    <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" data-tab="tasks" onclick="switchTab('tasks')">📋 Encaminhamentos</div>
+    <div class="nav-item" data-tab="timeline" onclick="switchTab('timeline')">📅 Cronograma</div>
+    <div class="nav-item" data-tab="team" onclick="switchTab('team')">👥 Equipe</div>
+    <div class="nav-item" data-tab="partners" onclick="switchTab('partners')">🤝 Parceiros</div>
+    <div class="nav-item" data-tab="activity" onclick="switchTab('activity')">🕐 Atividade</div>
+    <div class="nav-item hidden" data-tab="admin" id="navAdmin" onclick="switchTab('admin')">⚙ Admin</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+    <div id="tab-dashboard" class="tab-content fade-in"></div>
+    <div id="tab-tasks" class="tab-content hidden"></div>
+    <div id="tab-timeline" class="tab-content hidden"></div>
+    <div id="tab-team" class="tab-content hidden"></div>
+    <div id="tab-partners" class="tab-content hidden"></div>
+    <div id="tab-activity" class="tab-content hidden"></div>
+    <div id="tab-admin" class="tab-content hidden"></div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openModal('addTask')" title="Nova tarefa">+</button>
+
+</div><!-- /appShell -->
+
+<!-- ==================== SLIDE PANEL ==================== -->
+<div class="overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="panel" id="detailPanel">
+    <div class="panel-head">
+        <h2 id="panelTitle">—</h2>
+        <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+<div class="modal-bg" id="modal-addTask">
+    <div class="modal">
+        <h2>➕ Nova Tarefa</h2>
+        <div class="field"><label>Título *</label><input type="text" id="nt-title"></div>
+        <div class="field"><label>Descrição</label><textarea id="nt-desc"></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="field"><label>Fase</label><select id="nt-phase"></select></div>
+            <div class="field"><label>Prioridade</label><select id="nt-priority"><option value="media">Média</option><option value="alta">Alta</option><option value="urgente">Urgente</option><option value="baixa">Baixa</option></select></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="field"><label>Responsável</label><select id="nt-assign"></select></div>
+            <div class="field"><label>Prazo</label><input type="date" id="nt-due"></div>
+        </div>
+        <div class="field"><label>Notas</label><textarea id="nt-notes" style="min-height:50px;"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('addTask')">Cancelar</button>
+            <button class="btn btn-primary" onclick="createTask()">Criar Tarefa</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-addMember">
+    <div class="modal">
+        <h2>➕ Novo Membro</h2>
+        <div class="field"><label>Nome *</label><input type="text" id="nm-name"></div>
+        <div class="field"><label>Email</label><input type="text" id="nm-email"></div>
+        <div class="field"><label>Organização</label><input type="text" id="nm-org"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="field"><label>Papel</label><select id="nm-role"><option value="coordenadora">Coordenadora</option><option value="facilitadora">Facilitadora</option><option value="docente">Docente</option><option value="voluntaria">Voluntária</option><option value="parceira_externa">Parceira Externa</option></select></div>
+            <div class="field"><label>Cor do avatar</label><input type="color" id="nm-color" value="#7c3aed" style="height:38px;"></div>
+        </div>
+        <div class="field"><label>Notas</label><textarea id="nm-notes" style="min-height:50px;"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('addMember')">Cancelar</button>
+            <button class="btn btn-primary" onclick="createMember()">Adicionar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-addPartner">
+    <div class="modal">
+        <h2>➕ Novo Parceiro</h2>
+        <div class="field"><label>Nome *</label><input type="text" id="np-name"></div>
+        <div class="field"><label>Tipo</label><select id="np-type"><option value="institucional">Institucional</option><option value="academico">Acadêmico</option><option value="ong_parceira">ONG Parceira</option><option value="governamental">Governamental</option><option value="abrigo">Abrigo</option></select></div>
+        <div class="field"><label>Pessoa de contato</label><input type="text" id="np-contact"></div>
+        <div class="field"><label>Contribuição</label><textarea id="np-contrib" style="min-height:50px;"></textarea></div>
+        <div class="field"><label>Recebe</label><textarea id="np-receives" style="min-height:50px;"></textarea></div>
+        <div class="field"><label>Notas</label><textarea id="np-notes" style="min-height:50px;"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('addPartner')">Cancelar</button>
+            <button class="btn btn-primary" onclick="createPartner()">Adicionar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================
+// RODASDF APP v2 — Full Interactive
+// ============================================
+
+// --- State ---
+let S = {
+    connected: false, url: '', key: '',
+    user: { name: 'Demo', role: 'admin', color: '#7c3aed' },
+    team: [], partners: [], tasks: [], comments: [], activity: [],
+    filter: 'all', activeTab: 'dashboard'
+};
+
+// --- Offline demo data ---
+const COLORS = { 'Natalie':'#e11d48','Thaís':'#7c3aed','Giselle':'#2563eb','Cândida':'#059669','Laura':'#d97706','Márcia':'#0891b2' };
+const DEMO_TEAM = [
+    {id:'1',name:'Natalie',email:null,organization:'ONG RODASDF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga).'},
+    {id:'2',name:'Thaís',email:null,organization:'MPDFT',role:'coordenadora',expertise:['direito','articulacao_institucional'],avatar_color:'#7c3aed',is_active:true,notes:'Coordenação MPDFT. Contatos: Cândida (UNB), Márcia (IML), Ouvidora das Mulheres.'},
+    {id:'3',name:'Giselle',email:'giselle.trevizo@gmail.com',organization:'MPDFT',role:'coordenadora',expertise:['direito','formacao'],avatar_color:'#2563eb',is_active:true,notes:'Organização do curso, palestrante de Direito. Coordenação pedagógica.'},
+    {id:'4',name:'Cândida',email:null,organization:'UNB',role:'docente',expertise:['psicologia'],avatar_color:'#059669',is_active:true,notes:'Professora titular Psicologia UNB. CONFIRMADA.'},
+    {id:'5',name:'Laura',email:null,organization:'A confirmar',role:'docente',expertise:['psicologia'],avatar_color:'#d97706',is_active:true,notes:'Psicóloga. Contato via Natalie. Aguardando confirmação.'},
+    {id:'6',name:'Márcia',email:null,organization:'IML',role:'parceira_externa',expertise:['medicina_legal'],avatar_color:'#0891b2',is_active:true,notes:'Contato no IML. Thaís articulação.'},
+];
+const DEMO_PARTNERS = [
+    {id:'1',name:'MPDFT',type:'institucional',contact_person:'Thaís / Giselle',status:'em_andamento',contribution:'Espaço físico, apoio técnico, co-certificação, legitimidade institucional',receives:'Ampliação rede de proteção, dados de mapeamento',notes:'Parceiro principal.'},
+    {id:'2',name:'Instituto Mãos Solidárias (IMS)',type:'ong_parceira',contact_person:'—',status:'pendente',contribution:'Casas sociais com mulheres; espaço para rodas-piloto',receives:'Rodas de acolhimento para beneficiárias',notes:'Local do piloto.'},
+    {id:'3',name:'UNB — Pós-graduação Psicologia',type:'academico',contact_person:'Cândida',status:'em_andamento',contribution:'Estudantes facilitadoras; validação de horas; rede de alunos',receives:'Campo de prática; dados para pesquisa',notes:'Cândida confirmou.'},
+    {id:'4',name:'IML',type:'institucional',contact_person:'Márcia',status:'pendente',contribution:'Apoio técnico pericial; módulo sobre violência física',receives:'Fortalecimento rede de encaminhamento',notes:'Contato via Thaís.'},
+    {id:'5',name:'Ouvidoria das Mulheres — MPDFT',type:'institucional',contact_person:'Ouvidora (a identificar)',status:'pendente',contribution:'Canal fixo de denúncias via QR Code nas rodas',receives:'Denúncias qualificadas; capilaridade',notes:'QR Code obrigatório em toda roda.'},
+    {id:'6',name:'Abrigos de mulheres do DF',type:'abrigo',contact_person:'—',status:'pendente',contribution:'Acesso às mulheres abrigadas; espaço para rodas',receives:'Rodas regulares',notes:'Mapear na Fase 2.'},
+];
+const DEMO_TASKS = [
+    {id:'1',title:'Constituir ONG — estatuto e CNPJ',description:'Redigir estatuto social, registrar em cartório, obter CNPJ.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'1',due_date:'2026-05-15',notes:'Modelo de estatuto para associação civil sem fins lucrativos.'},
+    {id:'2',title:'Falar com Laura (psicóloga)',description:'Natalie entra em contato com Laura para convidar como docente.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-04-18',notes:'Confirmar até final de abril.'},
+    {id:'3',title:'Falar com Cândida (UNB)',description:'Thaís formalizou contato com Cândida da UNB.',phase:'fase_0_semente',status:'concluida',priority:'alta',assigned_to:'2',due_date:'2026-04-11',completed_at:'2026-04-08',notes:'CONCLUÍDO — Cândida topou.'},
+    {id:'4',title:'Falar com Márcia (IML)',description:'Thaís articula com Márcia do IML para parceria.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-05-09',notes:'IML pode contribuir com módulo sobre violência física.'},
+    {id:'5',title:'Falar com Ouvidora das Mulheres do MPDFT',description:'Canal fixo de denúncias via QR Code nas rodas.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'2',due_date:'2026-05-09',notes:'QR obrigatório em toda roda.'},
+    {id:'6',title:'Organizar estrutura do curso',description:'Currículo 40h, selecionar docentes, cronograma.',phase:'fase_0_semente',status:'em_andamento',priority:'urgente',assigned_to:'3',due_date:'2026-05-30',notes:'Detalhar com Cândida e integrar IML.'},
+    {id:'7',title:'Alinhar rede de alunos UNB com Cândida',description:'Captação de estudantes de pós-graduação.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'4',due_date:'2026-05-30',notes:'Depende de carta de intenções.'},
+    {id:'8',title:'Elaborar palestras de Direito',description:'Lei Maria da Penha, medidas protetivas, rede DF.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'3',due_date:'2026-05-30',notes:'Integrar com Módulo 3.'},
+    {id:'9',title:'Reunião de alinhamento — equipe fundadora',description:'Alinhar visão, responsabilidades e cronograma.',phase:'fase_0_semente',status:'pendente',priority:'urgente',assigned_to:'3',due_date:'2026-04-25',notes:'Presencial no MPDFT.'},
+    {id:'10',title:'Formalizar diálogo com IMS',description:'Apresentar projeto e propor parceria para piloto.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-05-15',notes:'Casas sociais com mulheres.'},
+    {id:'11',title:'Criar identidade visual',description:'Logo, cores, templates, QR Code.',phase:'fase_0_semente',status:'pendente',priority:'media',assigned_to:'1',due_date:'2026-05-30',notes:'Canva.'},
+    {id:'12',title:'1ª turma de capacitação (piloto)',description:'10-15 participantes, 40h.',phase:'fase_1_piloto',status:'pendente',priority:'alta',assigned_to:'3',due_date:'2026-07-31',notes:'Depende do currículo.'},
+    {id:'13',title:'Implantar rodas-piloto no IMS',description:'2+ rodas regulares com QR da Ouvidoria.',phase:'fase_1_piloto',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-08-31',notes:'Meta: 8 sessões, 40+ mulheres.'},
+    {id:'14',title:'Avaliar metodologia pós-piloto',description:'Feedback e relatório.',phase:'fase_1_piloto',status:'pendente',priority:'media',assigned_to:'4',due_date:'2026-09-30',notes:'Essencial para Fase 2.'},
+    {id:'15',title:'Termo de Cooperação MPDFT',description:'Cessão de espaço, apoio técnico, co-certificação.',phase:'fase_2_enraizamento',status:'pendente',priority:'alta',assigned_to:'2',due_date:'2026-10-31',notes:'Thaís articula.'},
+    {id:'16',title:'Convênio com UNB',description:'Validação de horas pós-graduação.',phase:'fase_2_enraizamento',status:'pendente',priority:'alta',assigned_to:'4',due_date:'2026-11-30',notes:'Extensão ou estágio.'},
+    {id:'17',title:'SEMA/MPDFT doação de materiais',description:'Cadeiras, impressos, equipamentos.',phase:'fase_2_enraizamento',status:'pendente',priority:'media',assigned_to:'2',due_date:'2026-11-30',notes:''},
+    {id:'18',title:'Expandir rodas para abrigos',description:'Mapear abrigos sem rodas.',phase:'fase_2_enraizamento',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-12-31',notes:'Abrigos estão sem rodas.'},
+];
+const DEMO_COMMENTS = [
+    {id:'1',task_id:'3',user_name:'Thaís',content:'Cândida confirmou interesse! Tem rede de alunos de pós que podem participar.',is_system:false,created_at:'2026-04-08T14:30:00'},
+    {id:'2',task_id:'3',user_name:'Sistema',content:'Status alterado de "pendente" para "concluida"',is_system:true,created_at:'2026-04-08T14:32:00'},
+    {id:'3',task_id:'6',user_name:'Giselle',content:'Currículo base está no projeto técnico. Preciso alinhar com Cândida a parte de Psicologia.',is_system:false,created_at:'2026-04-04T10:00:00'},
+    {id:'4',task_id:'5',user_name:'Giselle',content:'QR Code é excelente. Cada roda terá um cartaz com QR fixo da Ouvidoria. Simples e poderoso.',is_system:false,created_at:'2026-04-04T11:00:00'},
+];
+
+// --- Labels ---
+const PH = {'fase_0_semente':'🌱 Fase 0 — Semente','fase_1_piloto':'🧪 Fase 1 — Piloto','fase_2_enraizamento':'🌳 Fase 2 — Enraizamento','fase_3_rede':'🕸 Fase 3 — Rede','fase_4_expansao':'🚀 Fase 4 — Expansão','fase_5_sustentabilidade':'♻️ Fase 5 — Sustentabilidade'};
+const ST = {'pendente':'Pendente','em_andamento':'Em andamento','aguardando':'Aguardando','concluida':'Concluída','cancelada':'Cancelada'};
+const PR = {'baixa':'Baixa','media':'Média','alta':'Alta','urgente':'Urgente'};
+const PT = {'institucional':'🏛 Institucional','academico':'🎓 Acadêmico','ong_parceira':'🤝 ONG Parceira','governamental':'🏗 Governamental','abrigo':'🏠 Abrigo'};
+const RL = {'coordenadora':'Coordenadora','facilitadora':'Facilitadora','docente':'Docente','voluntaria':'Voluntária','parceira_externa':'Parceira Externa'};
+
+// --- API helpers ---
+async function api(table,params=''){
+    const r=await fetch(`${S.url}/rest/v1/${table}?${params}`,{headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`}});
+    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+}
+async function apiPost(table,data){
+    const r=await fetch(`${S.url}/rest/v1/${table}`,{method:'POST',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+}
+async function apiPatch(table,id,data){
+    const r=await fetch(`${S.url}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error(`${r.status}`);return r.json();
+}
+async function apiDel(table,id){
+    await fetch(`${S.url}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{'apikey':S.key,'Authorization':`Bearer ${S.key}`}});
+}
+
+// --- Login ---
+async function doLogin(){
+    const url=document.getElementById('loginUrl').value.trim();
+    const key=document.getElementById('loginKey').value.trim();
+    const name=document.getElementById('loginName').value.trim()||'Admin';
+    const err=document.getElementById('loginError');
+    if(!url||!key){err.textContent='Preencha URL e Key.';return;}
+    document.getElementById('btnLogin').disabled=true;
+    err.textContent='Conectando...';
+    try{
+        const r=await fetch(`${url}/rest/v1/team_members?select=id&limit=1`,{headers:{'apikey':key,'Authorization':`Bearer ${key}`}});
+        if(!r.ok)throw new Error(`HTTP ${r.status}`);
+        S.url=url;S.key=key;S.connected=true;
+        S.user.name=name;
+        localStorage.setItem('rdf_url',url);
+        localStorage.setItem('rdf_key',key);
+        localStorage.setItem('rdf_name',name);
+        await loadData();
+        enterApp();
+    }catch(e){err.textContent='Erro: '+e.message;document.getElementById('btnLogin').disabled=false;}
+}
+function enterOffline(){
+    S.connected=false;
+    S.user={name:'Demo',role:'admin',color:'#7c3aed'};
+    S.team=[...DEMO_TEAM];S.partners=[...DEMO_PARTNERS];S.tasks=[...DEMO_TASKS];S.comments=[...DEMO_COMMENTS];S.activity=[];
+    enterApp();
+}
+function enterApp(){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appShell').classList.remove('hidden');
+    document.getElementById('connDot').classList.toggle('ok',S.connected);
+    document.getElementById('connText').textContent=S.connected?'Conectado':'Offline';
+    document.getElementById('userName').textContent=S.user.name;
+    document.getElementById('userAvatar').textContent=initials(S.user.name);
+    renderTab('dashboard');
+}
+function doLogout(){
+    S.connected=false;S.url='';S.key='';
+    document.getElementById('appShell').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('loginError').textContent='';
+    document.getElementById('btnLogin').disabled=false;
+}
+
+// Auto-login
+(function(){
+    const u=localStorage.getItem('rdf_url'),k=localStorage.getItem('rdf_key'),n=localStorage.getItem('rdf_name');
+    if(u)document.getElementById('loginUrl').value=u;
+    if(k)document.getElementById('loginKey').value=k;
+    if(n)document.getElementById('loginName').value=n;
+})();
+
+// --- Data loading ---
+async function loadData(){
+    if(!S.connected)return;
+    try{
+        S.team=await api('team_members','select=*&order=name&is_active=eq.true');
+        S.partners=await api('partners','select=*&order=name');
+        S.tasks=await api('tasks','select=*&order=due_date.asc.nullslast');
+        S.comments=await api('comments','select=*&order=created_at.asc');
+        try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');}catch(e){S.activity=[];}
+    }catch(e){console.error('Load error:',e);}
+}
+
+// --- Helpers ---
+function member(id){return S.team.find(m=>m.id===id)||{name:'—',avatar_color:'#9ca3af',organization:''};}
+function initials(n){return(n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function fmtDate(d){if(!d)return'—';const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
+function fmtDateTime(d){if(!d)return'—';const dt=new Date(d);return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function dueCls(d,status){if(!d||status==='concluida')return'';const now=new Date();now.setHours(0,0,0,0);const due=new Date(d+'T12:00:00');const diff=(due-now)/(864e5);return diff<0?'overdue':diff<=7?'soon':'';}
+function taskComments(tid){return S.comments.filter(c=>c.task_id===tid);}
+
+// --- Tab switching ---
+function switchTab(t){
+    S.activeTab=t;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===t));
+    document.querySelectorAll('.tab-content').forEach(c=>{c.classList.add('hidden');c.classList.remove('fade-in');});
+    const el=document.getElementById('tab-'+t);
+    el.classList.remove('hidden');
+    el.classList.add('fade-in');
+    renderTab(t);
+}
+
+function renderTab(t){
+    const el=document.getElementById('tab-'+t);
+    switch(t){
+        case 'dashboard':el.innerHTML=renderDashboard();break;
+        case 'tasks':el.innerHTML=renderTasks();break;
+        case 'timeline':el.innerHTML=renderTimeline();break;
+        case 'team':el.innerHTML=renderTeamTab();break;
+        case 'partners':el.innerHTML=renderPartnersTab();break;
+        case 'activity':el.innerHTML=renderActivityTab();break;
+        case 'admin':el.innerHTML=renderAdmin();break;
+    }
+}
+
+// --- DASHBOARD ---
+function renderDashboard(){
+    const total=S.tasks.length,done=S.tasks.filter(t=>t.status==='concluida').length,
+        prog=S.tasks.filter(t=>t.status==='em_andamento').length,
+        overdue=S.tasks.filter(t=>t.status!=='concluida'&&t.due_date&&new Date(t.due_date+'T12:00:00')<new Date()).length;
+    const phases=['fase_0_semente','fase_1_piloto','fase_2_enraizamento'];
+    let phaseHtml=phases.map(p=>{
+        const pt=S.tasks.filter(t=>t.phase===p),pd=pt.filter(t=>t.status==='concluida').length;
+        const pct=pt.length?Math.round(pd/pt.length*100):0;
+        return `<div class="phase" onclick="S.filter='${p}';switchTab('tasks')">
+            <div class="phase-top"><span class="phase-name">${PH[p]}</span><span class="phase-pct">${pd}/${pt.length} — ${pct}%</span></div>
+            <div class="phase-track"><div class="phase-fill" style="width:${pct}%"></div></div></div>`;
+    }).join('');
+    const upcoming=S.tasks.filter(t=>t.status!=='concluida'&&t.due_date).sort((a,b)=>a.due_date.localeCompare(b.due_date)).slice(0,6);
+    return `<div class="stats">
+        <div class="stat"><div class="lbl">Total</div><div class="val">${total}</div><div class="sub">${S.tasks.filter(t=>t.phase==='fase_0_semente').length} na Fase 0</div></div>
+        <div class="stat green"><div class="lbl">Concluídas</div><div class="val">${done}</div><div class="sub">${total?Math.round(done/total*100):0}%</div></div>
+        <div class="stat amber"><div class="lbl">Em andamento</div><div class="val">${prog}</div><div class="sub">${S.tasks.filter(t=>t.status==='pendente').length} pendentes</div></div>
+        <div class="stat rose"><div class="lbl">Atrasadas</div><div class="val">${overdue}</div><div class="sub">${overdue?'⚠ Ação necessária':'✓ OK'}</div></div>
+        <div class="stat blue"><div class="lbl">Equipe</div><div class="val">${S.team.length}</div><div class="sub">${S.partners.length} parceiros</div></div>
+    </div>
+    <div class="phases">${phaseHtml}</div>
+    <div class="section-hdr"><h2 class="section-title">⚡ Próximos Vencimentos</h2></div>
+    <div class="tasks">${upcoming.map(taskCard).join('')}</div>`;
+}
+
+// --- TASK CARD ---
+function taskCard(t){
+    const m=member(t.assigned_to),isDone=t.status==='concluida',cc=taskComments(t.id).filter(c=>!c.is_system).length;
+    return `<div class="tcard p-${t.priority}" onclick="openTaskPanel('${t.id}')">
+        <div class="tchk ${isDone?'done':''}" onclick="event.stopPropagation();toggleDone('${t.id}')">${isDone?'✓':''}</div>
+        <div class="tinfo"><h3 class="${isDone?'struck':''}">${t.title}</h3><p>${PH[t.phase]||t.phase}</p></div>
+        <div class="tperson"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><span class="av-name">${m.name}</span></div>
+        <span class="badge ${t.status}">${ST[t.status]||t.status}</span>
+        <span class="tdate ${dueCls(t.due_date,t.status)}">${fmtDate(t.due_date)}</span>
+        <span class="tcomments">${cc?'💬'+cc:''}</span>
+    </div>`;
+}
+
+// --- TASKS TAB ---
+function renderTasks(){
+    let f=S.filter,list=[...S.tasks];
+    if(f!=='all'){list=list.filter(t=>t.phase===f||t.status===f||t.assigned_to===f);}
+    const ord={urgente:0,alta:1,media:2,baixa:3};
+    list.sort((a,b)=>{if((a.status==='concluida')!==(b.status==='concluida'))return a.status==='concluida'?1:-1;return(ord[a.priority]??2)-(ord[b.priority]??2);});
+    const filters=['all','fase_0_semente','fase_1_piloto','fase_2_enraizamento','pendente','em_andamento','concluida'];
+    const fLabels={'all':'Todos','fase_0_semente':'Fase 0','fase_1_piloto':'Fase 1','fase_2_enraizamento':'Fase 2','pendente':'Pendentes','em_andamento':'Em Andamento','concluida':'Concluídas'};
+    return `<div class="section-hdr">
+        <h2 class="section-title">Encaminhamentos (${list.length})</h2>
+        <div class="filters">${filters.map(k=>`<button class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';renderTab('tasks')">${fLabels[k]}</button>`).join('')}
+        ${S.team.map(m=>`<button class="fbtn ${f===m.id?'on':''}" onclick="S.filter='${m.id}';renderTab('tasks')" style="border-color:${m.avatar_color}55">${m.name}</button>`).join('')}
+        </div></div>
+    <div class="tasks">${list.map(taskCard).join('')||'<p style="color:var(--gray-400);padding:20px;">Nenhuma tarefa encontrada.</p>'}</div>`;
+}
+
+// --- TOGGLE DONE ---
+async function toggleDone(id){
+    const t=S.tasks.find(x=>x.id===id);if(!t)return;
+    const ns=t.status==='concluida'?'pendente':'concluida';
+    t.status=ns;if(ns==='concluida')t.completed_at=new Date().toISOString().slice(0,10);else t.completed_at=null;
+    if(S.connected)try{await apiPatch('tasks',id,{status:ns});}catch(e){console.error(e);}
+    renderTab(S.activeTab);
+}
+
+// --- TASK PANEL ---
+function openTaskPanel(id){
+    const t=S.tasks.find(x=>x.id===id);if(!t)return;
+    const m=member(t.assigned_to),cc=taskComments(t.id);
+    document.getElementById('panelTitle').textContent=t.title;
+    document.getElementById('panelBody').innerHTML=`
+        <div class="panel-section">
+            <div class="panel-section-title">📋 Detalhes</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="field"><label>Status</label><select onchange="updateTask('${t.id}','status',this.value)">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${t.status===k?'selected':''}>${v}</option>`).join('')}</select></div>
+                <div class="field"><label>Prioridade</label><select onchange="updateTask('${t.id}','priority',this.value)">${Object.entries(PR).map(([k,v])=>`<option value="${k}" ${t.priority===k?'selected':''}>${v}</option>`).join('')}</select></div>
+                <div class="field"><label>Responsável</label><select onchange="updateTask('${t.id}','assigned_to',this.value)">${S.team.map(m=>`<option value="${m.id}" ${t.assigned_to===m.id?'selected':''}>${m.name} (${m.organization})</option>`).join('')}</select></div>
+                <div class="field"><label>Prazo</label><input type="date" value="${t.due_date||''}" onchange="updateTask('${t.id}','due_date',this.value)"></div>
+                <div class="field" style="grid-column:span 2"><label>Fase</label><select onchange="updateTask('${t.id}','phase',this.value)">${Object.entries(PH).map(([k,v])=>`<option value="${k}" ${t.phase===k?'selected':''}>${v}</option>`).join('')}</select></div>
+            </div>
+            <div class="field"><label>Descrição</label><textarea onblur="updateTask('${t.id}','description',this.value)">${t.description||''}</textarea></div>
+            <div class="field"><label>Notas</label><textarea onblur="updateTask('${t.id}','notes',this.value)">${t.notes||''}</textarea></div>
+        </div>
+        <div class="panel-section">
+            <div class="panel-section-title">💬 Comentários (${cc.length})</div>
+            <div class="comments-list" id="commentsList">${cc.map(c=>`
+                <div class="comment ${c.is_system?'system':''}">
+                    <div class="comment-head"><span class="comment-author">${c.user_name}</span><span class="comment-date">${fmtDateTime(c.created_at)}</span></div>
+                    <div class="comment-body">${c.content}</div>
+                </div>`).join('')||'<p style="color:var(--gray-400);font-size:13px;">Nenhum comentário ainda.</p>'}
+            </div>
+            <div class="comment-input">
+                <textarea id="newComment" placeholder="Escreva um comentário..."></textarea>
+                <button onclick="addComment('${t.id}')">Enviar</button>
+            </div>
+        </div>
+        <div style="font-size:10px;color:var(--gray-400);margin-top:12px;">ID: ${t.id}${t.completed_at?' · Concluída: '+fmtDate(t.completed_at):''} · Criada: ${fmtDateTime(t.created_at)}</div>`;
+    document.getElementById('panelOverlay').classList.add('open');
+    document.getElementById('detailPanel').classList.add('open');
+}
+function closePanel(){
+    document.getElementById('panelOverlay').classList.remove('open');
+    document.getElementById('detailPanel').classList.remove('open');
+    renderTab(S.activeTab);
+}
+
+async function updateTask(id,field,val){
+    const t=S.tasks.find(x=>x.id===id);if(!t)return;
+    t[field]=val;
+    if(S.connected)try{await apiPatch('tasks',id,{[field]:val});}catch(e){console.error(e);}
+}
+
+async function addComment(tid){
+    const el=document.getElementById('newComment');
+    const txt=el.value.trim();if(!txt)return;
+    const c={id:'c_'+Date.now(),task_id:tid,user_name:S.user.name,content:txt,is_system:false,created_at:new Date().toISOString()};
+    S.comments.push(c);
+    if(S.connected)try{await apiPost('comments',{task_id:tid,user_name:S.user.name,content:txt,is_system:false});}catch(e){console.error(e);}
+    openTaskPanel(tid);
+    setTimeout(()=>{const cl=document.getElementById('commentsList');if(cl)cl.scrollTop=cl.scrollHeight;},100);
+}
+
+// --- TIMELINE ---
+function renderTimeline(){
+    const months=['Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const cw=100,tw=months.length*cw;
+    const y0=new Date(2026,3,1);
+    const now=new Date();
+    const todayPx=((now-y0)/(months.length*30*864e5))*tw;
+    const curM=now.getMonth()-3;
+    let h=`<div class="tl-wrap"><div class="tl-grid" style="min-width:${260+tw}px;position:relative;">`;
+    h+=`<div class="tl-months">${months.map((m,i)=>`<div class="tl-month${i===curM?' now':''}" style="width:${cw}px">${m}</div>`).join('')}</div>`;
+    const byPhase={};S.tasks.forEach(t=>{(byPhase[t.phase]=byPhase[t.phase]||[]).push(t);});
+    Object.keys(byPhase).sort().forEach(p=>{
+        h+=`<div class="tl-phase-label">${PH[p]}</div>`;
+        byPhase[p].forEach(t=>{
+            if(!t.due_date)return;
+            const m=member(t.assigned_to);
+            const due=new Date(t.due_date+'T12:00:00');
+            const s0=Math.max(0,(new Date(2026,3,4)-y0)/(864e5));
+            const s1=Math.max(s0+7,(due-y0)/(864e5));
+            const lPx=(s0/(months.length*30))*tw;
+            const wPx=Math.max(40,((s1-s0)/(months.length*30))*tw);
+            const fc=p.includes('0')?'f0':p.includes('1')?'f1':'f2';
+            const dn=t.status==='concluida'?' done':'';
+            h+=`<div class="tl-row"><div class="tl-label" title="${t.title}"><span style="color:${m.avatar_color};font-weight:600;">${m.name}:</span> ${t.title}</div>
+                <div class="tl-bars" style="width:${tw}px"><div class="tl-bar ${fc}${dn}" style="left:${lPx}px;width:${wPx}px" title="${fmtDate(t.due_date)}">${t.title.slice(0,35)}</div></div></div>`;
+        });
+    });
+    if(todayPx>0&&todayPx<tw)h+=`<div class="tl-today" style="left:${260+todayPx}px;top:30px;bottom:0;"></div>`;
+    h+=`</div></div>`;return h;
+}
+
+// --- TEAM ---
+function renderTeamTab(){
+    let h=`<div class="section-hdr"><h2 class="section-title">Equipe (${S.team.length})</h2><button class="admin-btn add" onclick="openModal('addMember')">+ Novo Membro</button></div><div class="grid">`;
+    S.team.forEach(m=>{
+        const mt=S.tasks.filter(t=>t.assigned_to===m.id),done=mt.filter(t=>t.status==='concluida').length,pend=mt.filter(t=>t.status!=='concluida').length;
+        h+=`<div class="card"><div class="card-hdr"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><div><div class="nm">${m.name}</div><div class="org">${m.organization} · ${RL[m.role]||m.role}</div></div></div>
+            <div class="card-note">${m.notes||''}</div>
+            <div class="card-stats">${pend} pendente${pend!==1?'s':''} · ${done} concluída${done!==1?'s':''}</div>
+            <div class="card-tasks">${mt.filter(t=>t.status!=='concluida').slice(0,5).map(t=>`<div class="card-task"><span>${t.title.slice(0,40)}${t.title.length>40?'...':''}</span><span class="mini-badge badge ${t.priority}">${PR[t.priority]}</span></div>`).join('')}</div></div>`;
+    });
+    return h+'</div>';
+}
+
+// --- PARTNERS ---
+function renderPartnersTab(){
+    let h=`<div class="section-hdr"><h2 class="section-title">Parceiros (${S.partners.length})</h2><button class="admin-btn add" onclick="openModal('addPartner')">+ Novo Parceiro</button></div><div class="grid">`;
+    S.partners.forEach(p=>{
+        h+=`<div class="card"><div class="card-hdr"><div><div class="nm">${p.name}</div><div class="org">${PT[p.type]||p.type} · ${p.contact_person||'—'}</div></div></div>
+            <div style="margin-bottom:8px"><span class="badge ${p.status}">${ST[p.status]}</span></div>
+            <div class="card-note"><strong>Oferece:</strong> ${p.contribution||'—'}</div>
+            <div class="card-note"><strong>Recebe:</strong> ${p.receives||'—'}</div>
+            <div class="card-note">${p.notes||''}</div></div>`;
+    });
+    return h+'</div>';
+}
+
+// --- ACTIVITY ---
+function renderActivityTab(){
+    if(!S.activity.length&&!S.comments.length)return'<p style="color:var(--gray-400);padding:20px;">Nenhuma atividade registrada ainda. As atividades aparecem quando você edita tarefas, muda status ou adiciona comentários.</p>';
+    const items=[...S.comments.map(c=>({type:'comment',time:c.created_at,who:c.user_name,text:c.content,sys:c.is_system,taskId:c.task_id}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,40);
+    let h=`<div class="section-hdr"><h2 class="section-title">🕐 Atividade Recente</h2></div><div class="admin-section">`;
+    items.forEach(i=>{
+        const task=S.tasks.find(t=>t.id===i.taskId);
+        const tn=task?task.title:'—';
+        h+=`<div class="activity-item ${i.sys?'system':''}">
+            <div style="display:flex;justify-content:space-between"><strong>${i.who}</strong><span class="activity-time">${fmtDateTime(i.time)}</span></div>
+            <div style="color:var(--gray-600)">${i.text}</div>
+            <div style="font-size:11px;color:var(--gray-400)">em: ${tn}</div></div>`;
+    });
+    return h+'</div>';
+}
+
+// --- ADMIN ---
+function renderAdmin(){
+    let h=`<div class="section-hdr"><h2 class="section-title">⚙ Administração</h2></div>`;
+    // Users
+    h+=`<div class="admin-section"><h3>👤 Usuários do App</h3>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Gerencie quem acessa o painel. Em produção, integre com Supabase Auth.</p>
+        <table class="admin-table"><thead><tr><th>Nome</th><th>Email</th><th>Papel</th><th>Ações</th></tr></thead><tbody>
+        <tr><td>${S.user.name}</td><td>—</td><td><span class="badge em_andamento">Admin</span></td><td>—</td></tr>
+        </tbody></table></div>`;
+    // Team
+    h+=`<div class="admin-section"><h3>👥 Membros da Equipe</h3>
+        <button class="admin-btn add" onclick="openModal('addMember')" style="margin-bottom:12px;">+ Novo Membro</button>
+        <table class="admin-table"><thead><tr><th>Nome</th><th>Organização</th><th>Papel</th><th>Tarefas</th><th>Ações</th></tr></thead><tbody>
+        ${S.team.map(m=>{
+            const tc=S.tasks.filter(t=>t.assigned_to===m.id).length;
+            return `<tr><td><span style="display:inline-flex;align-items:center;gap:6px;"><span class="av" style="background:${m.avatar_color};width:22px;height:22px;font-size:9px;">${initials(m.name)}</span>${m.name}</span></td><td>${m.organization}</td><td>${RL[m.role]||m.role}</td><td>${tc}</td><td><button class="admin-btn edit" onclick="editMember('${m.id}')">Editar</button></td></tr>`;
+        }).join('')}
+        </tbody></table></div>`;
+    // Partners
+    h+=`<div class="admin-section"><h3>🤝 Parceiros</h3>
+        <button class="admin-btn add" onclick="openModal('addPartner')" style="margin-bottom:12px;">+ Novo Parceiro</button>
+        <table class="admin-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Contato</th><th>Status</th></tr></thead><tbody>
+        ${S.partners.map(p=>`<tr><td>${p.name}</td><td>${PT[p.type]||p.type}</td><td>${p.contact_person||'—'}</td><td><span class="badge ${p.status}">${ST[p.status]}</span></td></tr>`).join('')}
+        </tbody></table></div>`;
+    // Stats
+    const totalComments=S.comments.filter(c=>!c.is_system).length;
+    h+=`<div class="admin-section"><h3>📊 Estatísticas</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;font-size:14px;">
+        <div><strong>${S.tasks.length}</strong> tarefas</div>
+        <div><strong>${S.team.length}</strong> membros</div>
+        <div><strong>${S.partners.length}</strong> parceiros</div>
+        <div><strong>${totalComments}</strong> comentários</div>
+        <div><strong>${S.connected?'✅ Conectado':'⚡ Offline'}</strong></div>
+        </div></div>`;
+    // Danger zone
+    h+=`<div class="admin-section" style="border:2px solid var(--rose-100);"><h3 style="color:var(--rose-600);">⚠ Zona de Risco</h3>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px;">Ações irreversíveis. Use com cuidado.</p>
+        <button class="btn btn-danger" onclick="if(confirm('Tem certeza? Isso vai recarregar todos os dados do Supabase.'))loadData().then(()=>renderTab('admin'))">🔄 Recarregar dados do Supabase</button>
+        </div>`;
+    return h;
+}
+
+function editMember(id){
+    // Quick inline edit via panel
+    const m=S.team.find(x=>x.id===id);if(!m)return;
+    document.getElementById('panelTitle').textContent='Editar: '+m.name;
+    document.getElementById('panelBody').innerHTML=`
+        <div class="field"><label>Nome</label><input type="text" id="em-name" value="${m.name}"></div>
+        <div class="field"><label>Organização</label><input type="text" id="em-org" value="${m.organization||''}"></div>
+        <div class="field"><label>Email</label><input type="text" id="em-email" value="${m.email||''}"></div>
+        <div class="field"><label>Papel</label><select id="em-role">${Object.entries(RL).map(([k,v])=>`<option value="${k}" ${m.role===k?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div class="field"><label>Cor</label><input type="color" id="em-color" value="${m.avatar_color||'#7c3aed'}" style="height:38px;"></div>
+        <div class="field"><label>Notas</label><textarea id="em-notes">${m.notes||''}</textarea></div>
+        <div class="modal-actions"><button class="btn btn-primary" onclick="saveMember('${m.id}')">Salvar</button></div>`;
+    document.getElementById('panelOverlay').classList.add('open');
+    document.getElementById('detailPanel').classList.add('open');
+}
+async function saveMember(id){
+    const data={name:document.getElementById('em-name').value,organization:document.getElementById('em-org').value,email:document.getElementById('em-email').value||null,role:document.getElementById('em-role').value,avatar_color:document.getElementById('em-color').value,notes:document.getElementById('em-notes').value};
+    const m=S.team.find(x=>x.id===id);if(m)Object.assign(m,data);
+    if(S.connected)try{await apiPatch('team_members',id,data);}catch(e){console.error(e);}
+    closePanel();
+}
+
+// --- MODALS ---
+function openModal(name){
+    if(name==='addTask'){
+        document.getElementById('nt-phase').innerHTML=Object.entries(PH).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+        document.getElementById('nt-assign').innerHTML=S.team.map(m=>`<option value="${m.id}">${m.name} (${m.organization})</option>`).join('');
+        document.getElementById('nt-title').value='';document.getElementById('nt-desc').value='';document.getElementById('nt-due').value='';document.getElementById('nt-notes').value='';
+    }
+    if(name==='addMember'){document.getElementById('nm-name').value='';document.getElementById('nm-email').value='';document.getElementById('nm-org').value='';document.getElementById('nm-notes').value='';}
+    if(name==='addPartner'){document.getElementById('np-name').value='';document.getElementById('np-contact').value='';document.getElementById('np-contrib').value='';document.getElementById('np-receives').value='';document.getElementById('np-notes').value='';}
+    document.getElementById('modal-'+name).classList.add('open');
+}
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('open');}
+
+async function createTask(){
+    const title=document.getElementById('nt-title').value.trim();
+    if(!title){alert('Título obrigatório.');return;}
+    const data={title,description:document.getElementById('nt-desc').value.trim(),phase:document.getElementById('nt-phase').value,priority:document.getElementById('nt-priority').value,assigned_to:document.getElementById('nt-assign').value,due_date:document.getElementById('nt-due').value||null,notes:document.getElementById('nt-notes').value.trim(),status:'pendente'};
+    if(S.connected){try{const r=await apiPost('tasks',data);if(r&&r.length)S.tasks.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.tasks.push(data);}}
+    else{data.id='l_'+Date.now();data.created_at=new Date().toISOString();S.tasks.push(data);}
+    closeModal('addTask');renderTab(S.activeTab);
+}
+
+async function createMember(){
+    const name=document.getElementById('nm-name').value.trim();
+    if(!name){alert('Nome obrigatório.');return;}
+    const data={name,email:document.getElementById('nm-email').value.trim()||null,organization:document.getElementById('nm-org').value.trim(),role:document.getElementById('nm-role').value,avatar_color:document.getElementById('nm-color').value,notes:document.getElementById('nm-notes').value.trim(),is_active:true};
+    if(S.connected){try{const r=await apiPost('team_members',data);if(r&&r.length)S.team.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.team.push(data);}}
+    else{data.id='l_'+Date.now();S.team.push(data);}
+    closeModal('addMember');renderTab(S.activeTab);
+}
+
+async function createPartner(){
+    const name=document.getElementById('np-name').value.trim();
+    if(!name){alert('Nome obrigatório.');return;}
+    const data={name,type:document.getElementById('np-type').value,contact_person:document.getElementById('np-contact').value.trim(),status:'pendente',contribution:document.getElementById('np-contrib').value.trim(),receives:document.getElementById('np-receives').value.trim(),notes:document.getElementById('np-notes').value.trim()};
+    if(S.connected){try{const r=await apiPost('partners',data);if(r&&r.length)S.partners.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.partners.push(data);}}
+    else{data.id='l_'+Date.now();S.partners.push(data);}
+    closeModal('addPartner');renderTab(S.activeTab);
+}
+
+function toggleUserMenu(){}
+</script>
+</body>
+</html>
