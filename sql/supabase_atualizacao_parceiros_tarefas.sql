@@ -52,9 +52,9 @@ WHERE tm.is_active IS NOT FALSE
   )
 LIMIT 1;
 
--- 5) Ajustar nota de tarefa de currículo (remover ideia de parceria formal com IML)
+-- 5) Ajustar nota de tarefa de currículo (IML + dependência de confirmação UNB)
 UPDATE tasks
-SET notes = 'Detalhar com Cândida (UNB). Módulo sobre violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'
+SET notes = 'Módulo Psicologia/UNB: depende de confirmação com Cândida (contato: Thaís). Módulo violência: convidados técnicos pontuais, sem parceria formal com IML. Apoio técnico ao material digital: Giselle.'
 WHERE title ILIKE '%Organizar estrutura do curso%';
 
 -- 5b) Giselle: só apoio tecnológico/desenvolvimento — realoca tudo que estava com ela para Thaís (ponte, reunião, curso no painel)
@@ -84,6 +84,35 @@ WHERE name ILIKE '%MPDFT%';
 UPDATE partners
 SET contact_person = 'Thaís'
 WHERE name ILIKE '%MPDFT%' AND contact_person ILIKE '%Giselle%';
+
+-- 5c) UNB / Cândida: parceria não confirmada — contato e tarefas com a Thaís
+UPDATE team_members
+SET notes = 'Professora titular Psicologia UNB (contato via Thaís). Nada confirmado formalmente até o momento.'
+WHERE name ILIKE '%Cândida%';
+
+UPDATE partners
+SET
+  status = 'pendente',
+  contact_person = 'Thaís (interlocução UNB; Prof.ª Cândida — sem confirmação)',
+  notes = 'Parceria acadêmica em negociação. Contato e follow-up: Thaís. Retorno da UNB/Cândida ainda pendente.'
+WHERE name ILIKE '%UNB%' AND (name ILIKE '%Psicologia%' OR name ILIKE '%Pós%');
+
+UPDATE tasks
+SET
+  status = 'pendente',
+  completed_at = NULL,
+  description = 'Thaís conduz o contato com a Prof.ª Cândida (UNB) para apresentar o projeto e negociar parceria acadêmica.',
+  notes = 'Aguardando resposta/confirmação da UNB. Nada fechado até o momento.',
+  due_date = '2026-05-15'
+WHERE title ILIKE '%Falar com Cândida%';
+
+-- Tudo que ainda estiver com a Cândida como responsável → Thaís (até haver confirmação formal)
+WITH th AS (SELECT id FROM team_members WHERE name ILIKE '%Thaís%' LIMIT 1),
+     ca AS (SELECT id FROM team_members WHERE name ILIKE '%Cândida%' LIMIT 1)
+UPDATE tasks t
+SET assigned_to = th.id
+FROM th, ca
+WHERE t.assigned_to = ca.id AND ca.id IS NOT NULL AND th.id IS NOT NULL;
 
 -- 6) (Opcional) Remover pessoa “Márcia” ligada ao IML da equipe — descomente se fizer sentido
 -- DELETE FROM team_members WHERE name ILIKE '%Márcia%' AND organization ILIKE '%IML%';
