@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="RODASDF — Rede de Rodas Multidisciplinares para Mulheres no DF. Notícias do projeto e painel de gestão para a equipe.">
+<meta name="description" content="Rede de Rodas do DF — rodas multidisciplinares para mulheres no Distrito Federal. Notícias e painel da equipe.">
 <meta name="theme-color" content="#5b21b6">
 <meta name="color-scheme" content="light">
-<title>RODASDF — Rede de Rodas para Mulheres (DF)</title>
+<link rel="icon" href="logotiporodas.png" type="image/png">
+<title>Rede de Rodas do DF — Mulheres no DF</title>
 <style>
 :root {
     --purple-900:#4c1d95;--purple-800:#5b21b6;--purple-700:#6d28d9;--purple-600:#7c3aed;
@@ -32,12 +33,27 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sa
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px;}
 
+/* Marca: REDE DE R[logo]DAS DO DF (o “O” de RODAS é a logotipo) */
+.brand-name{display:inline-flex;align-items:center;flex-wrap:wrap;gap:0;line-height:1.15;font-weight:800;letter-spacing:-.02em;}
+.brand-name .brand-core{display:inline;}
+.brand-o-img{height:0.92em;width:auto;max-height:26px;object-fit:contain;margin:0 1px;vertical-align:middle;display:inline-block;}
+.pub-top .brand-o-img{max-height:28px;}
+.pub-top .brand-name{color:white;}
+.news-title-sep{font-weight:700;color:var(--gray-400);}
+.login-logo img{display:block;max-width:min(220px,75vw);height:auto;margin:0 auto 12px;object-fit:contain;}
+.news-card h2 .brand-name{font-size:0.92em;vertical-align:middle;margin-right:4px;}
+.news-card h2 .brand-o-img{max-height:1.15em;}
+.header h1 .brand-name{font-size:19px;font-weight:700;}
+.header h1 .brand-o-img{max-height:22px;}
+.pub-brand-inner{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;}
+.footer-brand-wrap{display:inline-flex;justify-content:center;flex-wrap:wrap;align-items:center;gap:6px;}
+
 /* === PÁGINA PÚBLICA — NOTÍCIAS === */
 #publicHome{min-height:100vh;background:linear-gradient(180deg,var(--purple-50) 0%,var(--gray-100) 45%);}
 .pub-top{background:linear-gradient(135deg,var(--purple-900),var(--purple-700));color:white;box-shadow:var(--shadow-md);}
 .pub-bar{max-width:880px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.pub-brand{font-size:20px;font-weight:800;letter-spacing:-.02em;}
-.pub-brand small{display:block;font-size:12px;font-weight:500;opacity:.85;margin-top:2px;}
+.pub-brand{font-size:18px;font-weight:800;letter-spacing:-.02em;}
+.pub-brand small{display:block;font-size:12px;font-weight:500;opacity:.9;margin-top:6px;max-width:520px;line-height:1.4;}
 .pub-spacer{flex:1;min-width:8px;}
 .pub-btn-login{background:white;color:var(--purple-800);border:none;padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s;}
 .pub-btn-login:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
@@ -71,7 +87,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .login-back{margin-top:20px;background:transparent;border:none;color:rgba(255,255,255,.9);font-size:14px;cursor:pointer;text-decoration:underline;font-family:inherit;}
 .login-back:hover{color:white;}
 .login-card{background:white;border-radius:20px;padding:48px;width:420px;max-width:90vw;box-shadow:var(--shadow-lg);text-align:center;}
-.login-logo{font-size:48px;margin-bottom:8px;}
+.login-logo{margin-bottom:4px;}
 .login-card h1{font-size:28px;color:var(--purple-800);margin-bottom:4px;}
 .login-card p{color:var(--gray-500);font-size:14px;margin-bottom:32px;}
 .login-lead{text-align:left;line-height:1.55;margin-bottom:24px!important;}
@@ -288,7 +304,12 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 <div id="publicHome">
     <header class="pub-top" role="banner">
         <div class="pub-bar">
-            <div class="pub-brand">🔮 RODASDF <small>Rede de Rodas Multidisciplinares para Mulheres</small></div>
+            <div class="pub-brand">
+                <div class="pub-brand-inner">
+                    <span class="brand-name" aria-label="Rede de Rodas do DF"><span class="brand-core">REDE DE R</span><img src="logotiporodas.png" alt="" class="brand-o-img" width="30" height="30"><span class="brand-core">DAS DO DF</span></span>
+                </div>
+                <small>Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</small>
+            </div>
             <div class="pub-spacer"></div>
             <button type="button" class="pub-btn-login" onclick="openLoginScreen()" aria-label="Abrir login da equipe">Entrar na gestão</button>
         </div>
@@ -299,7 +320,8 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
         <div class="news-list" id="publicNewsList" aria-live="polite"></div>
     </main>
     <footer class="pub-footer" role="contentinfo">
-        <strong>RODASDF</strong> · Distrito Federal · 2026<br>
+        <div class="footer-brand-wrap"><span class="brand-name" aria-label="Rede de Rodas do DF"><span class="brand-core">REDE DE R</span><img src="logotiporodas.png" alt="" class="brand-o-img" width="24" height="24"><span class="brand-core">DAS DO DF</span></span></div>
+        <span>Distrito Federal · 2026</span><br>
         Site estático hospedado com segurança básica. Equipe: login com e-mail e senha (Supabase Auth) ou modo demonstração.
     </footer>
 </div>
@@ -307,7 +329,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 <!-- ==================== LOGIN (ÁREA ADMIN) ==================== -->
 <div id="loginScreen" class="hidden">
     <div class="login-card">
-        <div class="login-logo">🔮</div>
+        <div class="login-logo"><img src="logotiporodas.png" alt="Rede de Rodas do DF"></div>
 
         <div id="loginPane">
             <h1>Acesso à gestão</h1>
@@ -357,7 +379,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 <!-- HEADER -->
 <div class="header">
     <div class="header-left">
-        <h1>🔮 RODASDF <span>Painel de Gestão</span></h1>
+        <h1><span class="brand-name" aria-label="Rede de Rodas do DF"><span class="brand-core">REDE DE R</span><img src="logotiporodas.png" alt="" class="brand-o-img" width="24" height="24"><span class="brand-core">DAS DO DF</span></span> <span>Painel de Gestão</span></h1>
     </div>
     <div class="header-right">
         <div class="conn-badge">
@@ -468,7 +490,7 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 
 <script>
 // ============================================
-// RODASDF APP v3 — produção (notícias + Auth + painel)
+// Rede de Rodas do DF — app v3 (notícias + Auth + painel)
 // ============================================
 
 // --- CONFIG SUPABASE (Dashboard → Settings → API) — preencha UMA vez; não aparece na tela de login ---
@@ -490,7 +512,7 @@ let S = {
 // --- Offline demo data ---
 const COLORS = { 'Natalie':'#e11d48','Thaís':'#7c3aed','Giselle':'#2563eb','Cândida':'#059669','Laura':'#d97706','Márcia':'#0891b2' };
 const DEMO_TEAM = [
-    {id:'1',name:'Natalie',email:null,organization:'ONG RODASDF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga).'},
+    {id:'1',name:'Natalie',email:null,organization:'Rede de Rodas do DF',role:'coordenadora',expertise:['gestao','articulacao'],avatar_color:'#e11d48',is_active:true,notes:'Coordenação da ONG. Contatos: Laura (psicóloga).'},
     {id:'2',name:'Thaís',email:null,organization:'MPDFT',role:'coordenadora',expertise:['direito','articulacao_institucional'],avatar_color:'#7c3aed',is_active:true,notes:'Coordenação MPDFT. Contatos: Cândida (UNB), Márcia (IML), Ouvidora das Mulheres.'},
     {id:'3',name:'Giselle',email:'giselle.trevizo@gmail.com',organization:'MPDFT',role:'coordenadora',expertise:['direito','formacao'],avatar_color:'#2563eb',is_active:true,notes:'Organização do curso, palestrante de Direito. Coordenação pedagógica.'},
     {id:'4',name:'Cândida',email:null,organization:'UNB',role:'docente',expertise:['psicologia'],avatar_color:'#059669',is_active:true,notes:'Professora titular Psicologia UNB. CONFIRMADA.'},
@@ -534,12 +556,16 @@ const DEMO_COMMENTS = [
 
 // --- Notícias (página pública inicial; depois podem vir do Supabase) ---
 const PUBLIC_NEWS = [
-    {id:'1',date:'2026-04-02',title:'RODASDF: nasce uma rede de acolhimento para mulheres do DF',excerpt:'Conheça o projeto que capacita facilitadoras para rodas multidisciplinares de acolhimento e promoção de direitos.',body:'O Projeto RODASDF reúne ações permanentes, multidisciplinares e conectadas: cada roda trabalha acolhimento e escuta, psicoeducação em direitos (Lei Maria da Penha, medidas protetivas, rede de proteção) e fortalecimento comunitário.\n\nA rede está em construção — parcerias com MPDFT, UNB e organizações da sociedade civil fortalecem o alcance.'},
+    {id:'1',date:'2026-04-02',title:'Nasce uma rede de acolhimento para mulheres do DF',excerpt:'Conheça o projeto que capacita facilitadoras para rodas multidisciplinares de acolhimento e promoção de direitos.',body:'A Rede de Rodas do DF reúne ações permanentes, multidisciplinares e conectadas: cada roda trabalha acolhimento e escuta, psicoeducação em direitos (Lei Maria da Penha, medidas protetivas, rede de proteção) e fortalecimento comunitário.\n\nA rede está em construção — parcerias com MPDFT, UNB e organizações da sociedade civil fortalecem o alcance.'},
     {id:'2',date:'2026-03-31',title:'Cândida Alves (UNB) confirma parceria para capacitação',excerpt:'Professora titular de Psicologia articula módulo de Psicologia e rede de alunos de pós-graduação.',body:'A parceria com a UNB permite validação de horas e estágio para estudantes que atuarão como facilitadoras em formação, apoiando um dos desafios centrais de projetos voluntários: reter pessoas qualificadas.\n\nPróximos passos incluem carta de intenções e critérios de seleção de alunos.'},
     {id:'3',date:'2026-03-15',title:'Metodologia em três eixos',excerpt:'Como funcionam as rodas: acolhimento, direitos e fortalecimento em rede.',body:'1) Acolhimento e escuta — espaço seguro baseado em práticas de Psicologia Comunitária.\n2) Psicoeducação de direitos — linguagem acessível sobre proteção e canais de denúncia.\n3) Fortalecimento comunitário — vínculos entre mulheres que permanecem além da roda.'},
 ];
 
 function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function brandNameHtml(extraCls){
+    var c=extraCls?(' '+extraCls):'';
+    return '<span class="brand-name'+c+'" aria-label="Rede de Rodas do DF"><span class="brand-core">REDE DE R</span><img src="logotiporodas.png" alt="" class="brand-o-img" width="28" height="28"><span class="brand-core">DAS DO DF</span></span>';
+}
 function escapeAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function normalizeSupabaseUrl(url){
     let u=String(url||'').trim();
@@ -621,7 +647,7 @@ function renderPublicNews(){
     if(!el)return;
     el.innerHTML=PUBLIC_NEWS.map(n=>`<article class="news-card" id="news-${n.id}">
         <div class="news-meta">${fmtNewsDate(n.date)}</div>
-        <h2>${escapeHtml(n.title)}</h2>
+        <h2>${brandNameHtml()}<span class="news-title-sep"> — </span>${escapeHtml(n.title)}</h2>
         <p class="news-excerpt">${escapeHtml(n.excerpt)}</p>
         <button type="button" class="news-toggle" onclick="toggleNewsBody('${n.id}')" id="news-btn-${n.id}">Ler mais</button>
         <div class="news-body" id="news-body-${n.id}">${escapeHtml(n.body)}</div>
@@ -890,7 +916,7 @@ async function loadData(){
             try{
                 S.restBearer=RODASDF_SUPABASE_ANON_KEY;
                 await loadDataFetchCore();
-                console.info('[RODASDF] Dados carregados com Bearer anon (políticas RLS antigas).');
+                console.info('[Rede Rodas DF] Dados carregados com Bearer anon (RLS legado).');
                 return;
             }catch(e2){
                 console.error('Load error (fallback anon):',e2);
