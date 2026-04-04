@@ -76,6 +76,11 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .login-card p{color:var(--gray-500);font-size:14px;margin-bottom:32px;}
 .login-lead{text-align:left;line-height:1.55;margin-bottom:24px!important;}
 .login-lead strong{color:var(--gray-700);}
+.login-switch{margin-top:18px;font-size:14px;color:var(--gray-600);}
+.login-switch button{background:none;border:none;color:var(--purple-600);cursor:pointer;font-weight:700;text-decoration:underline;font-family:inherit;padding:0;}
+.login-switch button:hover{color:var(--purple-800);}
+#signupPane h2{font-size:22px;color:var(--purple-800);margin-bottom:6px;}
+.login-success{color:var(--green-600)!important;font-size:14px!important;}
 .login-card .input-group{margin-bottom:16px;text-align:left;}
 .login-card label{font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;}
 .login-card input{width:100%;padding:12px 16px;border:2px solid var(--gray-200);border-radius:var(--radius);font-size:15px;transition:border-color .2s;font-family:inherit;}
@@ -303,21 +308,46 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 <div id="loginScreen" class="hidden">
     <div class="login-card">
         <div class="login-logo">🔮</div>
-        <h1>Acesso à gestão</h1>
-        <p class="login-lead">Entre com o <strong>e-mail</strong> e a <strong>senha</strong> da sua conta no Supabase Auth (equipe). A URL e a chave do projeto ficam só no código, não nesta tela.</p>
-        <div class="input-group">
-            <label for="loginEmail">E-mail</label>
-            <input type="email" id="loginEmail" placeholder="nome@exemplo.com" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false">
+
+        <div id="loginPane">
+            <h1>Acesso à gestão</h1>
+            <p class="login-lead">Entre com <strong>e-mail</strong> e <strong>senha</strong>. Ainda não tem conta? Use <strong>Criar conta</strong> abaixo.</p>
+            <div class="input-group">
+                <label for="loginEmail">E-mail</label>
+                <input type="email" id="loginEmail" placeholder="nome@exemplo.com" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false">
+            </div>
+            <div class="input-group">
+                <label for="loginPassword">Senha</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <button class="btn-login" id="btnLogin" type="button" onclick="doLogin()">Entrar no painel</button>
+            <div class="login-error" id="loginError"></div>
+            <p class="login-switch">Primeiro acesso? <button type="button" onclick="showSignupPane()">Criar conta da equipe</button></p>
+            <div class="login-divider">ou</div>
+            <button type="button" class="login-offline" onclick="enterOffline()">Modo demonstração (sem login)</button>
+            <button type="button" class="login-back" onclick="backToPublicHome()">← Voltar às notícias</button>
         </div>
-        <div class="input-group">
-            <label for="loginPassword">Senha</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+
+        <div id="signupPane" class="hidden">
+            <h2>Criar conta</h2>
+            <p class="login-lead">Cadastro para acesso ao <strong>painel de gestão</strong>. Use um e-mail válido; se o Supabase exigir confirmação, você receberá um link por e-mail.</p>
+            <div class="input-group">
+                <label for="signupEmail">E-mail</label>
+                <input type="email" id="signupEmail" placeholder="nome@exemplo.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+            </div>
+            <div class="input-group">
+                <label for="signupPassword">Senha</label>
+                <input type="password" id="signupPassword" placeholder="Mínimo 6 caracteres" autocomplete="new-password" minlength="6">
+            </div>
+            <div class="input-group">
+                <label for="signupPassword2">Confirmar senha</label>
+                <input type="password" id="signupPassword2" placeholder="Repita a senha" autocomplete="new-password" minlength="6">
+            </div>
+            <button class="btn-login" id="btnSignup" type="button" onclick="doSignup()">Cadastrar e continuar</button>
+            <div class="login-error" id="signupError"></div>
+            <p class="login-switch"><button type="button" onclick="showLoginPane()">← Já tenho conta — entrar</button></p>
+            <button type="button" class="login-back" onclick="backToPublicHome()">← Voltar às notícias</button>
         </div>
-        <button class="btn-login" id="btnLogin" type="button" onclick="doLogin()">Entrar no painel</button>
-        <div class="login-error" id="loginError"></div>
-        <div class="login-divider">ou</div>
-        <button type="button" class="login-offline" onclick="enterOffline()">Modo demonstração (sem login)</button>
-        <button type="button" class="login-back" onclick="backToPublicHome()">← Voltar às notícias</button>
     </div>
 </div>
 
@@ -603,8 +633,20 @@ function toggleNewsBody(id){
     const open=b.classList.toggle('open');
     t.textContent=open?'Ler menos':'Ler mais';
 }
+function showLoginPane(){
+    document.getElementById('loginPane').classList.remove('hidden');
+    document.getElementById('signupPane').classList.add('hidden');
+    var se=document.getElementById('signupError');
+    if(se){se.textContent='';se.classList.remove('login-success');}
+}
+function showSignupPane(){
+    document.getElementById('loginPane').classList.add('hidden');
+    document.getElementById('signupPane').classList.remove('hidden');
+    document.getElementById('loginError').textContent='';
+}
 async function openLoginScreen(){
     window.scrollTo(0,0);
+    showLoginPane();
     document.getElementById('publicHome').classList.add('hidden');
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('loginError').textContent='';
@@ -630,6 +672,9 @@ function backToPublicHome(){
     document.getElementById('publicHome').classList.remove('hidden');
     document.getElementById('loginError').textContent='';
     document.getElementById('btnLogin').disabled=false;
+    var se=document.getElementById('signupError');if(se){se.textContent='';se.classList.remove('login-success');}
+    document.getElementById('btnSignup').disabled=false;
+    showLoginPane();
     window.scrollTo(0,0);
 }
 
@@ -706,6 +751,56 @@ async function doLogin(){
         document.getElementById('btnLogin').disabled=false;
     }
 }
+
+async function doSignup(){
+    var errEl=document.getElementById('signupError');
+    errEl.textContent='';
+    errEl.classList.remove('login-success');
+    if(!rodasdfConfigOk()){
+        errEl.textContent='Configure RODASDF_SUPABASE_URL e RODASDF_SUPABASE_ANON_KEY no início do script.';
+        return;
+    }
+    var email=document.getElementById('signupEmail').value.trim().toLowerCase();
+    var p1=document.getElementById('signupPassword').value;
+    var p2=document.getElementById('signupPassword2').value;
+    if(!email||!p1||!p2){errEl.textContent='Preencha e-mail e as duas senhas.';return;}
+    if(p1!==p2){errEl.textContent='As senhas não conferem.';return;}
+    if(p1.length<6){errEl.textContent='A senha deve ter pelo menos 6 caracteres.';return;}
+    document.getElementById('btnSignup').disabled=true;
+    errEl.textContent='Cadastrando...';
+    try{
+        var base=normalizeSupabaseUrl(RODASDF_SUPABASE_URL);
+        var r=await fetch(base+'/auth/v1/signup',{
+            method:'POST',
+            headers:{'apikey':RODASDF_SUPABASE_ANON_KEY,'Content-Type':'application/json'},
+            body:JSON.stringify({email:email,password:p1})
+        });
+        var j=await r.json().catch(function(){return{};});
+        if(!r.ok){
+            throw new Error(j.error_description||j.message||j.msg||'Não foi possível cadastrar.');
+        }
+        var sess=j.session||(j.access_token?j:null);
+        if(sess&&sess.access_token){
+            rodasdfApplyAuthTokens(sess);
+            S.loadError=false;
+            await loadData();
+            enterApp();
+            document.getElementById('signupPassword').value='';
+            document.getElementById('signupPassword2').value='';
+        }else{
+            errEl.classList.add('login-success');
+            errEl.textContent='Conta criada. Se apareceu e-mail de confirmação no Supabase, abra o link e depois use «Entrar». Caso contrário, já pode entrar com e-mail e senha.';
+            showLoginPane();
+            document.getElementById('loginEmail').value=email;
+            document.getElementById('signupPassword').value='';
+            document.getElementById('signupPassword2').value='';
+        }
+    }catch(e){
+        errEl.textContent=(e&&e.message)?e.message:String(e);
+    }
+    document.getElementById('btnSignup').disabled=false;
+}
+
 function enterOffline(){
     rodasdfClearAuthSession();
     S.connected=false;
