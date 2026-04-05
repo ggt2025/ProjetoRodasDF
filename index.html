@@ -343,6 +343,24 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .proto-card li{font-size:14px;color:var(--gray-700);line-height:1.55;margin:8px 0;}
 .proto-card strong{color:var(--gray-800);}
 .proto-flow{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:16px 18px;font-size:12px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--gray-800);}
+/* === PROTO NOTES === */
+.proto-notes{margin-top:18px;border-top:1.5px dashed var(--purple-100);padding-top:14px;}
+.proto-notes-toggle{background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;color:var(--purple-600);display:flex;align-items:center;gap:6px;padding:4px 0;width:100%;text-align:left;transition:color .15s;}
+.proto-notes-toggle:hover{color:var(--purple-800);}
+.proto-notes-arrow{margin-left:auto;font-size:10px;opacity:.7;}
+.proto-notes-body{margin-top:12px;}
+.proto-note-item{background:var(--purple-50);border:1px solid var(--purple-100);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;position:relative;}
+.proto-note-meta{font-size:11px;color:var(--gray-500);margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.proto-note-meta strong{color:var(--purple-700);}
+.proto-note-text{font-size:13px;color:var(--gray-700);line-height:1.55;margin:0 0 8px;white-space:pre-wrap;}
+.proto-note-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:11px;color:var(--gray-400);padding:2px 5px;border-radius:4px;transition:color .15s,background .15s;}
+.proto-note-del:hover{color:var(--rose-600);background:var(--rose-50);}
+.proto-notes-empty{font-size:12px;color:var(--gray-400);font-style:italic;margin:0 0 10px;}
+.proto-note-add{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.proto-note-add textarea{font-size:13px;line-height:1.5;min-height:72px;padding:10px 12px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;resize:vertical;transition:border-color .15s;}
+.proto-note-add textarea:focus{outline:none;border-color:var(--purple-400);box-shadow:0 0 0 3px var(--purple-100);}
+.proto-note-add-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.proto-note-count-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--purple-100);color:var(--purple-700);}
 
 /* === TEAM / PARTNERS GRID === */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
@@ -996,6 +1014,7 @@ const LEV_WORKSPACE_KEY = 'rdf_levantamento_workspace_v1';
 const PUBLIC_NEWS_LOCAL_KEY = 'rdf_public_news_local_v1';
 const PONTES_STORAGE_KEY = 'rdf_pontes_v1';
 const EVENTOS_STORAGE_KEY = 'rdf_eventos_v1';
+const PROTO_NOTES_KEY = 'rdf_proto_notes_v1';
 const LEV_LIGACAO_OPTS=[['nao_ligado','Não ligamos ainda'],['a_ligar','A ligar'],['tentamos','Tentamos / recado'],['ouvimos','Ouvimos — registrado']];
 
 let __bodyScrollLockN=0;
@@ -1021,6 +1040,7 @@ let S = {
     team: [], partners: [], pontes: [], tasks: [], comments: [], activity: [],
     forumCats: [], forumTopics: [], forumReplies: [],
     eventos: [],
+    protoNotes: {},
     forumView: 'categories', forumCatFilter: null, forumTopicOpen: null,
     redeServicos: [], redeArticulacoes: [],
     redeFilterTipo: 'all', redeFilterCirc: 'all', redeSubTab: 'servicos', redeSearch: '',
@@ -2128,6 +2148,7 @@ function enterApp(){
     document.getElementById('userAvatar').textContent=initials(S.user.name);
     loadPontes();
     loadEventos();
+    loadProtoNotes();
     window.scrollTo(0,0);
     renderTab('dashboard');
     updateFabVisibility();
@@ -2312,6 +2333,94 @@ function loadEventos(){
     }catch(e){S.eventos=[...DEMO_EVENTOS];}
 }
 function saveEventos(){try{localStorage.setItem(EVENTOS_STORAGE_KEY,JSON.stringify(S.eventos));}catch(e){console.error(e);}}
+
+// --- PROTO NOTES (observações por capítulo) ---
+let _protoNotesOpen=new Set(); // seções com painel aberto (sem re-render completo)
+function loadProtoNotes(){
+    try{
+        const raw=localStorage.getItem(PROTO_NOTES_KEY);
+        S.protoNotes=raw?JSON.parse(raw):{};
+        if(typeof S.protoNotes!=='object'||Array.isArray(S.protoNotes))S.protoNotes={};
+    }catch(e){S.protoNotes={};}
+}
+function saveProtoNotes(){try{localStorage.setItem(PROTO_NOTES_KEY,JSON.stringify(S.protoNotes));}catch(e){console.error(e);}}
+function protoNoteGen(){return'pn_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);}
+function protoNotesList(sid){
+    if(!S.protoNotes)S.protoNotes={};
+    return Array.isArray(S.protoNotes[sid])?S.protoNotes[sid]:[];
+}
+function renderProtoNotesBlock(sid){
+    const notes=protoNotesList(sid);
+    const isOpen=_protoNotesOpen.has(sid);
+    const cnt=notes.length;
+    const cntBadge=cnt?`<span class="proto-note-count-badge">${cnt}</span>`:'';
+    const notesHtml=notes.length
+        ? notes.map(function(n){
+            return `<div class="proto-note-item">
+                <div class="proto-note-meta">
+                    <strong>${escapeHtml(n.author||'—')}</strong>
+                    <span>·</span>
+                    <span>${fmtDateTime(n.created_at)}</span>
+                </div>
+                <p class="proto-note-text">${escapeHtml(n.text)}</p>
+                <button type="button" class="proto-note-del" onclick="deleteProtoNote('${sid}','${n.id}')" title="Excluir observação">✕ excluir</button>
+            </div>`;
+          }).join('')
+        : '<p class="proto-notes-empty">Nenhuma observação ainda — seja o primeiro a registrar uma prática local.</p>';
+    const addHtml=`<div class="proto-note-add">
+        <textarea id="proto-note-input-${sid}" placeholder="Descreva uma observação, adaptação ou prática local para este capítulo…" rows="3"></textarea>
+        <div class="proto-note-add-row">
+            <button type="button" class="btn btn-primary" style="font-size:13px;padding:7px 16px" onclick="addProtoNote('${sid}')">+ Adicionar observação</button>
+            <span style="font-size:11px;color:var(--gray-400)">Salvo localmente neste navegador.</span>
+        </div>
+    </div>`;
+    return `<div class="proto-notes">
+        <button type="button" class="proto-notes-toggle" onclick="toggleProtoNotes('${sid}')" aria-expanded="${isOpen}">
+            💬 Observações e práticas locais ${cntBadge}
+            <span class="proto-notes-arrow">${isOpen?'▲':'▼'}</span>
+        </button>
+        <div class="proto-notes-body" id="proto-notes-body-${sid}" style="display:${isOpen?'block':'none'}">
+            ${notesHtml}
+            ${addHtml}
+        </div>
+    </div>`;
+}
+function toggleProtoNotes(sid){
+    const body=document.getElementById('proto-notes-body-'+sid);
+    if(!body)return;
+    const btn=body.previousElementSibling;
+    const open=body.style.display==='none';
+    body.style.display=open?'block':'none';
+    if(btn){btn.setAttribute('aria-expanded',open);btn.querySelector('.proto-notes-arrow').textContent=open?'▲':'▼';}
+    if(open)_protoNotesOpen.add(sid);else _protoNotesOpen.delete(sid);
+}
+function addProtoNote(sid){
+    const inp=document.getElementById('proto-note-input-'+sid);
+    if(!inp)return;
+    const text=(inp.value||'').trim();
+    if(!text){inp.focus();return;}
+    const author=(S.user&&S.user.name)||'Equipe';
+    const note={id:protoNoteGen(),author:author,text:text,created_at:new Date().toISOString()};
+    if(!S.protoNotes)S.protoNotes={};
+    if(!Array.isArray(S.protoNotes[sid]))S.protoNotes[sid]=[];
+    S.protoNotes[sid].push(note);
+    saveProtoNotes();
+    _protoNotesOpen.add(sid);
+    // re-render apenas o bloco de notas desse capítulo, sem refazer a aba inteira
+    const block=document.getElementById('proto-notes-block-'+sid);
+    if(block)block.outerHTML=`<div id="proto-notes-block-${sid}">${renderProtoNotesBlock(sid)}</div>`;
+    else renderTab('prototypes');
+}
+function deleteProtoNote(sid,noteId){
+    if(!confirm('Excluir esta observação?'))return;
+    if(!S.protoNotes||!Array.isArray(S.protoNotes[sid]))return;
+    S.protoNotes[sid]=S.protoNotes[sid].filter(function(n){return n.id!==noteId;});
+    saveProtoNotes();
+    _protoNotesOpen.add(sid);
+    const block=document.getElementById('proto-notes-block-'+sid);
+    if(block)block.outerHTML=`<div id="proto-notes-block-${sid}">${renderProtoNotesBlock(sid)}</div>`;
+    else renderTab('prototypes');
+}
 function eventoGen(){return 'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
 function renderCalendarioTab(){
     const tipoLabel={reuniao:'Reunião',roda:'Roda',capacitacao:'Capacitação',articulacao:'Articulação',outro:'Evento'};
@@ -3184,10 +3293,21 @@ function renderPartnersTab(){
 
 // --- PROTÓTIPOS (Natalie) ---
 function renderPrototypesTab(){
-    const toc=NATALIE_PROTO_SECTIONS.map(s=>'<a href="#'+s.id+'">'+escapeHtml(s.title)+'</a>').join(' · ');
-    const cards=NATALIE_PROTO_SECTIONS.map(s=>'<section class="proto-card" id="'+s.id+'"><h3>'+escapeHtml(s.title)+'</h3>'+s.html+'</section>').join('');
-    return `<div class="section-hdr"><h2 class="section-title">Protótipos metodológicos</h2></div>
-    <p class="proto-src">Referência elaborada pela <strong>Natalie</strong> para avaliação <em>ex ante</em> e desenho operacional das rodas. Complementa — não substitui — normas institucionais, POPs do MPDFT/parceiros e adaptações locais a cada território. A <strong>fase de análise</strong> deve considerar <strong>cobertura espacial</strong> e <strong>demandas reprimidas</strong> (§9); a <strong>fase final</strong> do cronograma incorpora <strong>fluxo</strong>, <strong>rede</strong> e <strong>formulação de novas rodas</strong> para esses locais (§10).</p>
+    const totalNotes=Object.values(S.protoNotes||{}).reduce(function(acc,arr){return acc+(Array.isArray(arr)?arr.length:0);},0);
+    const toc=NATALIE_PROTO_SECTIONS.map(function(s){
+        const cnt=protoNotesList(s.id).length;
+        return '<a href="#'+s.id+'">'+escapeHtml(s.title)+(cnt?' <sup style="color:var(--purple-500);font-weight:700">'+cnt+'</sup>':'')+'</a>';
+    }).join(' · ');
+    const cards=NATALIE_PROTO_SECTIONS.map(function(s){
+        return '<section class="proto-card" id="'+s.id+'">'+
+            '<h3>'+escapeHtml(s.title)+'</h3>'+
+            s.html+
+            '<div id="proto-notes-block-'+s.id+'">'+renderProtoNotesBlock(s.id)+'</div>'+
+            '</section>';
+    }).join('');
+    const notesInfo=totalNotes?`<span style="font-size:12px;color:var(--purple-600);font-weight:600">· ${totalNotes} observaç${totalNotes===1?'ão':'ões'} registrada${totalNotes===1?'':'s'}</span>`:'';
+    return `<div class="section-hdr"><h2 class="section-title">Protótipos metodológicos ${notesInfo}</h2></div>
+    <p class="proto-src">Referência elaborada pela <strong>Natalie</strong> para avaliação <em>ex ante</em> e desenho operacional das rodas. Complementa — não substitui — normas institucionais, POPs do MPDFT/parceiros e adaptações locais a cada território. Cada capítulo tem um painel <strong>💬 Observações e práticas locais</strong> para a equipe registrar adaptações, achados de campo ou notas territoriais.</p>
     <nav class="proto-toc" aria-label="Índice dos protótipos">${toc}</nav>
     <div class="proto-wrap">${cards}</div>`;
 }
