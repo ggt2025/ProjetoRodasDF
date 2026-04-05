@@ -232,12 +232,11 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 
 /* === TASK CARDS === */
 .tasks{display:flex;flex-direction:column;gap:6px;}
-.tcard{background:white;border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:36px 1fr 130px 110px 90px 60px;align-items:center;gap:10px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+.tcard{background:white;border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:36px 1fr 130px 110px 80px 60px;align-items:center;gap:10px;cursor:pointer;transition:all .2s;border-left:4px solid #e2e8f0;}
 .tcard:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
-.tcard.p-urgente{border-left-color:var(--rose-500);}.tcard.p-alta{border-left-color:var(--amber-500);}
-.tcard.p-media{border-left-color:var(--blue-400);}.tcard.p-baixa{border-left-color:var(--gray-300);}
 .tcard.done-card{background:#f0fdf4;border-left-color:var(--green-400)!important;opacity:.82;}
 .tcard.done-card:hover{opacity:1;}
+.month-tag{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap;letter-spacing:.02em;}
 .tchk{width:20px;height:20px;border-radius:50%;border:2px solid var(--gray-300);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;flex-shrink:0;}
 .tchk:hover{border-color:var(--green-500);background:var(--green-100);}
 .tchk.done{background:var(--green-500);border-color:var(--green-500);color:white;}
@@ -313,18 +312,18 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .tl-bars{position:relative;flex:1;height:22px;}
 .tl-bar{position:absolute;height:18px;border-radius:4px;top:2px;font-size:9px;color:white;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
 .tl-bar:hover{opacity:.85;}
-.tl-bar.f0{background:linear-gradient(90deg,var(--purple-500),var(--purple-400));}
-.tl-bar.f1{background:linear-gradient(90deg,var(--blue-500),var(--blue-400));}
-.tl-bar.f2{background:linear-gradient(90deg,var(--green-500),var(--green-400));}
+.tl-bar.f0{background:linear-gradient(90deg,#7c3aed,#a78bfa);}
+.tl-bar.f1{background:linear-gradient(90deg,#2563eb,#60a5fa);}
+.tl-bar.f2{background:linear-gradient(90deg,#059669,#34d399);}
 .tl-bar.f3{background:linear-gradient(90deg,#6366f1,#818cf8);}
-.tl-bar.f4{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.tl-bar.f4{background:linear-gradient(90deg,#d97706,#fbbf24);}
 .tl-bar.f5{background:linear-gradient(90deg,#64748b,#94a3b8);}
 .tl-bar.done{opacity:.55;background:linear-gradient(90deg,var(--green-500),var(--green-400))!important;text-decoration:line-through;}
 .tl-intro{font-size:13px;color:var(--gray-600);line-height:1.45;margin:0 0 12px;max-width:920px;}
 .tl-legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:11px;}
-.tl-leg{padding:3px 10px;border-radius:6px;font-weight:600;color:white;}
-.tl-leg.f0{background:var(--purple-500);}.tl-leg.f1{background:var(--blue-500);}.tl-leg.f2{background:var(--green-500);}
-.tl-leg.f3{background:#6366f1;}.tl-leg.done{background:var(--gray-400);text-decoration:line-through;}
+.tl-leg{padding:3px 10px;border-radius:6px;font-weight:600;font-size:11px;color:white;}
+.tl-leg.f0{background:#7c3aed;}.tl-leg.f1{background:#2563eb;}.tl-leg.f2{background:#059669;}
+.tl-leg.f3{background:#6366f1;}.tl-leg.done{background:#059669;opacity:.6;text-decoration:line-through;}
 .tl-nodue-list{margin:0 0 16px;padding-left:20px;font-size:13px;color:var(--gray-700);line-height:1.6;}
 .news-loading{color:var(--gray-500);padding:20px;font-size:14px;}
 .tl-today{position:absolute;top:0;bottom:0;width:3px;background:var(--rose-500);z-index:10;pointer-events:none;box-shadow:0 0 6px rgba(239,68,68,.4);}
@@ -1958,6 +1957,23 @@ function backToPublicHome(){
 
 // --- Labels ---
 const PH = {'fase_0_semente':'🌱 Fase 1 — Estruturação · mai–jun/2026','fase_1_piloto':'🧪 Fase 2 — Piloto · jun–ago/2026','fase_2_enraizamento':'🌳 Fase 3 — Consolidação · ago–out/2026','fase_3_rede':'🕸 Pós-piloto · dez/2026–jan/2027','fase_4_expansao':'🚀 Expansão · fev/2027','fase_5_sustentabilidade':'♻️ Sustentabilidade · mar/2027'};
+// Paleta sincronizada: usada em cards, timeline e equipe
+const PHASE_COLORS={
+    'fase_0_semente':'#7c3aed',
+    'fase_1_piloto':  '#2563eb',
+    'fase_2_enraizamento':'#059669',
+    'fase_3_rede':    '#6366f1',
+    'fase_4_expansao':'#d97706',
+    'fase_5_sustentabilidade':'#64748b',
+};
+function phaseColor(p){return PHASE_COLORS[p]||'#94a3b8';}
+function monthTag(due){
+    if(!due)return'—';
+    const d=new Date(due+'T12:00:00');
+    const ms=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const yr=d.getFullYear();
+    return ms[d.getMonth()]+(yr!==2026?'/'+String(yr).slice(2):'');
+}
 const ST = {'pendente':'Pendente','em_andamento':'Em andamento','aguardando':'Aguardando','concluida':'Concluída','cancelada':'Cancelada'};
 const PR = {'baixa':'Baixa','media':'Média','alta':'Alta','urgente':'Urgente'};
 const PT = {'institucional':'🏛 Institucional','academico':'🎓 Acadêmico','ong_parceira':'🤝 ONG Parceira','governamental':'🏗 Governamental','abrigo':'🏠 Abrigo'};
@@ -2771,9 +2787,10 @@ function renderDashboard(){
     let phaseHtml=(phases.length?phases:['fase_0_semente']).map(p=>{
         const pt=S.tasks.filter(t=>t.phase===p),pd=pt.filter(t=>t.status==='concluida').length;
         const pct=pt.length?Math.round(pd/pt.length*100):0;
-        return `<div class="phase" onclick="S.filter='${p}';switchTab('tasks')">
-            <div class="phase-top"><span class="phase-name">${PH[p]}</span><span class="phase-pct">${pd}/${pt.length} — ${pct}%</span></div>
-            <div class="phase-track"><div class="phase-fill" style="width:${pct}%"></div></div></div>`;
+        const pc=phaseColor(p);
+        return `<div class="phase" style="border-left:3px solid ${pc}" onclick="S.filter='${p}';switchTab('tasks')">
+            <div class="phase-top"><span class="phase-name">${PH[p]}</span><span class="phase-pct" style="color:${pc}">${pd}/${pt.length} — ${pct}%</span></div>
+            <div class="phase-track"><div class="phase-fill" style="width:${pct}%;background:linear-gradient(90deg,${pc},${pc}99)"></div></div></div>`;
     }).join('');
     // "Próximos vencimentos": pendentes/em andamento por data + concluídas recentes (ficam verdes)
     const openT=S.tasks.filter(t=>t.status!=='concluida'&&t.due_date).sort((a,b)=>a.due_date.localeCompare(b.due_date));
@@ -2798,12 +2815,14 @@ function taskCard(t){
     const m=member(t.assigned_to),h=t.delivery_helper_id?member(t.delivery_helper_id):null,isDone=t.status==='concluida',cc=taskComments(t.id).filter(c=>!c.is_system).length;
     const peerAv=h?`<div class="av av-peer" style="background:${h.avatar_color}" title="Apoio à entrega: ${escapeAttr(h.name)}">${initials(h.name)}</div>`:'';
     const nameLine=h?escapeHtml(m.name)+' · '+escapeHtml(h.name):escapeHtml(m.name);
-    return `<div class="tcard p-${t.priority}${isDone?' done-card':''}" onclick="openTaskPanel('${escapeAttr(t.id)}')">
+    const pc=isDone?'#059669':phaseColor(t.phase);
+    const mt=isDone?'✓ Feito':monthTag(t.due_date);
+    return `<div class="tcard${isDone?' done-card':''}" style="border-left-color:${pc}" onclick="openTaskPanel('${escapeAttr(t.id)}')">
         <div class="tchk ${isDone?'done':''}" onclick="event.stopPropagation();toggleDone('${escapeAttr(t.id)}')" title="${isDone?'Clique para desmarcar':'Marcar como concluída'}">${isDone?'✓':''}</div>
-        <div class="tinfo"><h3 class="${isDone?'struck':''}">${escapeHtml(t.title)}${isDone?' <span style="font-size:10px;color:var(--green-600);font-weight:700;margin-left:4px">✓ Concluída</span>':''}</h3><p>${escapeHtml(PH[t.phase]||t.phase||'')}</p><p class="t-mobile-people">${nameLine}</p></div>
+        <div class="tinfo"><h3 class="${isDone?'struck':''}">${escapeHtml(t.title)}</h3><p>${escapeHtml(PH[t.phase]||t.phase||'')}</p><p class="t-mobile-people">${nameLine}</p></div>
         <div class="tperson"><div class="tperson-peers"><div class="av" style="background:${m.avatar_color}" title="Responsável direto">${initials(m.name)}</div>${peerAv}</div><span class="av-name" title="Conduz + apoio">${nameLine}</span></div>
         <span class="badge ${t.status}">${ST[t.status]||t.status}</span>
-        <span class="tdate ${dueCls(t.due_date,t.status)}">${fmtDate(t.due_date)}</span>
+        <span class="month-tag" style="background:${pc}18;color:${pc};border:1.5px solid ${pc}44" title="${t.due_date?fmtDate(t.due_date):''}">${mt}</span>
         <span class="tcomments">${cc?'💬'+cc:''}</span>
     </div>`;
 }
@@ -2826,8 +2845,14 @@ function renderTasks(){
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin-bottom:8px;">
         <button type="button" class="fbtn" title="Preenche só tarefas abertas sem apoio; prioriza organização/papel diferentes do responsável" onclick="tasksFillEmptyDeliveryHelpers()">🎲 Apoios vazios (sorteio diverso)</button>
         <span style="font-size:11px;color:var(--gray-500);max-width:280px;line-height:1.35">Cada tarefa: <strong>responsável direto</strong> conduz; <strong>apoio à entrega</strong> revisa prazo e apoia (peer de outra área quando possível).</span></div>
-        <div class="filters">${filters.map(k=>`<button type="button" class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';renderTab('tasks')">${fLabels[k]}</button>`).join('')}
-        ${S.team.map(m=>`<button type="button" class="fbtn ${String(f)===String(m.id)?'on':''}" onclick="S.filter='${escapeAttr(m.id)}';renderTab('tasks')" style="border-color:${m.avatar_color}55">${escapeHtml(m.name)}</button>`).join('')}
+        <div class="filters">${filters.map(k=>{
+            const pc=PHASE_COLORS[k];
+            const lbl=fLabels[k]||k;
+            const on=f===k;
+            const style=pc?(on?`background:${pc};border-color:${pc};color:white`:`border-color:${pc}55;color:${pc}`):'';
+            return`<button type="button" class="fbtn${on?' on':''}" style="${style}" onclick="S.filter='${k}';renderTab('tasks')">${lbl}</button>`;
+        }).join('')}
+        ${S.team.map(m=>`<button type="button" class="fbtn ${String(f)===String(m.id)?'on':''}" onclick="S.filter='${escapeAttr(m.id)}';renderTab('tasks')" style="border-color:${m.avatar_color}55;${String(f)===String(m.id)?'background:'+m.avatar_color+';color:white':''}">${escapeHtml(m.name)}</button>`).join('')}
         </div></div>
     <div class="tasks">${list.map(taskCard).join('')||'<p style="color:var(--gray-400);padding:20px;">Nenhuma tarefa encontrada.</p>'}</div>`;
 }
@@ -3076,7 +3101,7 @@ function renderTeamTab(){
         h+=`<div class="card" ${isMe?'style="border:2px solid var(--purple-300);"':''}><div class="card-hdr"><div class="av" style="background:${m.avatar_color}">${initials(m.name)}</div><div><div class="nm">${escapeHtml(m.name)}${isMe?' <span style="font-size:10px;color:var(--purple-500);font-weight:600;">(você)</span>':''}</div><div class="org">${escapeHtml(m.organization||'')} · ${escapeHtml(RL[m.role]||m.role||'')}</div></div></div>
             <div class="card-note">${escapeHtml(m.notes||'')}</div>
             <div class="card-stats">${pend} pend. (conduz) · ${done} conc. · ${apo} apoio entrega</div>
-            <div class="card-tasks">${mt.filter(t=>t.status!=='concluida').slice(0,5).map(t=>`<div class="card-task"><span>${escapeHtml(t.title.slice(0,40))}${t.title.length>40?'...':''}</span><span class="mini-badge badge ${t.priority}">${escapeHtml(PR[t.priority]||'')}</span></div>`).join('')}</div>
+            <div class="card-tasks">${mt.filter(t=>t.status!=='concluida').slice(0,5).map(t=>{const pc=phaseColor(t.phase);const mt2=monthTag(t.due_date);return`<div class="card-task"><span>${escapeHtml(t.title.slice(0,40))}${t.title.length>40?'...':''}</span><span class="mini-badge month-tag" style="background:${pc}18;color:${pc};border:1px solid ${pc}44">${mt2}</span></div>`;}).join('')}</div>
             ${editBtn}</div>`;
     });
     return h+'</div>';
