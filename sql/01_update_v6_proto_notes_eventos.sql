@@ -217,6 +217,11 @@ WHERE NOT EXISTS (
 );
 
 -- ─────────────────────────────────────────────────────────────────────────────
+-- 5) ÍNDICE adicional para activity_log (histórico completo — limit 300)
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_activity_log_entity ON activity_log (entity_type, created_at DESC);
+
+-- ─────────────────────────────────────────────────────────────────────────────
 -- FIM — Validação rápida após execução:
 --   SELECT count(*) FROM public_eventos_cal;  → ≥ 7
 --   SELECT count(*) FROM proto_notes;         → 0 (populado pelo frontend)

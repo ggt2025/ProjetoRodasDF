@@ -1879,6 +1879,7 @@ async function siteRodaSaveModal(){
     try{
         if(window._siteRodaEditId)await apiPatch('public_rodas_site',window._siteRodaEditId,body);
         else await apiPost('public_rodas_site',body);
+        logAct((window._siteRodaEditId?'✏️ Card de Roda atualizado: ':'➕ Novo card de Roda criado: ')+body.title,'site');
         closeModal('rodaSite');
         await loadPublicNewsAndRender();
         if(S.activeTab==='site')await siteReloadPanel();
@@ -1888,6 +1889,7 @@ async function siteRodaDelete(id){
     if(!confirm('Excluir este registro?'))return;
     try{
         await apiDel('public_rodas_site',id);
+        logAct('🗑️ Card de Roda removido do site','site');
         await loadPublicNewsAndRender();
         if(S.activeTab==='site')await siteReloadPanel();
     }catch(e){alert('Erro ao excluir: '+(e&&e.message?e.message:String(e)));}
@@ -1906,12 +1908,14 @@ async function siteSaveEditalForm(){
     };
     try{
         await apiPatch('public_edital_site',1,body);
+        logAct('📄 Edital de capacitação atualizado','site');
         await loadPublicNewsAndRender();
         if(S.activeTab==='site')await siteReloadPanel();
         alert('Edital salvo.');
     }catch(e1){
         try{
             await apiPost('public_edital_site',Object.assign({id:1},body));
+            logAct('📄 Edital de capacitação publicado','site');
             await loadPublicNewsAndRender();
             if(S.activeTab==='site')await siteReloadPanel();
             alert('Edital salvo.');
@@ -2030,6 +2034,36 @@ async function apiPatch(table,id,data){
 }
 async function apiDel(table,id){
     await fetch(`${S.url}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:supabaseRestHeaders()});
+}
+
+// --- Log de Atividade ---
+// Chame logAct(desc, entityType?, taskId?) em toda mutação.
+// Persiste em S.activity (imediato) + activity_log no Supabase (se conectado).
+function logAct(description, entityType, taskId){
+    const entry={
+        id:'la_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),
+        user_name: (S.user&&S.user.name)||'Sistema',
+        actor_name: (S.user&&S.user.name)||'Sistema',
+        description: String(description),
+        action: String(description),
+        entity_type: entityType||'geral',
+        task_id: taskId||null,
+        created_at: new Date().toISOString()
+    };
+    if(!Array.isArray(S.activity))S.activity=[];
+    S.activity.unshift(entry);
+    if(S.activity.length>300)S.activity=S.activity.slice(0,300);
+    if(S.connected){
+        apiPost('activity_log',{
+            user_name:entry.user_name,
+            actor_name:entry.actor_name,
+            description:entry.description,
+            action:entry.action,
+            entity_type:entry.entity_type,
+            task_id:entry.task_id||undefined
+        }).catch(function(e){console.warn('[activity_log] write error:',e);});
+    }
+    if(S.activeTab==='activity')renderTab('activity');
 }
 
 // --- Login (Supabase Auth: e-mail + senha) ---
@@ -2230,7 +2264,7 @@ async function loadDataFetchCore(){
     });
     S.comments=await api('comments','select=*&order=created_at.asc');
     if(!Array.isArray(S.comments))S.comments=[];
-    try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=50');if(!Array.isArray(S.activity))S.activity=[];}catch(e){S.activity=[];}
+    try{S.activity=await api('activity_log','select=*&order=created_at.desc&limit=300');if(!Array.isArray(S.activity))S.activity=[];}catch(e){S.activity=[];}
     try{S.forumCats=await api('forum_categories','select=*&order=sort_order');if(!Array.isArray(S.forumCats))S.forumCats=[];}catch(e){S.forumCats=[...DEMO_FORUM_CATS];}
     try{S.forumTopics=await api('forum_topics','select=*&order=created_at.desc');if(!Array.isArray(S.forumTopics))S.forumTopics=[];}catch(e){S.forumTopics=[...DEMO_FORUM_TOPICS];}
     try{S.forumReplies=await api('forum_replies','select=*&order=created_at.asc');if(!Array.isArray(S.forumReplies))S.forumReplies=[];}catch(e){S.forumReplies=[...DEMO_FORUM_REPLIES];}
@@ -2417,6 +2451,7 @@ function addProtoNote(sid){
     if(!Array.isArray(S.protoNotes[sid]))S.protoNotes[sid]=[];
     S.protoNotes[sid].push(note);
     saveProtoNotes();
+    logAct('📝 Observação adicionada no capítulo '+sid,'prototipo');
     if(S.connected){
         apiPost('proto_notes',{id:note.id,section_id:sid,author:note.author,text:note.text,created_at:note.created_at})
             .catch(function(e){console.warn('[proto_notes] sync add error:',e);});
@@ -2432,6 +2467,7 @@ function deleteProtoNote(sid,noteId){
     if(!S.protoNotes||!Array.isArray(S.protoNotes[sid]))return;
     S.protoNotes[sid]=S.protoNotes[sid].filter(function(n){return n.id!==noteId;});
     saveProtoNotes();
+    logAct('🗑️ Observação removida do capítulo '+sid,'prototipo');
     if(S.connected){
         apiDel('proto_notes',noteId).catch(function(e){console.warn('[proto_notes] sync delete error:',e);});
     }
@@ -2524,6 +2560,7 @@ function eventoSaveModal(){
         S.eventos.push(obj);
     }
     saveEventos();
+    logAct((window._eventoEditId?'📅 Evento atualizado: ':'📅 Novo evento criado: ')+obj.titulo,'calendario');
     closeModal('addEvento');
     renderTab('calendario');
     renderPublicCal();
@@ -2533,13 +2570,16 @@ function eventoToggleConfirm(id){
     if(!ev)return;
     ev.confirmado=!ev.confirmado;
     saveEventos();
+    logAct((ev.confirmado?'✅ Evento confirmado: ':'⏳ Evento marcado a confirmar: ')+ev.titulo,'calendario');
     renderTab('calendario');
     renderPublicCal();
 }
 function eventoDelete(id){
     if(!confirm('Excluir este evento?'))return;
+    const ev=(S.eventos||[]).find(function(e){return e.id===id;});
     S.eventos=(S.eventos||[]).filter(function(e){return e.id!==id;});
     saveEventos();
+    logAct('🗑️ Evento removido: '+(ev?ev.titulo:'—'),'calendario');
     renderTab('calendario');
     renderPublicCal();
 }
@@ -2994,6 +3034,7 @@ async function toggleDone(id){
     if(S.connected)try{
         await apiPatch('tasks',id,ns==='concluida'?{status:ns,completed_at:day}:{status:ns,completed_at:null});
     }catch(e){console.error(e);}
+    logAct((ns==='concluida'?'✅ Tarefa concluída: ':'↩️ Tarefa reaberta: ')+t.title,'tarefa',id);
     renderTab(S.activeTab);
 }
 
@@ -3081,6 +3122,9 @@ async function updateTask(id,field,val){
         payload[field]=t[field];
     }
     if(S.connected)try{await apiPatch('tasks',id,payload);}catch(e){console.error(e);}
+    const FIELD_LABELS={status:'status',priority:'prioridade',assigned_to:'responsável',due_date:'prazo',start_date:'início',phase:'fase',delivery_helper_id:'apoio à entrega'};
+    const fl=FIELD_LABELS[field]||field;
+    logAct('Tarefa atualizada — '+fl+': "'+t.title+'"','tarefa',id);
 }
 async function taskSortDeliveryHelper(id){
     const t=S.tasks.find(x=>String(x.id)===String(id));if(!t)return;
@@ -3111,6 +3155,8 @@ async function addComment(tid){
     const c={id:'c_'+Date.now(),task_id:tid,user_name:S.user.name,content:txt,is_system:false,created_at:new Date().toISOString()};
     S.comments.push(c);
     if(S.connected)try{await apiPost('comments',{task_id:tid,user_name:S.user.name,content:txt,is_system:false});}catch(e){console.error(e);}
+    const commentedTask=S.tasks.find(x=>String(x.id)===String(tid));
+    logAct('💬 Comentário adicionado em: '+(commentedTask?commentedTask.title:'tarefa'),'comentario',tid);
     openTaskPanel(tid);
     setTimeout(()=>{const cl=document.getElementById('commentsList');if(cl)cl.scrollTop=cl.scrollHeight;},100);
 }
@@ -3332,26 +3378,81 @@ function renderPrototypesTab(){
 }
 
 // --- ACTIVITY (comentários + activity_log do Supabase) ---
+const ACT_ENTITY_META={
+    tarefa:    {label:'Tarefa',    color:'#7c3aed',bg:'#f5f3ff'},
+    comentario:{label:'Comentário',color:'#2563eb',bg:'#eff6ff'},
+    membro:    {label:'Membro',    color:'#059669',bg:'#ecfdf5'},
+    parceiro:  {label:'Parceiro',  color:'#d97706',bg:'#fffbeb'},
+    calendario:{label:'Calendário',color:'#0891b2',bg:'#ecfeff'},
+    prototipo: {label:'Protótipo', color:'#e11d48',bg:'#fff1f2'},
+    forum:     {label:'Fórum',     color:'#7c3aed',bg:'#fdf4ff'},
+    rede:      {label:'Rede',      color:'#0891b2',bg:'#f0fdfa'},
+    site:      {label:'Site',      color:'#44403c',bg:'#fafaf9'},
+    geral:     {label:'Geral',     color:'#6b7280',bg:'#f9fafb'}
+};
 function renderActivityTab(){
     const logRows=Array.isArray(S.activity)?S.activity:[];
     const fromLog=logRows.map(a=>{
         const who=a.user_name||a.actor_name||a.actor||'Sistema';
         const text=a.description||a.action||a.message||a.detail||(a.entity_type?String(a.entity_type)+': alteração':JSON.stringify(a).slice(0,120));
-        return{type:'log',time:a.created_at,who:String(who),text:String(text),sys:true,taskId:a.task_id};
+        const etype=(a.entity_type||'geral').toLowerCase();
+        return{type:'log',time:a.created_at,who:String(who),text:String(text),etype,taskId:a.task_id};
     });
-    const fromComm=S.comments.map(c=>({type:'comment',time:c.created_at,who:c.user_name,text:c.content,sys:c.is_system,taskId:c.task_id}));
-    const items=[...fromLog,...fromComm].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,60);
-    if(!items.length)return'<p style="color:var(--gray-400);padding:20px;">Nenhuma atividade registrada ainda. Comentários e o log <code>activity_log</code> (se existir no Supabase) aparecem aqui.</p>';
-    let h=`<div class="section-hdr"><h2 class="section-title">🕐 Atividade Recente</h2></div><div class="admin-section">`;
+    const fromComm=S.comments.map(c=>({type:'comment',time:c.created_at,who:c.user_name,text:'💬 '+c.content,etype:'comentario',taskId:c.task_id}));
+    const items=[...fromLog,...fromComm].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,200);
+    const total=items.length;
+    let h=`<div class="section-hdr">
+        <h2 class="section-title">🕐 Histórico de Atividades</h2>
+        <span style="font-size:12px;color:var(--gray-400);margin-left:8px;">${total} registro${total!==1?'s':''}</span>
+    </div>`;
+    if(!total){
+        return h+`<div class="admin-section"><p style="color:var(--gray-400);padding:20px 0;">Nenhuma atividade registrada ainda. Todas as modificações feitas no painel aparecerão aqui automaticamente.</p></div>`;
+    }
+    // group by date
+    const byDate={};
     items.forEach(i=>{
-        const task=S.tasks.find(t=>t.id===i.taskId);
-        const tn=task?task.title:'—';
-        h+=`<div class="activity-item ${i.sys?'system':''}">
-            <div style="display:flex;justify-content:space-between"><strong>${escapeHtml(i.who)}</strong><span class="activity-time">${fmtDateTime(i.time)}</span></div>
-            <div style="color:var(--gray-600)">${escapeHtml(i.text)}</div>
-            <div style="font-size:11px;color:var(--gray-400)">em: ${escapeHtml(tn)}</div></div>`;
+        const d=i.time?(i.time.slice(0,10)):'sem data';
+        if(!byDate[d])byDate[d]=[];
+        byDate[d].push(i);
+    });
+    h+=`<div class="admin-section" style="padding:0;">`;
+    Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).forEach(function(date){
+        const label=date==='sem data'?'Data desconhecida':(function(){
+            const d=new Date(date+'T12:00:00');
+            const today=new Date();today.setHours(12,0,0,0);
+            const yest=new Date(today);yest.setDate(yest.getDate()-1);
+            if(d.toDateString()===today.toDateString())return'Hoje, '+d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
+            if(d.toDateString()===yest.toDateString())return'Ontem, '+d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
+            return d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+        })();
+        h+=`<div style="padding:10px 20px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);border-top:1px solid var(--gray-100)">${escapeHtml(label)}</div>`;
+        byDate[date].forEach(function(i){
+            const meta=ACT_ENTITY_META[i.etype]||ACT_ENTITY_META.geral;
+            const badge=`<span style="display:inline-block;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;background:${meta.bg};color:${meta.color};border:1px solid ${meta.color}22;white-space:nowrap;">${meta.label}</span>`;
+            const task=i.taskId?S.tasks.find(t=>String(t.id)===String(i.taskId)):null;
+            const av=`<span class="av" style="width:28px;height:28px;font-size:10px;flex-shrink:0;background:${memberColorByName(i.who)}">${initials(i.who)}</span>`;
+            h+=`<div class="activity-item" style="display:flex;gap:10px;align-items:flex-start;padding:10px 20px;border-bottom:1px solid var(--gray-100);">
+                ${av}
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:3px;">
+                        <strong style="font-size:13px;">${escapeHtml(i.who)}</strong>
+                        ${badge}
+                        <span style="font-size:11px;color:var(--gray-400);margin-left:auto;">${fmtDateTime(i.time)}</span>
+                    </div>
+                    <div style="font-size:13px;color:var(--gray-700);line-height:1.4;">${escapeHtml(i.text)}</div>
+                    ${task?`<div style="font-size:11px;color:var(--gray-400);margin-top:2px;">↳ tarefa: ${escapeHtml(task.title)}</div>`:''}
+                </div>
+            </div>`;
+        });
     });
     return h+'</div>';
+}
+function memberColorByName(name){
+    const m=S.team&&S.team.find(function(x){return x.name&&x.name.toLowerCase()===(name||'').toLowerCase();});
+    if(m&&m.avatar_color)return m.avatar_color;
+    const palette=['#7c3aed','#2563eb','#059669','#d97706','#e11d48','#0891b2'];
+    let h=0;for(let i=0;i<(name||'').length;i++)h+=name.charCodeAt(i);
+    return palette[h%palette.length];
 }
 
 // --- ADMIN ---
@@ -3490,6 +3591,7 @@ async function saveMember(id){
     const data={name:document.getElementById('em-name').value,organization:document.getElementById('em-org').value,email:document.getElementById('em-email').value||null,role:document.getElementById('em-role').value,avatar_color:document.getElementById('em-color').value,notes:document.getElementById('em-notes').value};
     const m=S.team.find(x=>x.id===id);if(m)Object.assign(m,data);
     if(S.connected)try{await apiPatch('team_members',id,data);}catch(e){console.error(e);}
+    logAct('✏️ Membro atualizado: '+data.name,'membro');
     closePanel();
 }
 function editMyProfile(id){
@@ -3517,6 +3619,7 @@ async function saveMyProfile(id){
     if(!data.name){alert('Nome é obrigatório.');return;}
     const m=S.team.find(x=>x.id===id);if(m)Object.assign(m,data);
     if(S.connected)try{await apiPatch('team_members',id,data);}catch(e){console.error(e);}
+    logAct('👤 Perfil atualizado: '+data.name,'membro');
     S.user.name=data.name;
     S.user.color=data.avatar_color;
     document.getElementById('userName').textContent=data.name;
@@ -3613,6 +3716,7 @@ async function createTask(){
     }
     if(S.connected){try{const r=await apiPost('tasks',data);if(r&&r.length)S.tasks.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.tasks.push(data);}}
     else{data.id='l_'+Date.now();data.created_at=new Date().toISOString();S.tasks.push(data);}
+    logAct('Nova tarefa criada: '+data.title,'tarefa');
     closeModal('addTask');renderTab(S.activeTab);
 }
 
@@ -3622,6 +3726,7 @@ async function createMember(){
     const data={name,email:document.getElementById('nm-email').value.trim()||null,organization:document.getElementById('nm-org').value.trim(),role:document.getElementById('nm-role').value,avatar_color:document.getElementById('nm-color').value,notes:document.getElementById('nm-notes').value.trim(),is_active:true};
     if(S.connected){try{const r=await apiPost('team_members',data);if(r&&r.length)S.team.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.team.push(data);}}
     else{data.id='l_'+Date.now();S.team.push(data);}
+    logAct('👤 Novo membro adicionado: '+data.name,'membro');
     closeModal('addMember');renderTab(S.activeTab);
 }
 
@@ -3631,6 +3736,7 @@ async function createPartner(){
     const data={name,type:document.getElementById('np-type').value,contact_person:document.getElementById('np-contact').value.trim(),status:'pendente',contribution:document.getElementById('np-contrib').value.trim(),receives:document.getElementById('np-receives').value.trim(),notes:document.getElementById('np-notes').value.trim()};
     if(S.connected){try{const r=await apiPost('partners',data);if(r&&r.length)S.partners.push(r[0]);}catch(e){console.error(e);data.id='l_'+Date.now();S.partners.push(data);}}
     else{data.id='l_'+Date.now();S.partners.push(data);}
+    logAct('🤝 Novo parceiro adicionado: '+data.name,'parceiro');
     closeModal('addPartner');renderTab(S.activeTab);
 }
 
@@ -3819,6 +3925,7 @@ function forumCreateTopic(){
     if(S.connected){
         (async()=>{try{const r=await apiPost('forum_topics',{category_id:catId,title,body,author_name:S.user.name});if(r&&r.length){t.id=r[0].id;t.created_at=r[0].created_at;}}catch(e){console.error(e);}})();
     }
+    logAct('💬 Novo tópico no fórum: "'+title+'"','forum');
     closeModal('forumTopic');
     S.forumView='topic';S.forumTopicOpen=t.id;
     renderTab('forum');
@@ -3833,6 +3940,8 @@ function forumAddReply(tid){
     if(S.connected){
         (async()=>{try{await apiPost('forum_replies',{topic_id:tid,body,author_name:S.user.name});}catch(e){console.error(e);}})();
     }
+    const repliedTopic=S.forumTopics.find(x=>x.id===tid);
+    logAct('↩️ Resposta no fórum: "'+(repliedTopic?repliedTopic.title:'tópico')+'"','forum');
     renderTab('forum');
 }
 
@@ -4269,11 +4378,13 @@ function redeSaveItem(){
         const idx=c.arr.findIndex(x=>x.id===id);
         if(idx>=0)Object.assign(c.arr[idx],obj);
         if(c.tbl&&S.connected)(async()=>{try{await apiPatch(c.tbl+'?id=eq.'+id,obj);}catch(e){console.error(e);}})();
+        logAct('✏️ Item atualizado na rede ('+type+'): '+(obj.nome||obj.name||id),'rede');
     }else{
         const newId=type.charAt(0)+'_'+Date.now();
         obj.id=newId;
         c.arr.push(obj);
         if(c.tbl&&S.connected)(async()=>{try{await apiPost(c.tbl,obj);}catch(e){console.error(e);}})();
+        logAct('➕ Novo item adicionado na rede ('+type+'): '+(obj.nome||obj.name||newId),'rede');
     }
     closeModal('redeItem');
     renderTab('rede');
@@ -4293,9 +4404,11 @@ function redeDeleteItem(type,id){
     const c=colMap[type];
     if(!c)return;
     const arr=c.get();
+    const removed=arr.find(x=>x.id===id);
     const idx=arr.findIndex(x=>x.id===id);
     if(idx>=0)arr.splice(idx,1);
     if(c.tbl&&S.connected)(async()=>{try{await api(c.tbl+'?id=eq.'+id,'DELETE');}catch(e){console.error(e);}})();
+    logAct('🗑️ Item removido da rede ('+type+'): '+(removed&&(removed.nome||removed.name)||id),'rede');
     renderTab('rede');
 }
 

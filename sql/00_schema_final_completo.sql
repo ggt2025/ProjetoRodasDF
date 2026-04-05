@@ -362,6 +362,7 @@ CREATE INDEX IF NOT EXISTS idx_tasks_due_date         ON tasks (due_date);
 CREATE INDEX IF NOT EXISTS idx_tasks_phase            ON tasks (phase);
 CREATE INDEX IF NOT EXISTS idx_comments_task_id       ON comments (task_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_created   ON activity_log (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_log_entity    ON activity_log (entity_type, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_forum_topics_cat       ON forum_topics (category_id);
 CREATE INDEX IF NOT EXISTS idx_forum_topics_pinned    ON forum_topics (is_pinned DESC, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_forum_replies_topic    ON forum_replies (topic_id, created_at);
