@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public_news (
   title text NOT NULL,
   excerpt text DEFAULT '',
   body text DEFAULT '',
+  image_url text DEFAULT '',
   is_published boolean NOT NULL DEFAULT true,
   sort_order int DEFAULT 0,
   created_at timestamptz DEFAULT now()
@@ -42,3 +43,6 @@ SELECT CURRENT_DATE,
   'A página pública lê a tabela public_news. O cronograma usa due_date e, opcionalmente, start_date em cada tarefa.',
   true
 WHERE NOT EXISTS (SELECT 1 FROM public_news LIMIT 1);
+
+-- Tabelas já criadas sem foto no card: adicione a coluna.
+ALTER TABLE public_news ADD COLUMN IF NOT EXISTS image_url text DEFAULT '';

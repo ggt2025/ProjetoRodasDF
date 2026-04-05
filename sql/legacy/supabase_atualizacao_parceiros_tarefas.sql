@@ -2,6 +2,10 @@
 -- Rede de Rodas do DF — atualização no Supabase
 -- Rode no SQL Editor (Dashboard → SQL → New query).
 -- Ajuste nomes de colunas se o seu schema for diferente.
+--
+-- PRÉ-REQUISITO (enum member_role): se ainda não rodou, execute ANTES,
+-- numa query separada (commit obrigatório entre os dois — senão 55P04):
+--   sql/00_enum_member_role_apoio_tecnico.sql
 -- ============================================================
 
 -- 1) IML não é parceiro institucional (nada fechado com o órgão). Márcia = psicóloga do IML, só referência técnica possível.
@@ -68,6 +72,46 @@ WHERE tm.is_active IS NOT FALSE
   AND tm.name ILIKE '%Thaís%'
   AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.title ILIKE '%Adalgiza%')
 LIMIT 1;
+
+-- 4c) Giselle — contato Dra. Sofia (MP / caso Henry Borel)
+INSERT INTO tasks (title, description, phase, status, priority, assigned_to, due_date, notes)
+SELECT
+  'Contatar Dra. Sofia — MP/PJ (Henry Borel)',
+  'Ligar ou agendar contato com a Dra. Sofia na promotoria (Ministério Público) no âmbito do caso Henry Borel — alinhar possível articulação ou informações úteis à Rede de Rodas do DF.',
+  'fase_0_semente',
+  'pendente',
+  'alta',
+  tm.id,
+  '2026-04-18',
+  'Responsável: Giselle. Registrar retorno nas notas da tarefa.'
+FROM team_members tm
+WHERE tm.is_active IS NOT FALSE
+  AND tm.name ILIKE '%Giselle%'
+  AND NOT EXISTS (
+    SELECT 1 FROM tasks t
+    WHERE t.title ILIKE '%Dra. Sofia%' OR t.title ILIKE '%Henry Borel%'
+  )
+LIMIT 1;
+
+-- 4d) Thaís — acordo técnico com NUAV (MPDFT), Fase 1 (piloto)
+INSERT INTO tasks (title, description, phase, status, priority, assigned_to, due_date, notes)
+SELECT
+  'Acordo técnico com o NUAV (MPDFT)',
+  'Formalizar ou alinhar acordo técnico com o NUAV (Núcleo de Apoio à Vítima / atenção à vítima no MPDFT-DF): fluxos de encaminhamento, linguagem de acolhimento e interface com capacitação e rodas — sem sobrepor competências.',
+  'fase_1_piloto',
+  'pendente',
+  'alta',
+  tm.id,
+  '2026-06-15',
+  'Fase correta: Fase 1 (piloto) — alinhar à 1ª turma e às rodas-piloto. Responsável: Thaís. (No app: start_date sugerida 2026-06-01.)'
+FROM team_members tm
+WHERE tm.is_active IS NOT FALSE
+  AND tm.name ILIKE '%Thaís%'
+  AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.title ILIKE '%NUAV%')
+LIMIT 1;
+
+-- Opcional (se a coluna start_date existir em tasks): definir início no cronograma jun/2026.
+-- UPDATE tasks SET start_date = '2026-06-01' WHERE title ILIKE '%Acordo técnico com o NUAV%' AND start_date IS NULL;
 
 INSERT INTO partners (name, type, contact_person, status, contribution, receives, notes)
 SELECT
