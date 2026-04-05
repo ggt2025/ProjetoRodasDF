@@ -2241,6 +2241,18 @@ async function loadDataFetchCore(){
     try{const rl=await api('rede_legislacao','select=*&order=data');if(Array.isArray(rl)&&rl.length)DEMO_LEGISLACAO.splice(0,DEMO_LEGISLACAO.length,...rl);}catch(e){}
     try{const rp=await api('rede_publicacoes','select=*&order=data.desc');if(Array.isArray(rp)&&rp.length)DEMO_PUBLICACOES.splice(0,DEMO_PUBLICACOES.length,...rp);}catch(e){}
     try{const rs=await api('rede_sites','select=*&order=nome');if(Array.isArray(rs)&&rs.length)DEMO_SITES_INST.splice(0,DEMO_SITES_INST.length,...rs);}catch(e){}
+    try{
+        const pn=await api('proto_notes','select=*&order=created_at.asc');
+        if(Array.isArray(pn)&&pn.length){
+            const grouped={};
+            pn.forEach(function(n){
+                if(!grouped[n.section_id])grouped[n.section_id]=[];
+                grouped[n.section_id].push({id:n.id,author:n.author,text:n.text,created_at:n.created_at});
+            });
+            S.protoNotes=grouped;
+            saveProtoNotes();
+        }
+    }catch(e){}
 }
 async function loadData(){
     if(!S.connected)return;
@@ -2371,7 +2383,7 @@ function renderProtoNotesBlock(sid){
         <textarea id="proto-note-input-${sid}" placeholder="Descreva uma observação, adaptação ou prática local para este capítulo…" rows="3"></textarea>
         <div class="proto-note-add-row">
             <button type="button" class="btn btn-primary" style="font-size:13px;padding:7px 16px" onclick="addProtoNote('${sid}')">+ Adicionar observação</button>
-            <span style="font-size:11px;color:var(--gray-400)">Salvo localmente neste navegador.</span>
+            <span style="font-size:11px;color:var(--gray-400)">${S.connected?'Sincronizado com o banco de dados.':'Salvo localmente neste navegador.'}</span>
         </div>
     </div>`;
     return `<div class="proto-notes">
@@ -2405,6 +2417,10 @@ function addProtoNote(sid){
     if(!Array.isArray(S.protoNotes[sid]))S.protoNotes[sid]=[];
     S.protoNotes[sid].push(note);
     saveProtoNotes();
+    if(S.connected){
+        apiPost('proto_notes',{id:note.id,section_id:sid,author:note.author,text:note.text,created_at:note.created_at})
+            .catch(function(e){console.warn('[proto_notes] sync add error:',e);});
+    }
     _protoNotesOpen.add(sid);
     // re-render apenas o bloco de notas desse capítulo, sem refazer a aba inteira
     const block=document.getElementById('proto-notes-block-'+sid);
@@ -2416,6 +2432,9 @@ function deleteProtoNote(sid,noteId){
     if(!S.protoNotes||!Array.isArray(S.protoNotes[sid]))return;
     S.protoNotes[sid]=S.protoNotes[sid].filter(function(n){return n.id!==noteId;});
     saveProtoNotes();
+    if(S.connected){
+        apiDel('proto_notes',noteId).catch(function(e){console.warn('[proto_notes] sync delete error:',e);});
+    }
     _protoNotesOpen.add(sid);
     const block=document.getElementById('proto-notes-block-'+sid);
     if(block)block.outerHTML=`<div id="proto-notes-block-${sid}">${renderProtoNotesBlock(sid)}</div>`;

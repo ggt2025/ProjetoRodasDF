@@ -1,22 +1,27 @@
 -- =============================================================================
--- REDE DE RODAS DO DF — SCHEMA COMPLETO FINAL (v5 SAAD)
+-- REDE DE RODAS DO DF — SCHEMA COMPLETO FINAL (v6)
 -- Sistema de Articulação, Apoio e Deliberação
 -- PostgreSQL 15+ / Supabase
 --
--- COBRE
---   Tabelas: team_members, partners, tasks (c/ delivery_helper_id),
---            comments, activity_log, public_news,
---            forum_categories, forum_topics, forum_replies,
---            rede_servicos, rede_articulacoes,
---            rede_ferramentas, rede_fluxos, rede_legislacao, rede_publicacoes, rede_sites,
---            public_rodas_site, public_edital_site,
---            pontes
---   Índices, RLS, GRANTs, seeds (equipe, parceiros, tarefas, fórum, rede, pontes, site público)
+-- COBRE (21 tabelas)
+--   team_members, partners, tasks (c/ delivery_helper_id, start_date, completed_at),
+--   comments, activity_log, public_news,
+--   forum_categories, forum_topics, forum_replies,
+--   rede_servicos, rede_articulacoes, rede_ferramentas, rede_fluxos,
+--   rede_legislacao, rede_publicacoes, rede_sites,
+--   public_rodas_site, public_edital_site, public_eventos_cal,
+--   pontes, proto_notes
 --
--- COMO RODAR
+--   Índices, RLS, GRANTs, seeds (equipe, parceiros, tarefas, fórum,
+--   rede de serviços, pontes, calendário público, site público)
+--
+-- COMO RODAR (instalação do zero)
 --   1) Supabase → SQL Editor → New query → colar este arquivo → Run
 --   2) Settings → API → copiar URL e anon key para o index.html
---   3) Se já existem tabelas, IF NOT EXISTS evita duplicação
+--   3) IF NOT EXISTS em todo lugar → seguro re-executar
+--
+-- ATUALIZAÇÃO DE INSTÂNCIA EXISTENTE
+--   Rode sql/01_update_v6_proto_notes_eventos.sql em vez deste arquivo.
 -- =============================================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -329,6 +334,23 @@ CREATE TABLE IF NOT EXISTS pontes (
 COMMENT ON TABLE pontes IS 'Articulações institucionais da rede — cada registro é uma «ponte» com órgão, rede ou parceiro, agrupada por eixo (grupo).';
 
 -- ═══════════════════════════════════════════════════════════════════
+-- 5c) OBSERVAÇÕES E PRÁTICAS LOCAIS — PROTÓTIPOS METODOLÓGICOS
+-- ═══════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS proto_notes (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  section_id       text NOT NULL,
+  section_title    text DEFAULT '',
+  author           text NOT NULL DEFAULT '',
+  author_member_id uuid REFERENCES team_members (id) ON DELETE SET NULL,
+  text             text NOT NULL DEFAULT '',
+  created_at       timestamptz NOT NULL DEFAULT now(),
+  updated_at       timestamptz NOT NULL DEFAULT now()
+);
+COMMENT ON TABLE proto_notes IS
+  'Observações e práticas locais registradas pela equipe em cada capítulo dos Protótipos Metodológicos. section_id corresponde ao id do protótipo no frontend (ex.: proto-p1, proto-p2 …).';
+
+-- ═══════════════════════════════════════════════════════════════════
 -- 6) ÍNDICES
 -- ═══════════════════════════════════════════════════════════════════
 
@@ -351,6 +373,8 @@ CREATE INDEX IF NOT EXISTS idx_rede_fluxos_status      ON rede_fluxos (status);
 CREATE INDEX IF NOT EXISTS idx_rede_publicacoes_tipo   ON rede_publicacoes (tipo);
 CREATE INDEX IF NOT EXISTS idx_public_rodas_site_sort  ON public_rodas_site (sort_order);
 CREATE INDEX IF NOT EXISTS idx_pontes_grupo            ON pontes (grupo);
+CREATE INDEX IF NOT EXISTS idx_proto_notes_section     ON proto_notes (section_id);
+CREATE INDEX IF NOT EXISTS idx_proto_notes_created     ON proto_notes (created_at DESC);
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 7) ROW LEVEL SECURITY
@@ -374,8 +398,9 @@ ALTER TABLE rede_publicacoes  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rede_sites        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_rodas_site ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_edital_site ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pontes            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pontes             ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_eventos_cal ENABLE ROW LEVEL SECURITY;
+ALTER TABLE proto_notes        ENABLE ROW LEVEL SECURITY;
 
 -- Limpa nomes anteriores se reexecutar
 DO $$ DECLARE _t text; _p text;
@@ -400,7 +425,9 @@ BEGIN
       ('rede_sites','rrdf_auth_rede_site'),('rede_sites','rrdf_anon_rede_site'),
       ('public_rodas_site','public_rodas_site_select_visible'),('public_rodas_site','public_rodas_site_auth_all'),
       ('public_edital_site','public_edital_site_select'),('public_edital_site','public_edital_site_auth_all'),
-      ('pontes','rrdf_auth_pontes'),('pontes','rrdf_anon_pontes')
+      ('pontes','rrdf_auth_pontes'),('pontes','rrdf_anon_pontes'),
+      ('public_eventos_cal','pub_eventos_select_visible'),('public_eventos_cal','pub_eventos_auth_all'),
+      ('proto_notes','proto_notes_auth_all'),('proto_notes','proto_notes_anon_sel')
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I ON %I', _p, _t);
   END LOOP;
@@ -455,6 +482,9 @@ CREATE POLICY "rrdf_anon_pontes" ON pontes FOR SELECT TO anon USING (true);
 CREATE POLICY "pub_eventos_select_visible" ON public_eventos_cal FOR SELECT TO anon, authenticated USING (is_visible = true);
 CREATE POLICY "pub_eventos_auth_all"       ON public_eventos_cal FOR ALL    TO authenticated      USING (true) WITH CHECK (true);
 
+CREATE POLICY "proto_notes_auth_all" ON proto_notes FOR ALL    TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "proto_notes_anon_sel" ON proto_notes FOR SELECT TO anon          USING (true);
+
 -- ═══════════════════════════════════════════════════════════════════
 -- 8) GRANTS
 -- ═══════════════════════════════════════════════════════════════════
@@ -475,6 +505,8 @@ GRANT SELECT ON public_edital_site TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public_edital_site TO authenticated;
 GRANT SELECT ON public_eventos_cal TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public_eventos_cal TO authenticated;
+GRANT SELECT ON proto_notes TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON proto_notes TO authenticated;
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 9) SEED — Equipe
@@ -840,21 +872,23 @@ INSERT INTO pontes (grupo, funcao, ponte, responsavel, notas) SELECT 'MPDFT (red
 INSERT INTO pontes (grupo, funcao, ponte, responsavel, notas) SELECT 'MPDFT (rede próxima)', 'SEPS — Setor Psicossocial do MPDFT.', 'Ponte possível com o setor psicossocial (SEPS): alinhar linguagem de acolhimento, apoio técnico à capacitação, encaminhamentos e continuidade de cuidado com mulheres em situação de violência — coerente com metodologia das rodas e com rede interinstitucional.', 'A definir', 'Confirmar interlocução nominal no MPDFT-DF.' WHERE NOT EXISTS (SELECT 1 FROM pontes WHERE grupo='MPDFT (rede próxima)' AND ponte ILIKE '%SEPS%');
 
 -- ═══════════════════════════════════════════════════════════════════
--- FIM — Validação:
---   SELECT count(*) FROM team_members;                → 6
---   SELECT count(*) FROM partners;                    → 10
---   SELECT count(*) FROM tasks;                       → 7
---   SELECT count(*) FROM forum_categories;            → 5
+-- FIM — Validação rápida pós-execução:
+--   SELECT count(*) FROM team_members;                   → 6
+--   SELECT count(*) FROM partners;                       → 10
+--   SELECT count(*) FROM tasks;                          → 8
+--   SELECT count(*) FROM forum_categories;               → 5
 --   SELECT count(*) FROM public_news WHERE is_published; → 6
---   SELECT count(*) FROM rede_servicos;               → ~30
---   SELECT count(*) FROM rede_articulacoes;           → 10
---   SELECT count(*) FROM rede_ferramentas;            → 10
---   SELECT count(*) FROM rede_fluxos;                 → 8
---   SELECT count(*) FROM rede_legislacao;             → 8
---   SELECT count(*) FROM rede_publicacoes;            → 8
---   SELECT count(*) FROM rede_sites;                  → 8
---   SELECT count(*) FROM public_rodas_site;           → 3
---   SELECT count(*) FROM public_edital_site;          → 1
---   SELECT count(*) FROM pontes;                      → 16
--- TOTAL: 19 tabelas + extensão pgcrypto
+--   SELECT count(*) FROM rede_servicos;                  → ~30
+--   SELECT count(*) FROM rede_articulacoes;              → 10
+--   SELECT count(*) FROM rede_ferramentas;               → 10
+--   SELECT count(*) FROM rede_fluxos;                    → 8
+--   SELECT count(*) FROM rede_legislacao;                → 8
+--   SELECT count(*) FROM rede_publicacoes;               → 8
+--   SELECT count(*) FROM rede_sites;                     → 8
+--   SELECT count(*) FROM public_rodas_site;              → 3
+--   SELECT count(*) FROM public_edital_site;             → 1
+--   SELECT count(*) FROM public_eventos_cal;             → 7
+--   SELECT count(*) FROM pontes;                         → 16
+--   SELECT count(*) FROM proto_notes;                    → 0 (populado pelo frontend)
+-- TOTAL: 21 tabelas + extensão pgcrypto
 -- ═══════════════════════════════════════════════════════════════════
