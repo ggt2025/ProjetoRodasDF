@@ -1,19 +1,21 @@
 -- =============================================================================
--- REDE DE RODAS DO DF — SCHEMA COMPLETO FINAL (v6)
+-- REDE DE RODAS DO DF — SCHEMA COMPLETO FINAL (v7)
 -- Sistema de Articulação, Apoio e Deliberação
 -- PostgreSQL 15+ / Supabase
 --
--- COBRE (21 tabelas)
+-- COBRE (23 tabelas)
 --   team_members, partners, tasks (c/ delivery_helper_id, start_date, completed_at),
 --   comments, activity_log, public_news,
 --   forum_categories, forum_topics, forum_replies,
 --   rede_servicos, rede_articulacoes, rede_ferramentas, rede_fluxos,
 --   rede_legislacao, rede_publicacoes, rede_sites,
 --   public_rodas_site, public_edital_site, public_eventos_cal,
---   pontes, proto_notes
+--   pontes, proto_notes,
+--   rodas_mapeadas, member_rodas
 --
 --   Índices, RLS, GRANTs, seeds (equipe, parceiros, tarefas, fórum,
---   rede de serviços, pontes, calendário público, site público)
+--   rede de serviços, pontes, calendário público, site público,
+--   levantamento de rodas existentes no DF)
 --
 -- COMO RODAR (instalação do zero)
 --   1) Supabase → SQL Editor → New query → colar este arquivo → Run
@@ -351,6 +353,49 @@ COMMENT ON TABLE proto_notes IS
   'Observações e práticas locais registradas pela equipe em cada capítulo dos Protótipos Metodológicos. section_id corresponde ao id do protótipo no frontend (ex.: proto-p1, proto-p2 …).';
 
 -- ═══════════════════════════════════════════════════════════════════
+-- 5d) MAPEAMENTO DE RODAS EXISTENTES NO DF
+-- ═══════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS rodas_mapeadas (
+  id               uuid  PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome             text  NOT NULL DEFAULT '',
+  tipo             text  NOT NULL DEFAULT 'outro'
+    CHECK (tipo IN (
+      'espaco_acolher','ceam','crmb','cepav',
+      'direito_delas','comite_protecao','casa_mulher',
+      'rede_territorial','projeto','outro'
+    )),
+  instituicao      text  DEFAULT '',
+  circunscricao    text  NOT NULL DEFAULT '',
+  endereco         text  DEFAULT '',
+  telefone         text  DEFAULT '',
+  email            text  DEFAULT '',
+  horario          text  DEFAULT '',
+  frequencia       text  NOT NULL DEFAULT 'permanente'
+    CHECK (frequencia IN ('permanente','mensal','semanal','quinzenal','pontual','a_confirmar')),
+  descricao        text  DEFAULT '',
+  cobertura        text  DEFAULT '',
+  confirmado_rede  boolean NOT NULL DEFAULT false,
+  is_visible       boolean NOT NULL DEFAULT true,
+  sort_order       int   NOT NULL DEFAULT 0,
+  created_at       timestamptz NOT NULL DEFAULT now()
+);
+COMMENT ON TABLE rodas_mapeadas IS
+  'Equipamentos e iniciativas permanentes de apoio a mulheres no DF — levantamento Rodas DF (abril/2026). confirmado_rede=true indica que a rede local confirmou os dados.';
+
+CREATE TABLE IF NOT EXISTS member_rodas (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id  uuid NOT NULL REFERENCES team_members  (id) ON DELETE CASCADE,
+  roda_id    uuid NOT NULL REFERENCES rodas_mapeadas (id) ON DELETE CASCADE,
+  papel      text DEFAULT 'participante',
+  notas      text DEFAULT '',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (member_id, roda_id)
+);
+COMMENT ON TABLE member_rodas IS
+  'Vínculo entre membros da equipe e rodas/equipamentos mapeados. Indica que o membro conhece, articula ou participa daquele espaço.';
+
+-- ═══════════════════════════════════════════════════════════════════
 -- 6) ÍNDICES
 -- ═══════════════════════════════════════════════════════════════════
 
@@ -376,6 +421,11 @@ CREATE INDEX IF NOT EXISTS idx_public_rodas_site_sort  ON public_rodas_site (sor
 CREATE INDEX IF NOT EXISTS idx_pontes_grupo            ON pontes (grupo);
 CREATE INDEX IF NOT EXISTS idx_proto_notes_section     ON proto_notes (section_id);
 CREATE INDEX IF NOT EXISTS idx_proto_notes_created     ON proto_notes (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rodas_mapeadas_circ     ON rodas_mapeadas (circunscricao);
+CREATE INDEX IF NOT EXISTS idx_rodas_mapeadas_tipo     ON rodas_mapeadas (tipo);
+CREATE INDEX IF NOT EXISTS idx_rodas_mapeadas_vis      ON rodas_mapeadas (is_visible, circunscricao);
+CREATE INDEX IF NOT EXISTS idx_member_rodas_member     ON member_rodas (member_id);
+CREATE INDEX IF NOT EXISTS idx_member_rodas_roda       ON member_rodas (roda_id);
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 7) ROW LEVEL SECURITY
@@ -402,6 +452,8 @@ ALTER TABLE public_edital_site ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pontes             ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_eventos_cal ENABLE ROW LEVEL SECURITY;
 ALTER TABLE proto_notes        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rodas_mapeadas     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE member_rodas       ENABLE ROW LEVEL SECURITY;
 
 -- Limpa nomes anteriores se reexecutar
 DO $$ DECLARE _t text; _p text;
@@ -428,7 +480,9 @@ BEGIN
       ('public_edital_site','public_edital_site_select'),('public_edital_site','public_edital_site_auth_all'),
       ('pontes','rrdf_auth_pontes'),('pontes','rrdf_anon_pontes'),
       ('public_eventos_cal','pub_eventos_select_visible'),('public_eventos_cal','pub_eventos_auth_all'),
-      ('proto_notes','proto_notes_auth_all'),('proto_notes','proto_notes_anon_sel')
+      ('proto_notes','proto_notes_auth_all'),('proto_notes','proto_notes_anon_sel'),
+      ('rodas_mapeadas','rodas_mapeadas_auth_all'),('rodas_mapeadas','rodas_mapeadas_anon_sel'),
+      ('member_rodas','member_rodas_auth_all'),('member_rodas','member_rodas_anon_sel')
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I ON %I', _p, _t);
   END LOOP;
@@ -483,8 +537,12 @@ CREATE POLICY "rrdf_anon_pontes" ON pontes FOR SELECT TO anon USING (true);
 CREATE POLICY "pub_eventos_select_visible" ON public_eventos_cal FOR SELECT TO anon, authenticated USING (is_visible = true);
 CREATE POLICY "pub_eventos_auth_all"       ON public_eventos_cal FOR ALL    TO authenticated      USING (true) WITH CHECK (true);
 
-CREATE POLICY "proto_notes_auth_all" ON proto_notes FOR ALL    TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "proto_notes_anon_sel" ON proto_notes FOR SELECT TO anon          USING (true);
+CREATE POLICY "proto_notes_auth_all"    ON proto_notes    FOR ALL    TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "proto_notes_anon_sel"    ON proto_notes    FOR SELECT TO anon          USING (true);
+CREATE POLICY "rodas_mapeadas_auth_all" ON rodas_mapeadas FOR ALL    TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "rodas_mapeadas_anon_sel" ON rodas_mapeadas FOR SELECT TO anon          USING (is_visible = true);
+CREATE POLICY "member_rodas_auth_all"   ON member_rodas   FOR ALL    TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "member_rodas_anon_sel"   ON member_rodas   FOR SELECT TO anon          USING (true);
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 8) GRANTS
@@ -508,6 +566,10 @@ GRANT SELECT ON public_eventos_cal TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public_eventos_cal TO authenticated;
 GRANT SELECT ON proto_notes TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON proto_notes TO authenticated;
+GRANT SELECT ON rodas_mapeadas TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON rodas_mapeadas TO authenticated;
+GRANT SELECT ON member_rodas TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON member_rodas TO authenticated;
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 9) SEED — Equipe
@@ -891,5 +953,7 @@ INSERT INTO pontes (grupo, funcao, ponte, responsavel, notas) SELECT 'MPDFT (red
 --   SELECT count(*) FROM public_eventos_cal;             → 7
 --   SELECT count(*) FROM pontes;                         → 16
 --   SELECT count(*) FROM proto_notes;                    → 0 (populado pelo frontend)
--- TOTAL: 21 tabelas + extensão pgcrypto
+--   SELECT count(*) FROM rodas_mapeadas;                 → 55 (levantamento abril/2026)
+--   SELECT count(*) FROM member_rodas;                   → 0 (populado pelo frontend)
+-- TOTAL: 23 tabelas + extensão pgcrypto
 -- ═══════════════════════════════════════════════════════════════════

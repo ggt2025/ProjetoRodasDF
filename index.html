@@ -598,6 +598,49 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
 .cal-legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
 .badge-cal-conf{background:#d1fae5;color:#059669;font-size:11px;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap;}
 .badge-cal-pend{background:#fef3c7;color:#d97706;font-size:11px;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap;}
+/* === RODAS MAPEADAS — pública + admin === */
+.rm-pub-intro{font-size:12px;color:var(--gray-500);line-height:1.5;margin-bottom:16px;padding:10px 14px;background:#fafafa;border-left:3px solid var(--purple-300);border-radius:0 var(--radius) var(--radius) 0;}
+.rm-search-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center;}
+.rm-search-bar input,.rm-search-bar select{font-family:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);color:var(--gray-800);background:white;}
+.rm-search-bar input{flex:1;min-width:160px;}
+.rm-region-section{margin-bottom:24px;}
+.rm-region-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--purple-100);}
+.rm-region-title{font-size:14px;font-weight:700;color:var(--gray-700);}
+.rm-region-count{font-size:11px;color:var(--gray-400);margin-left:2px;}
+.rm-cobertura-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.rm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.rm-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:12px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm);transition:box-shadow .15s;}
+.rm-card:hover{box-shadow:var(--shadow-md);}
+.rm-card-head{display:flex;align-items:flex-start;gap:8px;}
+.rm-tipo-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.rm-status{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.rm-status--conf{background:#d1fae5;color:#059669;}
+.rm-status--pend{background:#fef3c7;color:#d97706;}
+.rm-card-nome{font-size:13px;font-weight:700;color:var(--gray-800);line-height:1.3;}
+.rm-card-inst{font-size:11px;color:var(--gray-400);}
+.rm-card-info{font-size:12px;color:var(--gray-600);display:grid;grid-template-columns:auto 1fr;gap:2px 6px;align-items:baseline;}
+.rm-card-info-lbl{color:var(--gray-400);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.rm-card-desc{font-size:11.5px;color:var(--gray-500);line-height:1.4;border-top:1px solid var(--gray-100);padding-top:6px;}
+.rm-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.rm-vincular-btn{font-size:12px;padding:5px 12px;border-radius:var(--radius);border:1.5px solid var(--purple-300);background:white;color:var(--purple-700);cursor:pointer;font-weight:600;transition:background .15s,border-color .15s;}
+.rm-vincular-btn:hover{background:var(--purple-50);border-color:var(--purple-500);}
+.rm-vincular-btn.vinculado{background:#d1fae5;border-color:#6ee7b7;color:#059669;}
+.rm-vincular-btn.vinculado:hover{background:#a7f3d0;}
+.rm-members-linked{font-size:11px;color:var(--gray-400);display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.rm-admin-actions{display:flex;gap:5px;margin-left:auto;}
+/* pub rodas mapeadas */
+.pub-rm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;}
+.pub-rm-card{background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:12px 14px;box-shadow:var(--shadow-sm);}
+.pub-rm-tipo{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block;margin-bottom:4px;}
+.pub-rm-nome{font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:2px;}
+.pub-rm-inst{font-size:11px;color:var(--gray-400);margin-bottom:5px;}
+.pub-rm-info{font-size:12px;color:var(--gray-600);line-height:1.5;}
+.pub-rm-status{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;margin-top:5px;}
+.rm-region-acc{border:1px solid var(--gray-200);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden;}
+.rm-region-acc-hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--gray-50);cursor:pointer;border:none;width:100%;font-family:inherit;font-size:13px;font-weight:700;color:var(--gray-700);text-align:left;}
+.rm-region-acc-hd:hover{background:var(--purple-50);}
+.rm-region-acc-body{padding:12px 14px;display:none;}
+.rm-region-acc-body.open{display:block;}
 </style>
 </head>
 <body>
@@ -619,9 +662,9 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
     </header>
     <main class="pub-wrap pub-main" id="publicMain" role="main" tabindex="-1">
         <nav class="pub-quick-nav" aria-label="Ir para seção">
-            <a href="#sec-calendario">Calendário</a>
+            <a href="#sec-rodas-mapeadas">Rodas no DF</a>
             <a href="#sec-noticias">Notícias</a>
-            <a href="#sec-rodas">Rodas atuais</a>
+            <a href="#sec-rodas">Nossos encontros</a>
             <a href="#sec-participe">Faça parte</a>
             <a href="#sec-edital">Edital</a>
             <a href="#sec-notebooks">Conhecimento</a>
@@ -631,10 +674,13 @@ button:focus-visible,.pub-btn-login:focus-visible,.header-btn:focus-visible,.fbt
             <p class="pub-hero-lead">Rodas multidisciplinares de acolhimento para mulheres no DF — notícias, encontros, participação e capacitação de facilitadoras.</p>
         </div>
 
-        <section class="pub-block" id="sec-calendario" aria-labelledby="pub-h-calendario">
-            <h2 id="pub-h-calendario" class="pub-block-h">Calendário</h2>
-            <p class="pub-block-lead">Próximos encontros, rodas e capacitações.&ensp;<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle"><span class="pub-cal-dot pub-cal-dot--conf" style="display:inline-block;margin:0"></span><strong style="font-size:12px;color:#059669">Confirmado</strong></span>&ensp;<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle"><span class="pub-cal-dot pub-cal-dot--pend" style="display:inline-block;margin:0"></span><strong style="font-size:12px;color:#d97706">A confirmar</strong></span></p>
-            <div class="pub-cal-grid" id="publicCalList"></div>
+        <section class="pub-block" id="sec-rodas-mapeadas" aria-labelledby="pub-h-rodas-mapeadas">
+            <h2 id="pub-h-rodas-mapeadas" class="pub-block-h">Rodas e equipamentos no DF</h2>
+            <p class="pub-block-lead">Espaços permanentes de acolhimento, apoio e rodas de conversa para mulheres em todo o Distrito Federal — levantamento de abril/2026.&ensp;<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle"><span class="pub-cal-dot pub-cal-dot--conf" style="display:inline-block;margin:0"></span><strong style="font-size:12px;color:#059669">Confirmado pela rede</strong></span>&ensp;<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle"><span class="pub-cal-dot pub-cal-dot--pend" style="display:inline-block;margin:0"></span><strong style="font-size:12px;color:#d97706">A confirmar</strong></span></p>
+            <div id="pubRodasMapeadasSearch" style="margin-bottom:14px">
+                <input id="pubRmQ" type="search" placeholder="Buscar por nome, endereço, região..." oninput="renderPublicRodasMapeadas()" style="width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:13px;">
+            </div>
+            <div id="pubRodasMapeadasList"></div>
         </section>
 
         <section class="pub-block" id="sec-noticias" aria-labelledby="pub-h-noticias">
@@ -1122,6 +1168,65 @@ const DEMO_TASKS = [
     {id:'23',title:'Análise de cobertura territorial e demandas reprimidas',description:'Estudar onde existe roda ou equipamento mas o alcance não cobre zona rural, núcleos isolados ou bairros periféricos; cruzar oferta do levantamento com relatos de lacuna (transporte, divulgação, medo, horário). Documentar na aba Levantamento e subsidiar decisões de itinerância/parcerias.',phase:'fase_0_semente',status:'pendente',priority:'alta',assigned_to:'1',due_date:'2026-06-05',notes:'Fase 0 — jun/2026. Ver Protótipos §9 e Parte 5 «lacunas» no Rodas DF como ponto de partida, sem substituir escuta no território.'},
     {id:'24',title:'Fase final: consolidar fluxo, rede e plano de novas rodas (demanda reprimida)',description:'Documentar fluxo operacional consolidado; mapear rede de parcerias e calendário territorial; priorizar e formular novas rodas ou itinerâncias para territórios com demanda reprimida identificados no levantamento (§9), com critérios ex ante por local.',phase:'fase_5_sustentabilidade',status:'pendente',priority:'alta',assigned_to:'2',start_date:'2026-12-01',due_date:'2027-03-20',notes:'Fase 5 — dez/2026–mar/2027. Protótipos §10. Articulação institucional: Thaís; desenho de novas rodas: equipe com Natalie. Ajustar datas conforme cronograma real.'},
 ];
+// ── DEMO: Rodas mapeadas no DF (levantamento abril/2026) ──────────────────────
+const DEMO_RODAS_MAPEADAS=[
+ {id:'rm01',nome:'Espaço Acolher — Plano Piloto',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Brasília (Plano Piloto)',endereco:'SMAS Tr.3, Lt.4/6, Bl.5, Térreo — Asa Sul',telefone:'(61) 99323-6567',email:'geafavd.planopiloto@mulher.df.gov.br',horario:'Seg–Sex 12h–19h',frequencia:'permanente',descricao:'Grupos de Mulheres e Grupos Reflexivos de Homens. Mais de 9,5 mil atendimentos desde a fundação.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:10},
+ {id:'rm02',nome:'Espaço Acolher — Asa Sul (10ª unidade)',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Brasília (Plano Piloto)',endereco:'SQS 112/312 — Asa Sul',telefone:'—',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Inaugurado em julho/2025. 12 profissionais, capacidade para 20 pessoas.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:11},
+ {id:'rm03',nome:'CEAM 102 Sul',tipo:'ceam',instituicao:'SMDF',circunscricao:'Brasília (Plano Piloto)',endereco:'Estação Metrô 102 Sul — Asa Sul',telefone:'(61) 3181-2245 / (61) 99183-6454',email:'ceam.102sul@mulher.df.gov.br',horario:'Seg–Sex 8h–18h (sem agendamento)',frequencia:'permanente',descricao:'Acolhimento psicossocial, pedagógico e orientação jurídica. Inclui rodas de conversa terapêuticas.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:12},
+ {id:'rm04',nome:'CEAM CIOB — Asa Norte',tipo:'ceam',instituicao:'SMDF',circunscricao:'Brasília (Plano Piloto)',endereco:'SAM, Conjunto A — Asa Norte',telefone:'(61) 3341-1840',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Acolhimento psicossocial, orientação jurídica e rodas de conversa grupais.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:13},
+ {id:'rm05',nome:'CEPAV Margarida (HRAN)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Brasília (Plano Piloto)',endereco:'Ambulatório HRAN, 1º Andar, Sala 04 — SMHN Q2, Asa Norte',telefone:'(61) 3449-4740 / (61) 99237-0336',email:'cepav.margarida@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Rodas de conversa terapêuticas com mulheres. Rede de CEPAVs (Flores em Rede), 18 unidades.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:14},
+ {id:'rm06',nome:'CEPAV Violeta (HMIB)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Brasília (Plano Piloto)',endereco:'HMIB — Av. L2 Sul, SGAS Qd.608, Módulo A, Asa Sul',telefone:'(61) 3449-7759',email:'pavvioleta.hmib@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos de mulheres, crianças e adolescentes. Atendimento individual ciclo de vida.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:15},
+ {id:'rm07',nome:'Programa Elas / Rede Social de Brasília',tipo:'rede_territorial',instituicao:'CMVD/TJDFT + MPDFT',circunscricao:'Brasília (Plano Piloto)',endereco:'Fórum de Brasília — 8º andar',telefone:'—',email:'—',horario:'Ações regulares ao longo do ano',frequencia:'permanente',descricao:'Seminários, cine-debates e rodas. Semana Paz em Casa (32ª edição em março/2026). Programa Elas para servidoras e magistradas.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:16},
+ {id:'rm08',nome:'Núcleo Direito Delas — Brasília',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Brasília (Plano Piloto)',endereco:'Estação Rodoferroviária, Ala Central, Térreo',telefone:'(61) 98314-0626 / (61) 2244-1282',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento humanizado, orientação jurídica, apoio psicológico, encaminhamento à rede.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:17},
+ {id:'rm09',nome:'Casa da Mulher Brasileira — Ceilândia',tipo:'casa_mulher',instituicao:'SMDF / Gov. Federal',circunscricao:'Ceilândia',endereco:'CNM 1, Bl. I, Lt. 3',telefone:'(61) 98312-0284',email:'—',horario:'24 horas, todos os dias',frequencia:'permanente',descricao:'Acolhimento 24h, atendimento psicossocial, jurídico, alojamento. Rodas de conversa continuadas. Mais de 40 mil atendimentos desde 2021.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:20},
+ {id:'rm10',nome:'Espaço Acolher — Ceilândia',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Ceilândia',endereco:'QNM 02, Conj. F, Lote 1/3 — Ceilândia Centro',telefone:'(61) 98314-0882',email:'geafavd.ceilandia@mulher.df.gov.br',horario:'Seg–Sex 9h–18h',frequencia:'permanente',descricao:'Grupos de Mulheres e Grupos Reflexivos de Homens.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:21},
+ {id:'rm11',nome:'Núcleo Direito Delas — Ceilândia',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Ceilândia',endereco:'Shopping Popular de Ceilândia — Espaço Na Hora',telefone:'(61) 98314-0620 / (61) 2244-1421',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio psicológico e social.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:22},
+ {id:'rm12',nome:'Comitê de Proteção à Mulher — Ceilândia',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Ceilândia',endereco:'Sede da Administração Regional de Ceilândia',telefone:'(61) 98312-0136',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Acolhimento, orientação e encaminhamento. Recebimento de denúncias.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:23},
+ {id:'rm13',nome:'CEPAV Flor de Lótus (HRC)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Ceilândia',endereco:'Hospital Regional de Ceilândia — QNM 27',telefone:'(61) 2017-2000 r.3155',email:'srsoe.nupav@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos para mulheres; atendimento pediátrico e ginecológico para vítimas.',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:24},
+ {id:'rm14',nome:'Rede Mulher de Ceilândia / Projeto Todas Elas',tipo:'rede_territorial',instituicao:'MPDFT — Núcleo de Gênero',circunscricao:'Ceilândia',endereco:'MPDFT Ceilândia',telefone:'—',email:'—',horario:'Reuniões regulares da rede local',frequencia:'permanente',descricao:'Fluxo regional de enfrentamento à violência consolidado. 2º Fórum Todas Elas (agosto/2025).',cobertura:'muito_alta',confirmado_rede:false,is_visible:true,sort_order:25},
+ {id:'rm15',nome:'Rede ELAS — Gama e Santa Maria',tipo:'rede_territorial',instituicao:'MPDFT — Núcleo de Gênero',circunscricao:'Gama',endereco:'MPDFT Gama (reuniões mensais)',telefone:'—',email:'@elas_rede_de_enfrentamento (Instagram)',horario:'Encontros mensais',frequencia:'mensal',descricao:'Rodas de conversa e reflexões. Em funcionamento desde fevereiro de 2015 (11+ anos). Cobre também Santa Maria.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:30},
+ {id:'rm16',nome:'Espaço Acolher — Gama',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Gama',endereco:'Promotoria de Justiça do Gama — Qd.01, Lts.860/800, Subsolo',telefone:'(61) 99120-5114 / (61) 3181-2239',email:'geafavd.gama@mulher.df.gov.br',horario:'Seg–Sex 12h–19h',frequencia:'permanente',descricao:'Grupos de Mulheres e Grupos Reflexivos de Homens.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:31},
+ {id:'rm17',nome:'Núcleo Direito Delas — Gama',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Gama',endereco:'Promotoria de Justiça do Gama — Setor Leste Industrial',telefone:'—',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'11º núcleo, inaugurado em dezembro/2024.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:32},
+ {id:'rm18',nome:'CEPAV Gardênia (HRG)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Gama',endereco:'Hospital Regional do Gama — Área Especial nº 01',telefone:'(61) 3449-7357 / (61) 99201-7372',email:'nupav.srssu@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos de mulheres; atendimento pediátrico.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:33},
+ {id:'rm19',nome:'CEPAV Flor do Cerrado (HRSM)',tipo:'cepav',instituicao:'SES-DF / IgesDF',circunscricao:'Santa Maria',endereco:'Hospital Regional de Santa Maria — Qd. AC 102',telefone:'(61) 3449-7356 / (61) 4042-7770 r.5525',email:'cepavflordocerrado@gmail.com',horario:'Dias úteis 7h–18h',frequencia:'permanente',descricao:'Rodas de conversa terapêuticas e grupos de mulheres. Modelo de referência da Rede Flores.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:40},
+ {id:'rm20',nome:'Espaço Acolher — Santa Maria',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Santa Maria',endereco:'Promotoria de Justiça de Santa Maria — QR 211, Conj. A, Lote 14',telefone:'(61) 3394-6863 / (61) 99516-1772',email:'geafavd.santamaria@mulher.df.gov.br',horario:'Seg–Sex 9h30–17h',frequencia:'permanente',descricao:'Acompanhamento psicossocial e Grupos de Mulheres.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:41},
+ {id:'rm21',nome:'Comitê de Proteção à Mulher — Santa Maria',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Santa Maria',endereco:'Sede da Administração Regional de Santa Maria',telefone:'—',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Inaugurado em julho/2025. Acolhimento, orientação e encaminhamento.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:42},
+ {id:'rm22',nome:'CEPAV Azaleia (HRT)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Taguatinga / Águas Claras',endereco:'Hospital Regional de Taguatinga — QNC, Área Especial nº 24',telefone:'(61) 3449-6678 / (61) 99357-5529',email:'cepav.azaleia@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Atendimento ginecológico (a partir de 12 anos) e pediátrico para vítimas.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:50},
+ {id:'rm23',nome:'Comitê de Proteção à Mulher — Águas Claras',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Taguatinga / Águas Claras',endereco:'Sede da Administração Regional de Águas Claras',telefone:'(61) 98312-0245',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Um dos 7 comitês ativos no DF em 2026.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:51},
+ {id:'rm24',nome:'Espaço Acolher — Samambaia',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Samambaia',endereco:'Ed. Arena Mall — QS 406, Conj. E, Lote 3, Loja 4',telefone:'(61) 99226-2858 / (61) 3181-2237',email:'geafavd.samambaia@mulher.df.gov.br',horario:'Seg–Sex 9h–18h',frequencia:'permanente',descricao:'Grupos de Mulheres e Grupos Reflexivos de Homens.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:60},
+ {id:'rm25',nome:'Núcleo Direito Delas — Samambaia',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Samambaia',endereco:'QS 402, Conj. G, Lote 1 — Samambaia/DF',telefone:'(61) 98314-0792 / (61) 98314-0631',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio psicológico.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:61},
+ {id:'rm26',nome:'CEPAV Orquídea (HRSam)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Samambaia',endereco:'Hospital Regional de Samambaia — QS 614, Conj. C',telefone:'(61) 3449-7009 / (61) 99155-2702',email:'cepav.orquidea@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos para mulheres e crianças; atendimento ginecológico e pediátrico.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:62},
+ {id:'rm27',nome:'Projeto "Desabafe Aqui" — Terapia Comunitária',tipo:'projeto',instituicao:'Sejus-DF + Instituto Bethel',circunscricao:'Sobradinho / Sobradinho II',endereco:'Sobradinho II e regiões adjacentes',telefone:'—',email:'—',horario:'Jan–Fev/2026 (potencial de renovação)',frequencia:'a_confirmar',descricao:'Rodas de Terapia Comunitária Integrativa (TCI) para 60 mulheres. Aguarda confirmação de renovação.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:70},
+ {id:'rm28',nome:'Espaço Acolher — Sobradinho',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Sobradinho / Sobradinho II',endereco:'Ed. Gran Via — Q.3, Lote Especial 05, 1º Andar, Sala 115',telefone:'(61) 99501-6007 / (61) 3181-2241',email:'geafavd.sobradinho@mulher.df.gov.br',horario:'Seg–Sex 9h–18h',frequencia:'permanente',descricao:'Grupos de Mulheres.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:71},
+ {id:'rm29',nome:'CRMB — Sobradinho II',tipo:'crmb',instituicao:'SMDF',circunscricao:'Sobradinho / Sobradinho II',endereco:'Área Especial 06, COER, Qd.01, Setor Oeste — Sobradinho II',telefone:'(61) 3181-2663 / (61) 3181-2664',email:'centrodereferenciadamulherbras@gmail.com',horario:'Seg–Sex 9h–18h (sem agendamento)',frequencia:'permanente',descricao:'Rodas de acolhimento, cursos gratuitos, alojamento de passagem. Inaugurado em maio/2025.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:72},
+ {id:'rm30',nome:'Comitê de Proteção à Mulher — Sobradinho',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Sobradinho / Sobradinho II',endereco:'Sede da Administração Regional de Sobradinho',telefone:'(61) 98279-0713',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Acolhimento, orientação e encaminhamento.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:73},
+ {id:'rm31',nome:'CEPAV Sempre Viva (HRS)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Sobradinho / Sobradinho II',endereco:'Hospital Regional de Sobradinho — Qd. Central, Bloco B',telefone:'(61) 3449-5541 / WhatsApp: (61) 99253-2414',email:'cepav.sempreviva@saude.df.gov.br',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Atendimento individual e em grupo para mulheres em situação de violência.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:74},
+ {id:'rm32',nome:'Espaço Acolher — Planaltina',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Planaltina',endereco:'Promotoria de Justiça de Planaltina — Área Especial 10/A',telefone:'(61) 99128-9921 / (61) 3181-2242',email:'geafavd.planaltina@mulher.df.gov.br',horario:'Seg–Sex 12h–19h',frequencia:'permanente',descricao:'Grupos de Mulheres.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:80},
+ {id:'rm33',nome:'CEAM Planaltina',tipo:'ceam',instituicao:'SMDF',circunscricao:'Planaltina',endereco:'A/E 1/2, Lote 3/5, Jardim Roriz — Planaltina',telefone:'(61) 3388-4656 / (61) 99341-6001',email:'ceamplanaltinadm@mulher.df.gov.br',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Acolhimento psicossocial e rodas de conversa grupais.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:81},
+ {id:'rm34',nome:'Núcleo Direito Delas — Planaltina',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Planaltina',endereco:'Promotoria de Justiça de Planaltina (MPDFT)',telefone:'(61) 98314-0611 / (61) 3555-2737',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Espaço renovado inaugurado em novembro/2024.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:82},
+ {id:'rm35',nome:'CEPAV Flor de Lis (HRP)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Planaltina',endereco:'Hospital Regional de Planaltina — Via W/L 4',telefone:'(61) 3449-5749 / (61) 99262-0729',email:'cepav.flordelis@saude.df.gov.br',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Atendimentos individuais e em grupo para mulheres em situação de violência.',cobertura:'alta',confirmado_rede:false,is_visible:true,sort_order:83},
+ {id:'rm36',nome:'Núcleo Direito Delas — São Sebastião',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'São Sebastião',endereco:'Qd. 101, Conj. 8 — Administração Regional de São Sebastião',telefone:'(61) 98314-0627 / (61) 2244-1131',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Inaugurado em setembro/2024.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:90},
+ {id:'rm37',nome:'CRMB — São Sebastião',tipo:'crmb',instituicao:'SMDF',circunscricao:'São Sebastião',endereco:'Área Especial 11, Centro de Múltiplas Atividades',telefone:'(61) 3181-2661 / (61) 3181-2662',email:'centrodereferenciadamulherbras@gmail.com',horario:'Seg–Sex 9h–18h (sem agendamento)',frequencia:'permanente',descricao:'Rodas de acolhimento. Inaugurado em maio/2025.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:91},
+ {id:'rm38',nome:'CEPAV Tulipa (São Sebastião)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'São Sebastião',endereco:'Centro de Múltiplas Atividades, Conj. 10',telefone:'(61) 99175-2409',email:'cepav.tulipa@saude.df.gov.br',horario:'Seg–Qui 8h–18h; Sex 8h–12h',frequencia:'permanente',descricao:'Grupos de apoio para mulheres em situação de violência.',cobertura:'media_alta',confirmado_rede:false,is_visible:true,sort_order:92},
+ {id:'rm39',nome:'Projeto Todas Elas — Riacho Fundo (MPDFT)',tipo:'rede_territorial',instituicao:'MPDFT — Núcleo de Gênero',circunscricao:'Riacho Fundo',endereco:'MPDFT Riacho Fundo / Juizado de VD',telefone:'—',email:'—',horario:'Ações regulares',frequencia:'permanente',descricao:'Diálogos interinstitucionais (3ª edição em março/2026); Capacitação Provid. Juíza Fabriziane Zapata.',cobertura:'media_baixa',confirmado_rede:false,is_visible:true,sort_order:100},
+ {id:'rm40',nome:'Espaço Acolher — Paranoá',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Paranoá / Itapoã',endereco:'Promotoria de Justiça do Paranoá — Qd.04, Conj. B, Sala 111',telefone:'(61) 3369-4784 / (61) 99206-6281',email:'geafavd.paranoa@mulher.df.gov.br',horario:'Seg–Sex 12h–19h',frequencia:'permanente',descricao:'Grupos de Mulheres.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:110},
+ {id:'rm41',nome:'Núcleo Direito Delas — Paranoá',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Paranoá / Itapoã',endereco:'Qd. 05, Conj. 03, Área Especial D — Paranoá',telefone:'(61) 98314-0622 / (61) 2244-1417',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio social.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:111},
+ {id:'rm42',nome:'Núcleo Direito Delas — Itapoã',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Paranoá / Itapoã',endereco:'Praça dos Direitos, Qd. 203, Del Lago II — Itapoã',telefone:'(61) 98314-0632 / (61) 2244-1418',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio social.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:112},
+ {id:'rm43',nome:'Comitê de Proteção à Mulher — Itapoã',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Paranoá / Itapoã',endereco:'Sede da Administração Regional do Itapoã',telefone:'(61) 98312-0284',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Acolhimento, orientação e encaminhamento.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:113},
+ {id:'rm44',nome:'CEPAV Girassol (HRL — Paranoá)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Paranoá / Itapoã',endereco:'Hospital da Região Leste — Área Especial, Qd.2, Conj.K (Corredor D)',telefone:'(61) 2017-1550 r.1711 / (61) 99264-2694',email:'cepav.girassol@saude.df.gov.br',horario:'Seg–Qui 8h–18h; Sex 8h–12h',frequencia:'permanente',descricao:'Grupos de apoio para mulheres de todas as faixas etárias.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:114},
+ {id:'rm45',nome:'Núcleo Direito Delas — Guará',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Guará',endereco:'Praça da QE 01, Lúcio Costa — Guará/DF',telefone:'(61) 98314-0619 / (61) 2244-1419',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio social.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:120},
+ {id:'rm46',nome:'CEPAV Primavera (HRGu)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Guará',endereco:'Policlínica Centro Sul / Hospital Regional do Guará — QI 06, Lote C',telefone:'(61) 3449-5127 / WhatsApp: (61) 99451-0035',email:'srscs.pavprimavera@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos de apoio para todas as faixas etárias em situação de violência.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:121},
+ {id:'rm47',nome:'Núcleo Direito Delas — Estrutural',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Estrutural (SCIA)',endereco:'Setor Central, Área Especial 5, s/n — Estrutural/DF',telefone:'(61) 98382-0189',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'9º núcleo, inaugurado em fevereiro/2025.',cobertura:'media_baixa',confirmado_rede:false,is_visible:true,sort_order:130},
+ {id:'rm48',nome:'Comitê de Proteção à Mulher — Estrutural',tipo:'comite_protecao',instituicao:'SMDF',circunscricao:'Estrutural (SCIA)',endereco:'Sede da Administração Regional da Estrutural',telefone:'—',email:'—',horario:'Seg–Sex 8h–18h',frequencia:'permanente',descricao:'Inaugurado em setembro/2024. Acolhimento, orientação e encaminhamento.',cobertura:'media_baixa',confirmado_rede:false,is_visible:true,sort_order:131},
+ {id:'rm49',nome:'Roda de Conversa — UBM-DF (Estrutural)',tipo:'rede_territorial',instituicao:'União Brasileira de Mulheres — DF',circunscricao:'Estrutural (SCIA)',endereco:'Feira Permanente da Estrutural',telefone:'—',email:'@ubmdf (Instagram)',horario:'A confirmar (recorrente)',frequencia:'a_confirmar',descricao:'Ação comunitária com potencial de recorrência. Sociedade civil.',cobertura:'media_baixa',confirmado_rede:false,is_visible:true,sort_order:132},
+ {id:'rm50',nome:'CRMB — Recanto das Emas',tipo:'crmb',instituicao:'SMDF',circunscricao:'Recanto das Emas',endereco:'Av. Buriti, Qd. 203, Lote 14 — Recanto das Emas',telefone:'(61) 3181-2665 / (61) 3181-2666',email:'centrodereferenciadamulherbras@gmail.com',horario:'Seg–Sex 9h–18h (sem agendamento)',frequencia:'permanente',descricao:'1º CRMB do DF (maio/2025). Rodas de acolhimento. 312 m², unidade móvel.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:140},
+ {id:'rm51',nome:'Núcleo Direito Delas — Recanto das Emas',tipo:'direito_delas',instituicao:'Sejus-DF',circunscricao:'Recanto das Emas',endereco:'Estação da Cidadania — CEU das Artes, Qd. 113',telefone:'(61) 98314-0613 / (61) 2244-1424',email:'—',horario:'Seg–Sex 8h–17h',frequencia:'permanente',descricao:'Acolhimento, orientação jurídica, apoio social.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:141},
+ {id:'rm52',nome:'CEPAV Amarílis (Recanto das Emas)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Recanto das Emas',endereco:'UBS 03 — Qd. 104/105, Área Especial, Lt. 25',telefone:'(61) 99171-4300',email:'cepav.amarilis@saude.df.gov.br',horario:'Seg–Sex (agendar antes)',frequencia:'permanente',descricao:'Equipe reduzida — ligar antes. Grupos de apoio para mulheres.',cobertura:'media',confirmado_rede:false,is_visible:true,sort_order:142},
+ {id:'rm53',nome:'Espaço Acolher — Brazlândia',tipo:'espaco_acolher',instituicao:'SMDF',circunscricao:'Brazlândia',endereco:'TJDFT — Área Especial 04, Lote 04, 1º Andar',telefone:'(61) 99103-0058 / (61) 3181-2236',email:'agenda.nafavdbrz@gmail.com',horario:'Seg–Sex 12h–19h',frequencia:'permanente',descricao:'Grupos de Mulheres.',cobertura:'baixa',confirmado_rede:false,is_visible:true,sort_order:150},
+ {id:'rm54',nome:'CEPAV Alfazema (Núcleo Bandeirante)',tipo:'cepav',instituicao:'SES-DF',circunscricao:'Núcleo Bandeirante',endereco:'Policlínica Centro Sul — 3ª Av., Área Especial nº 03',telefone:'(61) 2017-1145 r.8170 / WhatsApp: (61) 99451-2245',email:'srscs.pavalfazema@saude.df.gov.br',horario:'Seg–Sex horário comercial',frequencia:'permanente',descricao:'Grupos de apoio para todas as idades.',cobertura:'baixa',confirmado_rede:false,is_visible:true,sort_order:160},
+ {id:'rm55',nome:'CRMB — Sol Nascente',tipo:'crmb',instituicao:'SMDF',circunscricao:'Sol Nascente / Pôr do Sol',endereco:'Tr. 2, Qd. 100, Conj. A, Lote EC1 — Sol Nascente',telefone:'(61) 3181-2255 / (61) 3181-2660',email:'centrodereferenciadamulherbras@gmail.com',horario:'Seg–Sex 9h–18h (sem agendamento)',frequencia:'permanente',descricao:'Inaugurado em maio/2025. Atende ~100 mil habitantes. Rodas de acolhimento.',cobertura:'baixa',confirmado_rede:false,is_visible:true,sort_order:170},
+];
+
 const DEMO_EVENTOS = [
     {id:'devt1',titulo:'Contato com Ouvidoria das Mulheres (MPDFT)',data_evento:'2026-05-08',hora:'A confirmar',local:'MPDFT — Brasília/DF',descricao:'Canal fixo de denúncias via QR Code nas rodas — obrigatório.',confirmado:false,tipo:'articulacao',is_visible:true},
     {id:'devt2',titulo:'Falar com Adalgiza — Núcleo de Gênero (MPDFT)',data_evento:'2026-05-11',hora:'A confirmar',local:'MPDFT — Brasília/DF',descricao:'Apresentar a Rede, alinhar capacitação. Ponte com Todas Elas.',confirmado:false,tipo:'articulacao',is_visible:true},
@@ -1555,7 +1660,7 @@ async function refreshPublicRodasEditalFromAnon(){
     if(!rodasdfConfigOk()){
         renderPublicRodas();
         renderPublicEdital();
-        renderPublicCal();
+        renderPublicRodasMapeadas();
         return;
     }
     const base=normalizeSupabaseUrl(RODASDF_SUPABASE_URL);
@@ -1574,13 +1679,15 @@ async function refreshPublicRodasEditalFromAnon(){
     }catch(e){console.error(e);}
     renderPublicRodas();
     renderPublicEdital();
+    // load rodas_mapeadas for public display (anon)
     try{
-        const r3=await fetch(base+'/rest/v1/public_eventos_cal?select=*&is_visible=eq.true&order=data_evento.asc',{headers:h});
-        if(r3.ok){
-            const evs=await parseJsonBody(r3);
-            if(Array.isArray(evs)&&evs.length){window.RODASDF_PUBLIC_EVENTOS=evs;renderPublicCal();}
+        const r4=await fetch(base+'/rest/v1/rodas_mapeadas?select=*&is_visible=eq.true&order=sort_order.asc',{headers:h});
+        if(r4.ok){
+            const rm=await parseJsonBody(r4);
+            if(Array.isArray(rm)&&rm.length)window.RODASDF_PUBLIC_RODAS_MAPEADAS=rm;
         }
     }catch(e){console.error(e);}
+    renderPublicRodasMapeadas();
 }
 async function loadPublicNewsAndRender(){
     await refreshPublicRodasEditalFromAnon();
@@ -1756,6 +1863,56 @@ function renderPublicEdital(){
     el.innerHTML='<div class="edital-card"><h2>'+escapeHtml(e.titulo)+'</h2>'+badge+
         '<p class="edital-body" style="margin:0 0 8px;font-weight:600">'+escapeHtml(e.resumo)+'</p>'+
         meta+'<div class="edital-body">'+escapeHtml(e.texto)+'</div>'+link+'</div>';
+}
+function renderPublicRodasMapeadas(){
+    const el=document.getElementById('pubRodasMapeadasList');
+    if(!el)return;
+    const src=window.RODASDF_PUBLIC_RODAS_MAPEADAS||(S.rodasMapeadas&&S.rodasMapeadas.length?S.rodasMapeadas:DEMO_RODAS_MAPEADAS);
+    const q=(document.getElementById('pubRmQ')||{}).value||'';
+    const ql=q.toLowerCase();
+    const rodas=src.filter(r=>{
+        if(r.is_visible===false)return false;
+        if(ql){const blob=`${r.nome} ${r.circunscricao} ${r.instituicao} ${r.endereco} ${r.tipo} ${r.descricao}`.toLowerCase();return blob.includes(ql);}
+        return true;
+    });
+    if(!rodas.length){el.innerHTML='<p style="color:var(--gray-400);font-size:14px">Nenhum equipamento encontrado.</p>';return;}
+    // group by region
+    const byRegion={};
+    rodas.forEach(r=>{const k=r.circunscricao||'Sem região';if(!byRegion[k])byRegion[k]=[];byRegion[k].push(r);});
+    const regionsHtml=Object.entries(byRegion).sort((a,b)=>a[0].localeCompare(b[0],'pt')).map(([circ,items],i)=>{
+        const cardsHtml=items.map(r=>{
+            const c=RM_TIPO_COLOR[r.tipo]||'#6b7280';
+            const l=RM_TIPO_LABELS[r.tipo]||r.tipo;
+            const confDot=r.confirmado_rede?'<span class="pub-cal-dot pub-cal-dot--conf" style="display:inline-block;width:7px;height:7px;vertical-align:middle;margin-right:3px"></span><span style="font-size:10px;color:#059669;font-weight:600">Confirmado</span>':'<span class="pub-cal-dot pub-cal-dot--pend" style="display:inline-block;width:7px;height:7px;vertical-align:middle;margin-right:3px"></span><span style="font-size:10px;color:#d97706;font-weight:600">A confirmar</span>';
+            return`<div class="pub-rm-card">
+            <span class="pub-rm-tipo" style="background:${c}18;color:${c};border:1px solid ${c}40">${escapeHtml(l)}</span>
+            <div class="pub-rm-nome">${escapeHtml(r.nome)}</div>
+            <div class="pub-rm-inst">${escapeHtml(r.instituicao||'')}</div>
+            <div class="pub-rm-info">
+                ${r.horario?`⏱ ${escapeHtml(r.horario)}<br>`:''}
+                ${r.endereco?`📍 ${escapeHtml(r.endereco)}<br>`:''}
+                ${r.telefone&&r.telefone!=='—'?`📞 ${escapeHtml(r.telefone)}<br>`:''}
+                ${r.email&&r.email!=='—'?`✉ ${escapeHtml(r.email)}`:''}
+            </div>
+            ${r.descricao?`<p style="font-size:11px;color:var(--gray-400);margin-top:6px;line-height:1.4">${escapeHtml(r.descricao.slice(0,140))}${r.descricao.length>140?'…':''}</p>`:''}
+            <div class="pub-rm-status">${confDot}</div>
+            </div>`;
+        }).join('');
+        // collapsible accordion
+        const openDefault=i<3;
+        return`<div class="rm-region-acc">
+        <button type="button" class="rm-region-acc-hd" onclick="this.nextElementSibling.classList.toggle('open')">
+            <span style="font-size:14px">🗂</span>
+            <span class="rm-region-title">${escapeHtml(circ)}</span>
+            <span class="rm-region-count">(${items.length} equipamento${items.length!==1?'s':''})</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--gray-400)">${openDefault?'▲':'▼'}</span>
+        </button>
+        <div class="rm-region-acc-body ${openDefault?'open':''}">
+            <div class="pub-rm-grid">${cardsHtml}</div>
+        </div>
+        </div>`;
+    }).join('');
+    el.innerHTML=`<p class="rm-pub-intro">⚠️ Informações do levantamento de abril/2026. <strong>Confirme os dados antes de comparecer.</strong> Todos os equipamentos precisam de confirmação pelas respectivas equipes locais. Ligue 180 (24h) para informações oficiais.</p>${regionsHtml}`;
 }
 function renderPublicCal(){
     const el=document.getElementById('publicCalList');
@@ -2157,7 +2314,7 @@ function enterOffline(){
     S.restBearer='';
     S.loadError=false;
     S.user={name:'Demo',role:'admin',color:'#7c3aed'};
-    S.team=[...DEMO_TEAM];S.partners=[...DEMO_PARTNERS];S.tasks=[...DEMO_TASKS];S.comments=[...DEMO_COMMENTS];S.activity=[];S.pontes=[];S.eventos=[...DEMO_EVENTOS];
+    S.team=[...DEMO_TEAM];S.partners=[...DEMO_PARTNERS];S.tasks=[...DEMO_TASKS];S.comments=[...DEMO_COMMENTS];S.activity=[];S.pontes=[];S.eventos=[...DEMO_EVENTOS];S.rodasMapeadas=[...DEMO_RODAS_MAPEADAS];S.memberRodas=[];
     S.forumCats=[...DEMO_FORUM_CATS];S.forumTopics=[...DEMO_FORUM_TOPICS];S.forumReplies=[...DEMO_FORUM_REPLIES];
     S.redeServicos=[...DEMO_REDE_SERVICOS];S.redeArticulacoes=[...DEMO_REDE_ARTICULACOES];
     enterApp();
@@ -2275,6 +2432,8 @@ async function loadDataFetchCore(){
     try{const rl=await api('rede_legislacao','select=*&order=data');if(Array.isArray(rl)&&rl.length)DEMO_LEGISLACAO.splice(0,DEMO_LEGISLACAO.length,...rl);}catch(e){}
     try{const rp=await api('rede_publicacoes','select=*&order=data.desc');if(Array.isArray(rp)&&rp.length)DEMO_PUBLICACOES.splice(0,DEMO_PUBLICACOES.length,...rp);}catch(e){}
     try{const rs=await api('rede_sites','select=*&order=nome');if(Array.isArray(rs)&&rs.length)DEMO_SITES_INST.splice(0,DEMO_SITES_INST.length,...rs);}catch(e){}
+    try{const rm=await api('rodas_mapeadas','select=*&order=sort_order.asc,circunscricao.asc');if(Array.isArray(rm)&&rm.length)S.rodasMapeadas=rm;}catch(e){if(!S.rodasMapeadas||!S.rodasMapeadas.length)S.rodasMapeadas=[...DEMO_RODAS_MAPEADAS];}
+    try{const mr=await api('member_rodas','select=*');if(Array.isArray(mr))S.memberRodas=mr;}catch(e){S.memberRodas=[];}
     try{
         const pn=await api('proto_notes','select=*&order=created_at.asc');
         if(Array.isArray(pn)&&pn.length){
@@ -2726,31 +2885,164 @@ function renderRodasOneCard(part,row){
             <button type="button" class="btn btn-secondary" style="padding:6px 12px;font-size:12px" onclick="rodasOpenEdit('${rid}')">Editar</button>
         </div></div><dl>${dl}</dl>${meta}${nblock}</div>`;
 }
+// ─── helpers for rodas mapeadas ──────────────────────────────────────────────
+const RM_TIPO_LABELS={espaco_acolher:'Espaço Acolher',ceam:'CEAM',crmb:'CRMB',cepav:'CEPAV',direito_delas:'Direito Delas',comite_protecao:'Comitê Proteção',casa_mulher:'Casa da Mulher',rede_territorial:'Rede/Todas Elas',projeto:'Projeto',outro:'Outro'};
+const RM_TIPO_COLOR={espaco_acolher:'#7c3aed',ceam:'#2563eb',crmb:'#059669',cepav:'#0891b2',direito_delas:'#d97706',comite_protecao:'#dc2626',casa_mulher:'#9333ea',rede_territorial:'#16a34a',projeto:'#78716c',outro:'#6b7280'};
+const RM_COB_LABELS={muito_alta:'🟢 Muito alta',alta:'🟢 Alta',media_alta:'🟡 Média-alta',media:'🟡 Média',media_baixa:'🟠 Média-baixa',baixa:'🟠 Baixa',critica:'🔴 Crítica'};
+function rmTipoBadge(tipo){const c=RM_TIPO_COLOR[tipo]||'#6b7280';const l=RM_TIPO_LABELS[tipo]||tipo;return`<span class="rm-tipo-badge" style="background:${c}18;color:${c};border:1px solid ${c}40">${escapeHtml(l)}</span>`;}
+function rmStatusBadge(conf){return conf?'<span class="rm-status rm-status--conf">✓ Confirmado</span>':'<span class="rm-status rm-status--pend">⏳ A confirmar</span>';}
+function rmCurrentMemberLinks(rodaId){
+    const memberId=rmGetMyMemberId();
+    if(!memberId)return[];
+    return(S.memberRodas||[]).filter(mr=>mr.roda_id===rodaId);
+}
+function rmIsVinculado(rodaId){
+    const memberId=rmGetMyMemberId();
+    if(!memberId)return false;
+    return(S.memberRodas||[]).some(mr=>mr.roda_id===rodaId&&mr.member_id===memberId);
+}
+function rmGetMyMemberId(){
+    if(!S.user||!S.user.name)return null;
+    const m=(S.team||[]).find(t=>t.name===S.user.name);
+    return m?m.id:null;
+}
+function rmLinkedMembersHtml(rodaId){
+    const linked=(S.memberRodas||[]).filter(mr=>mr.roda_id===rodaId);
+    if(!linked.length)return'';
+    const names=linked.map(mr=>{const m=(S.team||[]).find(t=>t.id===mr.member_id);return m?escapeHtml(m.name):'?';});
+    return`<div class="rm-members-linked">👥 ${names.join(', ')}</div>`;
+}
+async function rmVincular(rodaId){
+    const memberId=rmGetMyMemberId();
+    if(!memberId){alert('Você precisa estar logado com um membro da equipe.');return;}
+    if(rmIsVinculado(rodaId))return;
+    const entry={member_id:memberId,roda_id:rodaId,papel:'participante'};
+    if(S.connected){
+        try{const r=await apiPost('member_rodas',entry);if(r&&r.id)S.memberRodas=[...(S.memberRodas||[]),r];else S.memberRodas=[...(S.memberRodas||[]),{id:'mr_'+Date.now(),created_at:new Date().toISOString(),...entry}];}
+        catch(e){S.memberRodas=[...(S.memberRodas||[]),{id:'mr_'+Date.now(),created_at:new Date().toISOString(),...entry}];}
+    }else{S.memberRodas=[...(S.memberRodas||[]),{id:'mr_'+Date.now(),created_at:new Date().toISOString(),...entry}];}
+    const roda=(S.rodasMapeadas||[]).find(r=>r.id===rodaId);
+    logAct(`Vínculo: ${S.user.name} → ${roda?roda.nome:rodaId}`,'roda',null);
+    renderTab('rodas');
+}
+async function rmDesvincular(rodaId){
+    const memberId=rmGetMyMemberId();
+    if(!memberId)return;
+    const entry=(S.memberRodas||[]).find(mr=>mr.roda_id===rodaId&&mr.member_id===memberId);
+    if(!entry)return;
+    if(S.connected&&entry.id&&!entry.id.startsWith('mr_')){
+        try{await apiDel('member_rodas',entry.id);}catch(e){console.warn(e);}
+    }
+    S.memberRodas=(S.memberRodas||[]).filter(mr=>!(mr.roda_id===rodaId&&mr.member_id===memberId));
+    const roda=(S.rodasMapeadas||[]).find(r=>r.id===rodaId);
+    logAct(`Vínculo removido: ${S.user.name} → ${roda?roda.nome:rodaId}`,'roda',null);
+    renderTab('rodas');
+}
+async function rmToggleConfirm(rodaId){
+    if(!S.isAdmin)return;
+    const roda=(S.rodasMapeadas||[]).find(r=>r.id===rodaId);
+    if(!roda)return;
+    const newVal=!roda.confirmado_rede;
+    if(S.connected){try{await apiPatch('rodas_mapeadas',rodaId,{confirmado_rede:newVal});}catch(e){console.warn(e);}}
+    roda.confirmado_rede=newVal;
+    logAct(`Roda ${newVal?'confirmada':'marcada a confirmar'}: ${roda.nome}`,'roda',null);
+    renderTab('rodas');
+    renderPublicRodasMapeadas();
+}
+function rmOpenEdit(rodaId){
+    const r=(S.rodasMapeadas||[]).find(x=>x.id===rodaId)||{};
+    const tipos=Object.entries(RM_TIPO_LABELS).map(([v,l])=>`<option value="${v}" ${r.tipo===v?'selected':''}>${escapeHtml(l)}</option>`).join('');
+    const freq=['permanente','mensal','semanal','quinzenal','pontual','a_confirmar'].map(v=>`<option value="${v}" ${r.frequencia===v?'selected':''}>${v.replace('_',' ')}</option>`).join('');
+    openModal(`<div class="form-grid">
+    <label>Nome<input id="rme-nome" class="form-input" value="${escapeHtml(r.nome||'')}" style="width:100%"></label>
+    <label>Tipo<select id="rme-tipo" class="form-input" style="width:100%">${tipos}</select></label>
+    <label>Instituição<input id="rme-inst" class="form-input" value="${escapeHtml(r.instituicao||'')}" style="width:100%"></label>
+    <label>Circunscrição/Região<input id="rme-circ" class="form-input" value="${escapeHtml(r.circunscricao||'')}" style="width:100%"></label>
+    <label>Endereço<input id="rme-end" class="form-input" value="${escapeHtml(r.endereco||'')}" style="width:100%"></label>
+    <label>Telefone<input id="rme-tel" class="form-input" value="${escapeHtml(r.telefone||'')}" style="width:100%"></label>
+    <label>E-mail<input id="rme-email" class="form-input" value="${escapeHtml(r.email||'')}" style="width:100%"></label>
+    <label>Horário<input id="rme-hor" class="form-input" value="${escapeHtml(r.horario||'')}" style="width:100%"></label>
+    <label>Frequência<select id="rme-freq" class="form-input" style="width:100%">${freq}</select></label>
+    <label style="grid-column:1/-1">Descrição (foco nas rodas / grupos)<textarea id="rme-desc" class="form-input" rows="3" style="width:100%">${escapeHtml(r.descricao||'')}</textarea></label>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rme-vis" ${r.is_visible!==false?'checked':''}> Visível no site público</label>
+    </div>`,
+    `Editar: ${escapeHtml(r.nome||'Nova roda')}`,
+    [{label:'Salvar',onclick:`rmSaveEdit('${rodaId}')`,cls:'btn-primary'}]);
+}
+async function rmSaveEdit(rodaId){
+    const patch={
+        nome:document.getElementById('rme-nome').value.trim(),
+        tipo:document.getElementById('rme-tipo').value,
+        instituicao:document.getElementById('rme-inst').value.trim(),
+        circunscricao:document.getElementById('rme-circ').value.trim(),
+        endereco:document.getElementById('rme-end').value.trim(),
+        telefone:document.getElementById('rme-tel').value.trim(),
+        email:document.getElementById('rme-email').value.trim(),
+        horario:document.getElementById('rme-hor').value.trim(),
+        frequencia:document.getElementById('rme-freq').value,
+        descricao:document.getElementById('rme-desc').value.trim(),
+        is_visible:document.getElementById('rme-vis').checked
+    };
+    if(!patch.nome)return alert('Nome é obrigatório.');
+    if(S.connected){try{await apiPatch('rodas_mapeadas',rodaId,patch);}catch(e){console.warn(e);}}
+    const idx=(S.rodasMapeadas||[]).findIndex(r=>r.id===rodaId);
+    if(idx>=0)Object.assign(S.rodasMapeadas[idx],patch);
+    logAct(`Roda atualizada: ${patch.nome}`,'roda',null);
+    closeModal();renderTab('rodas');renderPublicRodasMapeadas();
+}
+
 function renderRodasTab(){
-    const L=window.RODAS_LEV;
-    if(!L)return'<p style="padding:20px;color:var(--rose-600)">Não foi possível carregar o levantamento. Confira se <code>js/rodas_levantamento.js</code> está acessível (mesmo host que esta página).</p>';
-    const partsHtml=L.parts.map(part=>{
-        const cards=part.rows.map(r=>renderRodasOneCard(part,r)).join('');
-        const nVis=part.rows.filter(r=>{
-            const st=rodasRowState(r.id);
-            if(S.rodasHideVerified&&st.verified)return false;
-            if(S.rodasContactOnly&&!st.needsContact)return false;
-            return true;
-        }).length;
-        return `<section class="rodas-part" id="rodas-part-${part.id}"><div class="rodas-part-hd"><h2>${escapeHtml(part.title)}</h2>${part.subtitle?`<p>${escapeHtml(part.subtitle)}</p>`:''}<p style="font-size:12px;color:var(--gray-400);margin-top:6px">${nVis} registro(s) visíveis</p></div><div class="rodas-grid">${cards||'<p style="color:var(--gray-400);padding:8px">Nenhum registro com os filtros atuais.</p>'}</div></section>`;
+    const rodas=(S.rodasMapeadas||[]).filter(r=>r.is_visible!==false);
+    const q=(S._rmQ||'').toLowerCase();
+    const tf=S._rmTipo||'';
+    const filtered=rodas.filter(r=>{
+        if(tf&&r.tipo!==tf)return false;
+        if(q){const blob=`${r.nome} ${r.circunscricao} ${r.tipo} ${r.instituicao} ${r.endereco} ${r.descricao}`.toLowerCase();if(!blob.includes(q))return false;}
+        return true;
+    });
+    // group by region
+    const byRegion={};
+    filtered.forEach(r=>{const k=r.circunscricao||'Sem região';if(!byRegion[k])byRegion[k]=[];byRegion[k].push(r);});
+    const regionsHtml=Object.entries(byRegion).sort((a,b)=>a[0].localeCompare(b[0],'pt')).map(([circ,items])=>{
+        const cardsHtml=items.map(r=>{
+            const vinc=rmIsVinculado(r.id);
+            const isAdmin=S.isAdmin;
+            const linkedHtml=rmLinkedMembersHtml(r.id);
+            const adminBtns=isAdmin?`<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="rmOpenEdit('${r.id}')">✏️ Editar</button>
+                <button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="rmToggleConfirm('${r.id}')">${r.confirmado_rede?'⚠️ Desconfirmar':'✓ Confirmar'}</button>`:'';
+            const vincBtn=S.user?`<button type="button" class="rm-vincular-btn ${vinc?'vinculado':''}" onclick="${vinc?`rmDesvincular('${r.id}')`:`rmVincular('${r.id}')`}">${vinc?'✓ Vinculado — desvincular':'+ Vincular-me'}</button>`:'';
+            return`<div class="rm-card">
+            <div class="rm-card-head" style="flex-wrap:wrap;gap:6px">${rmTipoBadge(r.tipo)}${rmStatusBadge(r.confirmado_rede)}</div>
+            <div class="rm-card-nome">${escapeHtml(r.nome)}</div>
+            <div class="rm-card-inst">${escapeHtml(r.instituicao||'')}</div>
+            <div class="rm-card-info">
+                ${r.horario?`<span class="rm-card-info-lbl">Horário</span><span>${escapeHtml(r.horario)}</span>`:''}
+                ${r.telefone&&r.telefone!=='—'?`<span class="rm-card-info-lbl">Tel</span><span>${escapeHtml(r.telefone)}</span>`:''}
+                ${r.endereco?`<span class="rm-card-info-lbl">Local</span><span>${escapeHtml(r.endereco)}</span>`:''}
+                ${r.email&&r.email!=='—'?`<span class="rm-card-info-lbl">Email</span><span>${escapeHtml(r.email)}</span>`:''}
+            </div>
+            ${r.descricao?`<div class="rm-card-desc">${escapeHtml(r.descricao)}</div>`:''}
+            ${linkedHtml}
+            <div class="rm-card-actions">${vincBtn}${adminBtns}</div>
+            </div>`;
+        }).join('');
+        return`<div class="rm-region-section"><div class="rm-region-hd"><span class="rm-region-title">${escapeHtml(circ)}</span><span class="rm-region-count">(${items.length})</span></div><div class="rm-cards">${cardsHtml}</div></div>`;
     }).join('');
-    const refRows=(L.contatosReferencia||[]).map(c=>`<tr><td>${escapeHtml(c.canal)}</td><td>${escapeHtml(c.telefone)}</td></tr>`).join('');
-    return `<div class="section-hdr"><h2 class="section-title">📍 Levantamento — rede de apoio e rodas (DF)</h2></div>
-    <p class="rodas-legend">${escapeHtml(L.legend)}</p>
-    <div class="rodas-toolbar">
-        <label class="rodas-cb"><input type="checkbox" ${S.rodasContactOnly?'checked':''} onchange="S.rodasContactOnly=this.checked;renderTab('rodas')"> Mostrar só «contato a verificar»</label>
-        <label class="rodas-cb"><input type="checkbox" ${S.rodasHideVerified?'checked':''} onchange="S.rodasHideVerified=this.checked;renderTab('rodas')"> Ocultar conferidos</label>
-        <button type="button" class="btn btn-secondary" style="padding:6px 12px;font-size:12px;margin-left:auto" onclick="rodasClearMarks()">Limpar marcações neste aparelho</button>
+
+    const totalConf=rodas.filter(r=>r.confirmado_rede).length;
+    const tipoOptions=Object.entries(RM_TIPO_LABELS).map(([v,l])=>`<option value="${v}" ${tf===v?'selected':''}>${escapeHtml(l)}</option>`).join('');
+
+    return`<div class="section-hdr"><h2 class="section-title">📍 Rodas e equipamentos no DF</h2></div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px">${rodas.length} equipamentos mapeados (abril/2026) · ${totalConf} confirmados pela rede · ${(S.memberRodas||[]).length} vínculos registrados</p>
+    <div class="rm-search-bar">
+        <input type="search" placeholder="Buscar nome, região, endereço..." value="${escapeHtml(q)}" oninput="S._rmQ=this.value;renderTab('rodas')" style="flex:1;min-width:180px;">
+        <select onchange="S._rmTipo=this.value;renderTab('rodas')"><option value="">Todos os tipos</option>${tipoOptions}</select>
+        ${S.user?`<span style="font-size:12px;color:var(--gray-400)">Clique em <strong>+ Vincular-me</strong> para associar-se a rodas onde você atua</span>`:'<span style="font-size:12px;color:var(--gray-400)">Faça login para se vincular a rodas</span>'}
     </div>
-    ${partsHtml}
-    <section class="rodas-part"><div class="rodas-part-hd"><h2>Contatos gerais de referência</h2><p>Canais úteis para encaminhamento (dados do levantamento).</p></div>
-    <div style="overflow-x:auto;background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-200)">
-    <table class="rodas-ref-table"><thead><tr><th>Canal</th><th>Telefone</th></tr></thead><tbody>${refRows}</tbody></table></div></section>`;
+    ${filtered.length?regionsHtml:'<p style="color:var(--gray-400);padding:20px;text-align:center">Nenhum resultado encontrado para os filtros aplicados.</p>'}
+    <div style="margin-top:24px;padding:12px 16px;background:var(--gray-50);border-radius:var(--radius);font-size:12px;color:var(--gray-500)">
+    <strong>Canais centrais de acesso:</strong> Ligue 180 (24h, gratuito) · Programa Direito Delas: (61) 98382-0130 · WhatsApp Delegacia da Mulher: (61) 9610-0180 · Central 156 (opção 6) · SMDF: (61) 3181-1445
+    </div>`;
 }
 
 // --- ABA LEVANTAMENTO (pré-capacitação: ouvir rodas, ligações, comentários) ---
