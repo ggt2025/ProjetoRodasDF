@@ -1,64 +1,158 @@
 /* Barra Voltar / Avançar / Início — abaixo do header roxo */
 .site-header-nav-history {
-  padding: 8px 20px;
-  background: rgba(0, 0, 0, 0.14);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 20px 12px;
+  background: rgba(0, 0, 0, 0.16);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 .nav-history-inner {
   max-width: var(--content-max, 960px);
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 12px 16px;
   flex-wrap: wrap;
+}
+.nav-history-lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.nav-history-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
+@media (max-width: 520px) {
+  .nav-history-title {
+    display: none;
+  }
+}
+/* Grupo segmentado: Voltar | Avançar */
+.nav-history-actions {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: var(--radius, 10px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 .nav-history-btn {
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 7px 14px;
-  border-radius: var(--radius, 10px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.14);
+  min-height: 40px;
+  padding: 8px 14px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.12);
   color: var(--white, #fff);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.nav-history-btn--back {
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+  padding-left: 12px;
+}
+.nav-history-btn--fwd {
+  padding-right: 12px;
+}
+.nav-history-icon {
+  font-size: 1.05em;
+  line-height: 1;
+  opacity: 0.95;
+}
+.nav-history-btn-text {
+  line-height: 1.2;
+}
+@media (max-width: 380px) {
+  .nav-history-btn-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  .nav-history-btn {
+    min-width: 44px;
+    padding: 8px 12px;
+  }
 }
 .nav-history-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.24);
-  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.22);
 }
 .nav-history-btn:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.9);
-  outline-offset: 2px;
+  outline: 2px solid rgba(255, 255, 255, 0.95);
+  outline-offset: -2px;
+  z-index: 1;
 }
 .nav-history-btn:disabled {
-  opacity: 0.42;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .nav-history-home {
-  font-size: 13px;
-  font-weight: 600;
-  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 40px;
+  padding: 8px 18px;
   border-radius: var(--radius, 10px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.2);
   color: var(--white, #fff) !important;
   text-decoration: none !important;
-  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.nav-history-home-icon {
+  font-size: 1.1em;
+  line-height: 1;
+  opacity: 0.95;
 }
 .nav-history-home:hover {
   background: rgba(255, 255, 255, 0.32);
+  border-color: rgba(255, 255, 255, 0.6);
   text-decoration: none !important;
 }
 .nav-history-home:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline: 2px solid rgba(255, 255, 255, 0.95);
   outline-offset: 2px;
 }
 @media (max-width: 520px) {
-  .nav-history-home {
-    margin-left: 0;
+  .nav-history-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nav-history-lead {
     width: 100%;
-    text-align: center;
+    justify-content: center;
+  }
+  .nav-history-actions {
+    flex: 1;
+    min-width: 0;
+  }
+  .nav-history-actions .nav-history-btn {
+    flex: 1;
+  }
+  .nav-history-home {
+    width: 100%;
+    justify-content: center;
   }
 }

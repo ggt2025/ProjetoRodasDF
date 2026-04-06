@@ -33,6 +33,12 @@
     }
   }
 
+  global.syncNavHistoryUI = function () {
+    var backBtn = document.getElementById('nav-history-back');
+    var fwdBtn = document.getElementById('nav-history-forward');
+    sync(backBtn, fwdBtn);
+  };
+
   function init() {
     var backBtn = document.getElementById('nav-history-back');
     var fwdBtn = document.getElementById('nav-history-forward');

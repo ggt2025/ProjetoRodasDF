@@ -29,6 +29,7 @@
 <script src="js/site/editais.js" defer></script>
 <script src="js/site/bases-conhecimento.js" defer></script>
 <script src="js/site/contato.js" defer></script>
+<script src="js/site/landing-history.js" defer></script>
 </head>
 <body class="landing-page" data-nav-home="true">
 <a href="#main-content" class="skip-to-main-landing">Saltar para o conteúdo principal</a>
@@ -42,11 +43,22 @@
       <span class="loading-inline"><span class="spinner"></span> Carregando…</span>
     </nav>
   </div>
-  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+  <div class="site-header-nav-history" role="navigation" aria-label="Navegação neste separador">
     <div class="nav-history-inner">
-      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
-      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
-      <a class="nav-history-home" href="index.html">Início</a>
+      <div class="nav-history-lead">
+        <span class="nav-history-title">Neste separador</span>
+        <div class="nav-history-actions" role="group" aria-label="Retroceder e avançar">
+          <button type="button" class="nav-history-btn nav-history-btn--back" id="nav-history-back" aria-label="Voltar à página ou secção anterior">
+            <span class="nav-history-icon" aria-hidden="true">←</span>
+            <span class="nav-history-btn-text">Voltar</span>
+          </button>
+          <button type="button" class="nav-history-btn nav-history-btn--fwd" id="nav-history-forward" aria-label="Avançar para a página ou secção seguinte">
+            <span class="nav-history-btn-text">Avançar</span>
+            <span class="nav-history-icon" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+      <a class="nav-history-home" href="index.html"><span class="nav-history-home-icon" aria-hidden="true">⌂</span> Início do site</a>
     </div>
   </div>
 </header>
