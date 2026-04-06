@@ -1,0 +1,193 @@
+/* Card compacto — calendário */
+.roda-card-compact {
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  line-height: 1.3;
+  transition: box-shadow 0.15s;
+}
+.roda-card-compact:hover {
+  box-shadow: var(--shadow-sm);
+}
+.roda-card-compact--perm {
+  border-left: 3px solid #059669;
+  background: #f0fdf4;
+}
+.roda-card-compact--rec {
+  border-left: 3px solid #d97706;
+  background: #fffbeb;
+}
+.roda-card-compact--pont {
+  border-left: 3px solid #ea580c;
+  background: #fff7ed;
+}
+.roda-card-compact--st-ok {
+  border-color: #86efac;
+}
+.roda-card-compact--st-pend {
+  border-color: #fcd34d;
+}
+.roda-card-compact--st-off {
+  opacity: 0.55;
+}
+.roda-card-compact__badges {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--gray-600);
+}
+.roda-card-compact__title {
+  display: block;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 3px;
+}
+.roda-card-compact__meta {
+  display: block;
+  font-size: 10px;
+  color: var(--gray-600);
+}
+
+/* Modal detalhe */
+.roda-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.35);
+}
+.roda-modal {
+  position: fixed;
+  z-index: 301;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(520px, 94vw);
+  max-height: min(88vh, 640px);
+  overflow: auto;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 0;
+}
+.roda-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--gray-500);
+  border-radius: var(--radius);
+}
+.roda-modal__close:hover {
+  background: var(--gray-100);
+  color: var(--gray-900);
+}
+.roda-modal__inner {
+  padding: 20px 22px 24px;
+}
+.roda-modal__head {
+  margin-bottom: 10px;
+}
+.roda-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+.roda-badge--perm {
+  background: #d1fae5;
+  color: #065f46;
+}
+.roda-badge--rec {
+  background: #fef3c7;
+  color: #92400e;
+}
+.roda-badge--pont {
+  background: #ffedd5;
+  color: #9a3412;
+}
+.roda-badge--ok {
+  border: 2px solid #059669;
+  background: #ecfdf5;
+  color: #065f46;
+}
+.roda-badge--pend {
+  border: 2px solid #d97706;
+  background: #fffbeb;
+  color: #92400e;
+}
+.roda-badge--off {
+  border: 2px solid var(--gray-300);
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+.roda-modal__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 8px 0 12px;
+  line-height: 1.3;
+}
+.roda-modal__line,
+.roda-modal__agenda {
+  font-size: 14px;
+  color: var(--gray-700);
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+.roda-modal__agenda {
+  font-weight: 600;
+  color: var(--gray-800);
+}
+.roda-modal__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+.roda-modal__text {
+  font-size: 14px;
+  color: var(--gray-700);
+  margin: 0;
+  white-space: pre-wrap;
+}
+.roda-modal__block {
+  margin: 12px 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-100);
+}
+.roda-modal__foot {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin: 14px 0 0;
+}
+.roda-modal__edit {
+  display: inline-block;
+  margin-top: 16px;
+  text-decoration: none;
+}

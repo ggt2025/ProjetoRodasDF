@@ -3,41 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administração — Rede de Rodas do DF</title>
+<title>Área administrativa — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/dashboard-shell.css">
+<link rel="stylesheet" href="css/landing.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/app/admin-app.js" defer></script>
 </head>
-<body>
+<body id="admin-root">
 <header class="site-header">
   <div class="site-header-inner">
     <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
     <nav class="site-nav" data-auth-slot></nav>
   </div>
 </header>
-<div class="dash-main" style="padding:24px;max-width:900px;margin:0 auto">
-  <h1 style="font-size:1.25rem;margin-bottom:12px">Administração</h1>
-  <p class="dash-placeholder">Área <strong>Bloco 4</strong>: gestão de usuários e moderação de rodas pendentes.</p>
-  <p><a href="index.html">← Site</a></p>
+<div class="dash-layout" style="grid-template-columns:220px 1fr;max-width:1200px;margin:0 auto">
+  <aside class="dash-sidebar">
+    <p class="dash-app-title">B · Área administrativa</p>
+    <p class="dash-sidebar-hint">Apenas conta <strong>admin</strong>: define quem é <strong>gestão</strong> ou <strong>comum</strong> e consulta analytics.</p>
+    <a href="dashboard-usuario.html">Área do utilizador</a>
+    <a href="dashboard-gestao.html">Gestão do projeto</a>
+    <a href="perfil.html">Perfil</a>
+    <div class="dash-nav-divider"></div>
+    <a href="#perfis">Utilizadores e papéis</a>
+    <a href="#analytics">Analytics (visitas)</a>
+    <div class="dash-nav-divider"></div>
+    <a href="index.html">Site público</a>
+  </aside>
+  <div class="dash-main" style="padding:24px 20px 40px">
+    <h1 class="dash-h1">Área administrativa <button type="button" class="help-btn" onclick="openHelp('Área administrativa (B)','Apenas perfil «admin»: altera papéis (comum / gestão / admin) em qualquer linha de «profiles» e consulta a tabela de visitas. Não confundir com o painel de gestão de projeto (D).',[{label:'Gestão do projeto',href:'dashboard-gestao.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda">?</button></h1>
+    <p class="dash-panel-intro">Atribua papéis: <strong>comum</strong> (utilizadores externos), <strong>gestão</strong> (equipa do projeto) e <strong>admin</strong> (poucas contas). As visitas às páginas são registadas automaticamente para acompanhar participação.</p>
+
+    <section id="perfis" style="margin-bottom:40px">
+      <h2 class="dash-h1" style="font-size:1.15rem">Utilizadores e papéis</h2>
+      <div id="mount-admin-profiles"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+
+    <section id="analytics">
+      <h2 class="dash-h1" style="font-size:1.15rem">Analytics (páginas visitadas)</h2>
+      <p class="dash-muted">Registo automático em todas as páginas que carregam <code>analytics.js</code> (sem cookies de terceiros).</p>
+      <div id="mount-admin-analytics"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+  </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', async function () {
-  if (window.updateHeaderAuth) await updateHeaderAuth();
-  var x = await getSessionUser();
-  if (!x.user) {
-    location.href = 'login.html?next=' + encodeURIComponent(location.pathname);
-    return;
-  }
-  if (!x.profile || x.profile.role !== 'admin') {
-    toast('Acesso restrito a administradores.', 'err');
-    location.href = 'dashboard-usuario.html';
-    return;
-  }
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
 });
 </script>
 </body>

@@ -8,12 +8,14 @@
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/landing.css">
 <link rel="stylesheet" href="css/forms.css">
+<link rel="stylesheet" href="css/dashboard-shell.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
-<script src="js/perfil.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/app/perfil.js" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -23,10 +25,27 @@
   </div>
 </header>
 
-<main class="landing-wrap" style="max-width:640px">
+<main class="landing-wrap" style="max-width:640px" aria-label="Perfil do utilizador">
+  <p class="dash-area-label">A · Perfil</p>
+  <nav class="dash-crumb" aria-label="Navegação">
+    <a href="index.html">Site público</a> · <a href="dashboard-usuario.html">Área do utilizador</a> · <span aria-current="page">Perfil</span>
+  </nav>
+
+  <p id="pf-loading" class="empty-state" style="margin:20px 0">A carregar…</p>
+
+  <div id="pf-guest" hidden>
+    <h1 style="font-size:1.35rem;margin:16px 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">Perfil <button type="button" class="help-btn" onclick="openHelp('Perfil (visitante)','Com sessão, o perfil lê e grava a tabela «profiles» e mostra rodas ligadas em «usuario_rodas». Sem login só vê este convite.',[{label:'Entrar',href:'login.html?next=perfil.html'},{label:'Criar conta',href:'login.html#cadastro',primary:false}])" title="Ajuda">?</button></h1>
+    <p style="color:var(--gray-600);font-size:15px;line-height:1.5;margin-bottom:20px">Inicie sessão para ver e editar os seus dados e as rodas a que está vinculado.</p>
+    <p style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <a class="btn btn-primary" href="login.html?next=perfil.html">Entrar</a>
+      <a class="btn btn-secondary" href="login.html#cadastro">Criar conta</a>
+    </p>
+  </div>
+
+  <div id="pf-registered" hidden>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-    <h1 style="font-size:1.35rem">Área do perfil</h1>
-    <button type="button" class="help-btn" onclick="openHelp('Perfil','Aqui você gerencia seus dados pessoais e vê as rodas às quais está vinculada.')" title="Ajuda">?</button>
+    <h1 style="font-size:1.35rem">O meu perfil</h1>
+    <button type="button" class="help-btn" onclick="openHelp('Perfil (A)','Edição do seu registo em «profiles». O e-mail vem da conta. As rodas listadas são vínculos em «usuario_rodas». Gestão e admin acedem a outras áreas pelo menu.',[{label:'Rodas DF',href:'dashboard-usuario.html#rodas'},{label:'Site público',href:'index.html',primary:false}])" title="Ajuda">?</button>
   </div>
 
   <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px">Papel: <strong id="pf-role">—</strong></p>
@@ -42,10 +61,12 @@
 
   <h2 style="font-size:1.1rem;margin:32px 0 12px">Rodas vinculadas</h2>
   <div id="pf-rodas-list"><p class="empty-state">Carregando…</p></div>
+  </div>
 </main>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
   if (window.updateHeaderAuth) updateHeaderAuth();
   if (window.initPerfilPage) initPerfilPage();
 });

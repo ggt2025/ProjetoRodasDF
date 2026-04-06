@@ -3,25 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Rede de Rodas do DF — rodas de conversa multidisciplinares para mulheres no Distrito Federal.">
+<meta name="description" content="Rede de Rodas do DF — mapeamento semanal de rodas de conversa, notícias, edital de capacitação e contato com a gestão.">
 <meta name="theme-color" content="#5b21b6">
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <title>Rede de Rodas do DF</title>
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/landing.css">
 <link rel="stylesheet" href="css/calendar.css">
+<link rel="stylesheet" href="css/roda-card.css">
 <link rel="stylesheet" href="css/cards.css">
 <link rel="stylesheet" href="css/forms.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
-<script src="js/calendar.js" defer></script>
-<script src="js/noticias.js" defer></script>
-<script src="js/editais.js" defer></script>
-<script src="js/bases-conhecimento.js" defer></script>
-<script src="js/contato.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/lib/constants.js" defer></script>
+<script src="js/site/roda-card.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/site/calendar.js" defer></script>
+<script src="js/site/noticias.js" defer></script>
+<script src="js/site/editais.js" defer></script>
+<script src="js/site/bases-conhecimento.js" defer></script>
+<script src="js/site/contato.js" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -34,56 +38,71 @@
 </header>
 
 <main class="landing-wrap">
-  <!-- 1. Hero -->
+  <!-- 1. Hero: projeto + funcionalidades + CTA -->
   <section class="hero" id="sec-hero" aria-labelledby="hero-title">
-    <h1 id="hero-title">Rodas de conversa multidisciplinares para mulheres no Distrito Federal</h1>
-    <p class="hero-lead">Articulamos e fortalecemos rodas de acolhimento — conectando quem precisa com espaços de escuta, apoio e formação. Projeto em articulação com a rede de proteção à mulher no DF.</p>
+    <h1 id="hero-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Rede de Rodas do DF<button type="button" class="help-btn" onclick="openHelp('Este site','Página pública: calendário semanal alimentado pelo Supabase (Realtime), notícias, editais, bases de conhecimento e contacto com a gestão. Com login acede à área do utilizador (rodas, materiais, Rede DF, fórum público). Equipa de gestão e admin usam painéis dedicados.',[{label:'Ver mapeamento',href:'#sec-calendario'},{label:'Entrar',href:'login.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda sobre o site">?</button></h1>
+    <p class="hero-lead">Articulamos rodas de conversa multidisciplinares para mulheres no Distrito Federal — mapeamento semanal de encontros recorrentes, notícias da rede, edital de capacitação de facilitadoras, bases de conhecimento e canal direto com a gestão.</p>
+    <ul class="hero-features">
+      <li>Calendário semanal (Seg–Dom) alimentado pelo Supabase, com filtros e atualização em tempo real.</li>
+      <li>Cadastro de novas rodas após login (status pendente até confirmação da gestão).</li>
+      <li>Notícias, editais, materiais de referência e formulário de contato institucional.</li>
+    </ul>
     <div class="hero-ctas">
-      <a class="btn btn-primary" href="#sec-calendario">Conheça as Rodas</a>
-      <a class="btn btn-secondary" href="login.html">Entrar</a>
+      <a class="btn btn-primary" href="#sec-calendario">Ver mapeamento semanal</a>
+      <a class="btn btn-secondary" href="login.html">Entrar / cadastrar</a>
     </div>
   </section>
 
-  <!-- 2. Calendário -->
+  <nav class="landing-quick-nav" aria-label="Secções da página">
+    <a href="#sec-calendario">Mapeamento</a>
+    <a href="#sec-noticias">Notícias</a>
+    <a href="#sec-editais">Edital</a>
+    <a href="#sec-bases">Conhecimento</a>
+    <a href="#sec-contato">Contato</a>
+  </nav>
+
+  <!-- 2. Mapeamento semanal + CTA -->
   <section class="section" id="sec-calendario" aria-labelledby="cal-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="cal-title">Calendário de rodas <button type="button" class="help-btn" onclick="openHelp('Calendário','Visualização semanal das rodas recorrentes e permanentes mapeadas no DF. Use os filtros por região, tipo e status. Atualiza em tempo real quando há alterações no cadastro.')" title="Ajuda">?</button></h2>
-        <p class="section-lead">Grade semanal (Seg–Dom) com horários. Em telas pequenas, a lista agrupa por dia.</p>
+        <h2 class="section-title" id="cal-title">Mapeamento semanal das rodas <button type="button" class="help-btn" onclick="openHelp('Mapeamento semanal','Grade Seg–Dom com horários. Inclui rodas permanentes ou recorrentes (não pontuais) com estado diferente de encerrado. Filtros: circunscrição, tipo e status. Quinzenais podem alinhar-se à semana atual. Dados em tempo real (Supabase).',[{label:'Cadastrar ou gerir rodas',href:'dashboard-usuario.html'},{label:'Entrar',href:'login.html',primary:false}])" title="Ajuda">?</button></h2>
+        <p class="section-lead">Visualização tipo calendário: cada card é uma roda no dia e horário cadastrados. Toque num card para ver detalhes completos.</p>
       </div>
     </div>
     <div id="mount-calendario"><div class="loading-inline"><span class="spinner"></span> Carregando calendário…</div></div>
+    <div class="section-cta-row">
+      <a class="btn btn-primary" href="dashboard-usuario.html">Cadastrar ou gerir as minhas rodas</a>
+      <a class="btn btn-secondary" href="login.html">Entrar na conta</a>
+    </div>
   </section>
 
   <!-- 3. Notícias -->
   <section class="section" id="sec-noticias" aria-labelledby="news-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="news-title">Notícias <button type="button" class="help-btn" onclick="openHelp('Notícias','Últimas publicações da rede. Conteúdo gerido pela equipe de gestão no painel.')" title="Ajuda">?</button></h2>
+        <h2 class="section-title" id="news-title">Notícias <button type="button" class="help-btn" onclick="openHelp('Notícias','Comunicados publicados na tabela «noticias» (gestão define rascunho ou publicado). Aparecem aqui e podem ser replicados noutros canais.',[{label:'Editais',href:'#sec-editais'},{label:'Contactar gestão',href:'#sec-contato',primary:false}])" title="Ajuda">?</button></h2>
         <p class="section-lead">Comunicados e atualizações.</p>
       </div>
     </div>
     <div id="mount-noticias"><div class="loading-inline"><span class="spinner"></span> Carregando…</div></div>
-    <div class="section-cta"><a class="btn btn-secondary" href="#sec-noticias">Ver todas</a></div>
   </section>
 
-  <!-- 4. Editais -->
+  <!-- 4. Edital de capacitação -->
   <section class="section" id="sec-editais" aria-labelledby="ed-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="ed-title">Editais <button type="button" class="help-btn" onclick="openHelp('Editais','Processos seletivos e chamadas públicas publicados pela gestão.')" title="Ajuda">?</button></h2>
+        <h2 class="section-title" id="ed-title">Edital de capacitação <button type="button" class="help-btn" onclick="openHelp('Editais','Chamadas e capacitações na tabela «editais». A gestão controla datas e publicação. O bloco destaca o edital de capacitação quando existir.',[{label:'Bases de conhecimento',href:'#sec-bases'},{label:'Área de gestão',href:'dashboard-gestao.html',primary:false}])" title="Ajuda">?</button></h2>
         <p class="section-lead">Seleções, capacitações e documentos oficiais.</p>
       </div>
     </div>
     <div id="mount-editais"><div class="loading-inline"><span class="spinner"></span> Carregando…</div></div>
-    <div class="section-cta"><a class="btn btn-secondary" href="#sec-editais">Ver todos</a></div>
   </section>
 
   <!-- 5. Bases de conhecimento -->
   <section class="section" id="sec-bases" aria-labelledby="bases-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="bases-title">Bases de conhecimento <button type="button" class="help-btn" onclick="openHelp('Bases de conhecimento','Links e materiais de referência (NotebookLM, PDFs, páginas institucionais).')" title="Ajuda">?</button></h2>
+        <h2 class="section-title" id="bases-title">Bases de conhecimento <button type="button" class="help-btn" onclick="openHelp('Bases de conhecimento','Links e descrições na tabela «bases_conhecimento». Úteis para facilitadoras e equipa. A gestão mantém a lista.',[{label:'Contato',href:'#sec-contato'},{label:'Início da página',href:'#sec-hero',primary:false}])" title="Ajuda">?</button></h2>
         <p class="section-lead">Material de apoio e referências.</p>
       </div>
     </div>
@@ -95,7 +114,7 @@
   <section class="section" id="sec-contato" aria-labelledby="cont-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="cont-title">Contate a gestão <button type="button" class="help-btn" onclick="openHelp('Contato','Envie uma mensagem à equipe. Os dados são registrados para retorno institucional.')" title="Ajuda">?</button></h2>
+        <h2 class="section-title" id="cont-title">Contate a gestão <button type="button" class="help-btn" onclick="openHelp('Contato','Mensagens gravadas em «contatos» (visíveis só para gestão/admin). Indique assunto claro para resposta institucional.',[{label:'Entrar na conta',href:'login.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda">?</button></h2>
         <p class="section-lead">Dúvidas, sugestões ou pedidos de informação.</p>
       </div>
     </div>
@@ -108,10 +127,11 @@
   </section>
 </main>
 
-<footer class="site-footer">Rede de Rodas do DF · DF · <a href="login.html">Entrar</a> · <a href="perfil.html">Perfil</a> (após login)</footer>
+<footer class="site-footer">Rede de Rodas do DF · <a href="login.html">Entrar</a> · <a href="dashboard-usuario.html">Área do utilizador (C)</a> · <a href="dashboard-gestao.html">Gestão (D)</a> · <a href="admin.html">Admin (B)</a> · <a href="perfil.html">Perfil (A)</a></footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
   if (window.updateHeaderAuth) updateHeaderAuth();
   if (window.initCalendarSection) initCalendarSection('mount-calendario');
   if (window.loadNoticiasLanding) loadNoticiasLanding('mount-noticias', 6);

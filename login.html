@@ -10,10 +10,11 @@
 <link rel="stylesheet" href="css/forms.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
-<script src="js/router.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/auth/router.js" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -24,7 +25,7 @@
 </header>
 
 <main class="landing-wrap" style="max-width:440px">
-  <h1 style="font-size:1.5rem;margin-bottom:8px">Entrar</h1>
+  <h1 style="font-size:1.5rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">Entrar <button type="button" class="help-btn" onclick="openHelp('Entrar / cadastrar','Autenticação via Supabase (e-mail/senha ou Google). Depois do login, o site redireciona: admin → área administrativa; gestão → painel de gestão; restantes → área do utilizador. Use ?next=perfil.html (ou outra página .html) para voltar a um sítio após entrar.',[{label:'Site público',href:'index.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda">?</button></h1>
   <p style="color:var(--gray-600);font-size:14px;margin-bottom:24px">Acesso com e-mail ou Google. Novo usuário? <a href="#cadastro" id="link-cad">Cadastre-se</a>.</p>
 
   <form id="form-login" class="form-group">
@@ -50,6 +51,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
   if (location.hash === '#cadastro') document.getElementById('cadastro').scrollIntoView();
 
   document.getElementById('form-login').addEventListener('submit', async function (e) {

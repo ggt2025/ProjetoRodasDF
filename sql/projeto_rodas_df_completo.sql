@@ -1,8 +1,8 @@
 -- ============================================================
--- PROJETO RODAS DF — SQL COMPLETO E ÚNICO
--- PostgreSQL 15+ / Supabase
--- Execute no SQL Editor (Run). Re-execução: políticas recriadas.
--- Sem analytics. Sem tabelas de rastreamento.
+-- PROJETO RODAS DF — SQL ÚNICO (schema + RLS + analytics + seeds)
+-- PostgreSQL 15+ / Supabase · Executar UMA vez no SQL Editor (Run).
+-- Re-execução: políticas listadas são removidas e recriadas; tabelas IF NOT EXISTS.
+-- Inclui: perfis, rodas (compatibilidade com bases antigas), rede, fóruns, analytics.
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -20,7 +20,8 @@ BEGIN
       AND tablename IN (
         'profiles','rodas','usuario_rodas','rede_df','rede_df_pontes','noticias','editais',
         'bases_conhecimento','contatos','prototipos_redes','forum_topicos','cronograma',
-        'atividades_gestao','encaminhamentos','equipe_projeto','parceiros_pontes','registro_atividades'
+        'atividades_gestao','encaminhamentos','equipe_projeto','parceiros_pontes','registro_atividades',
+        'analytics_page_views'
       )
   ) LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I ON %I.%I', r.policyname, r.schemaname, r.tablename);
@@ -46,7 +47,10 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "profiles_select" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "profiles_update" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "profiles_update" ON public.profiles FOR UPDATE USING (
+  auth.uid() = id
+  OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
 CREATE POLICY "profiles_insert" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -61,7 +65,7 @@ BEGIN
     new.id,
     new.email,
     COALESCE(new.raw_user_meta_data->>'full_name', split_part(new.email,'@',1)),
-    CASE WHEN new.email = 'giselle.trevizo@gmail.com' THEN 'admin' ELSE 'comum' END
+    CASE WHEN LOWER(TRIM(new.email)) = 'giselle.trevizo@gmail.com' THEN 'admin' ELSE 'comum' END
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN new;
@@ -112,6 +116,45 @@ CREATE POLICY "rodas_update" ON public.rodas FOR UPDATE USING (
 CREATE POLICY "rodas_delete" ON public.rodas FOR DELETE USING (
   auth.uid() = user_id OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
 );
+
+-- 2b. Compatibilidade: instalações antigas em que public.rodas existia sem colunas atuais
+--     (CREATE TABLE IF NOT EXISTS não altera tabelas já criadas — evita erro 42703 em índices/seeds).
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS circunscricao text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS tipo text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS status text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS nome text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS instituicao text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS responsavel text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS dia_semana text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS horario_inicio time;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS horario_fim time;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS frequencia text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS observacao_frequencia text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS endereco text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS bairro text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS cep text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS telefone text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS whatsapp text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS email text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS instagram text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS site text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS descricao text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS historico text;
+ALTER TABLE public.rodas ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES auth.users(id);
+
+UPDATE public.rodas SET
+  circunscricao = COALESCE(NULLIF(trim(circunscricao::text), ''), 'DF'),
+  tipo = COALESCE(tipo, 'permanente'),
+  status = COALESCE(status, 'pendente'),
+  nome = COALESCE(NULLIF(trim(nome::text), ''), 'Roda a completar'),
+  dia_semana = COALESCE(dia_semana, 'terca'),
+  horario_inicio = COALESCE(horario_inicio, '09:00'::time),
+  frequencia = COALESCE(frequencia, 'semanal'),
+  endereco = COALESCE(NULLIF(trim(endereco::text), ''), '—')
+WHERE circunscricao IS NULL OR nome IS NULL OR dia_semana IS NULL OR horario_inicio IS NULL
+   OR frequencia IS NULL OR endereco IS NULL OR tipo IS NULL OR status IS NULL;
 
 -- 3. VINCULAÇÃO USUÁRIO ↔ RODA
 CREATE TABLE IF NOT EXISTS public.usuario_rodas (
@@ -429,6 +472,26 @@ CREATE POLICY "reg_ativ_gestao" ON public.registro_atividades FOR ALL USING (
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('gestao','admin'))
 );
 
+-- 18. ANALYTICS (visitas a páginas HTML — sem cookies de terceiros)
+CREATE TABLE IF NOT EXISTS public.analytics_page_views (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at timestamptz DEFAULT now(),
+  path text NOT NULL,
+  page_hash text,
+  user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL
+);
+
+ALTER TABLE public.analytics_page_views ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "analytics_insert" ON public.analytics_page_views FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "analytics_select" ON public.analytics_page_views FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('gestao', 'admin'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_created ON public.analytics_page_views (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_path ON public.analytics_page_views (path);
+
 -- Índices (consultas e filtros)
 CREATE INDEX IF NOT EXISTS idx_rodas_circ ON public.rodas (circunscricao);
 CREATE INDEX IF NOT EXISTS idx_rodas_dia ON public.rodas (dia_semana);
@@ -450,10 +513,30 @@ SELECT
   u.id,
   u.email,
   COALESCE(u.raw_user_meta_data->>'full_name', split_part(COALESCE(u.email, 'user'), '@', 1)),
-  CASE WHEN u.email = 'giselle.trevizo@gmail.com' THEN 'admin' ELSE 'comum' END
+  CASE WHEN LOWER(TRIM(u.email)) = 'giselle.trevizo@gmail.com' THEN 'admin' ELSE 'comum' END
 FROM auth.users u
 WHERE NOT EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = u.id)
 ON CONFLICT (id) DO NOTHING;
+
+-- Conta administrativa inicial (ajuste o e-mail se necessário)
+UPDATE public.profiles
+SET role = 'admin'
+WHERE LOWER(TRIM(email)) = 'giselle.trevizo@gmail.com';
+
+-- Fórum: alinhar textos genéricos em bases que já tinham linhas antigas
+UPDATE public.forum_topicos
+SET
+  titulo = 'Fórum público — debate aberto',
+  descricao = 'Espaço para troca de ideias entre participantes da comunidade. Tópicos de caráter geral; moderação conforme regras da plataforma. Mensagens em evolução.',
+  status = 'em_breve'
+WHERE tipo = 'publico';
+
+UPDATE public.forum_topicos
+SET
+  titulo = 'Fórum privado — equipa de gestão',
+  descricao = 'Canal reservado à equipa de gestão (alinhamento e decisões). Acesso apenas a perfis de gestão ou administração. Distinto do fórum público.',
+  status = 'em_breve'
+WHERE tipo = 'privado';
 
 -- GRANTS (Supabase REST + anon)
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
@@ -465,6 +548,8 @@ GRANT INSERT ON public.contatos TO anon;
 GRANT INSERT ON public.rodas TO anon;
 GRANT INSERT ON public.usuario_rodas TO anon;
 GRANT INSERT ON public.profiles TO anon;
+GRANT INSERT ON public.analytics_page_views TO anon, authenticated;
+GRANT SELECT ON public.analytics_page_views TO authenticated;
 
 -- Realtime: calendário público
 DO $$
@@ -494,18 +579,34 @@ SELECT
   'Ativa desde fevereiro de 2015. Mais de 10 anos de funcionamento contínuo.'
 WHERE NOT EXISTS (SELECT 1 FROM public.rodas WHERE nome = 'Rede ELAS – Roda Mensal');
 
--- SEED: FÓRUM PLACEHOLDERS
+-- SEED: FÓRUM (textos genéricos — debate público vs canal privado; sem detalhe operacional do projeto)
 INSERT INTO public.forum_topicos (titulo, descricao, tipo, status)
-SELECT 'Fórum Público – Rede de Mulheres DF',
-  'Espaço futuro de debate aberto sobre enfrentamento à violência contra a mulher no DF. Aberto a todas as participantes da rede. Tópicos: políticas públicas, experiências, sugestões.',
-  'publico', 'em_breve'
-WHERE NOT EXISTS (SELECT 1 FROM public.forum_topicos WHERE titulo = 'Fórum Público – Rede de Mulheres DF');
+SELECT
+  'Fórum público — debate aberto',
+  'Espaço para troca de ideias entre participantes da comunidade. Tópicos de caráter geral; moderação conforme regras da plataforma. Mensagens em evolução.',
+  'publico',
+  'em_breve'
+WHERE NOT EXISTS (SELECT 1 FROM public.forum_topicos WHERE tipo = 'publico');
 
 INSERT INTO public.forum_topicos (titulo, descricao, tipo, status)
-SELECT 'Fórum Privado – Equipe do Projeto Rodas',
-  'Espaço reservado para debates internos da equipe de gestão. Foco: decisões estratégicas, alinhamento, discussões sensíveis do projeto.',
-  'privado', 'em_breve'
-WHERE NOT EXISTS (SELECT 1 FROM public.forum_topicos WHERE titulo = 'Fórum Privado – Equipe do Projeto Rodas');
+SELECT
+  'Fórum privado — equipa de gestão',
+  'Canal reservado à equipa de gestão (alinhamento e decisões). Acesso apenas a perfis de gestão ou administração. Distinto do fórum público.',
+  'privado',
+  'em_breve'
+WHERE NOT EXISTS (SELECT 1 FROM public.forum_topicos WHERE tipo = 'privado');
+
+-- SEED opcional: um equipamento Rede DF (edição na gestão; liga a pontes e rodas no território)
+INSERT INTO public.rede_df (circunscricao, tipo_equipamento, nome, descricao, status)
+SELECT
+  'DF',
+  'outro',
+  'Equipamento de exemplo — Rede DF',
+  'Registo ilustrativo para articulação com pontes e rodas. Atualize ou apague na área de gestão (D.4).',
+  'em_implantacao'
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.rede_df WHERE nome = 'Equipamento de exemplo — Rede DF'
+);
 
 -- Exemplos para a landing (opcional)
 INSERT INTO public.noticias (titulo, resumo, conteudo, publicado, data_publicacao)

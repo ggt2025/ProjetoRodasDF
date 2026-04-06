@@ -10,9 +10,15 @@
     }
     var role = (profile && profile.role) || 'comum';
     var next = new URLSearchParams(window.location.search).get('next');
-    if (next && next.indexOf('/') === 0 && next.indexOf('//') < 0) {
-      window.location.href = next;
-      return;
+    if (next && !next.includes('://') && !next.includes('..')) {
+      if (next.charAt(0) === '/') {
+        window.location.href = next;
+        return;
+      }
+      if (/^[a-zA-Z0-9._-]+\.html$/.test(next)) {
+        window.location.href = next;
+        return;
+      }
     }
     if (role === 'admin') {
       window.location.href = 'admin.html';

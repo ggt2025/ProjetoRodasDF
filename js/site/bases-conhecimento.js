@@ -13,7 +13,9 @@
       .eq('publicado', true)
       .order('titulo');
     if (res.error) {
-      el.innerHTML = '<p class="empty-state">Erro ao carregar bases.</p>';
+      el.innerHTML = global.supabaseErrorBox
+        ? global.supabaseErrorBox(res.error)
+        : '<p class="empty-state">' + global.escapeHtml(res.error.message) + '</p>';
       return;
     }
     var rows = res.data || [];

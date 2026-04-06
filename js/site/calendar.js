@@ -1,6 +1,5 @@
 /**
- * Calendário semanal de rodas — landing e reutilização futura.
- * Realtime: atualiza ao mudar a tabela public.rodas.
+ * Calendário semanal de rodas — cards reutilizáveis + Realtime.
  */
 (function (global) {
   var DAYS = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
@@ -20,6 +19,7 @@
     filtCirc: '',
     filtTipo: '',
     filtStatus: '',
+    filtQuinzenalWeek: false,
     channel: null,
   };
 
@@ -30,6 +30,9 @@
       if (state.filtCirc && r.circunscricao !== state.filtCirc) return false;
       if (state.filtTipo && r.tipo !== state.filtTipo) return false;
       if (state.filtStatus && r.status !== state.filtStatus) return false;
+      if (state.filtQuinzenalWeek && r.frequencia === 'quinzenal') {
+        if (global.quinzenalMatchesThisWeek && !global.quinzenalMatchesThisWeek(r)) return false;
+      }
       return true;
     });
   }
@@ -37,9 +40,13 @@
   function renderDesktop(el, rodas) {
     var desk = el.querySelector('[data-cal-desktop]');
     if (!desk) return;
+    if (!global.renderRodaCardCompact) {
+      desk.innerHTML = '<p class="cal-empty">Carregue roda-card.js antes do calendário.</p>';
+      return;
+    }
     if (!rodas.length) {
       desk.innerHTML =
-        '<p class="cal-empty">Nenhuma roda recorrente encontrada para os filtros. Ajuste ou cadastre novas rodas após entrar na conta.</p>';
+        '<p class="cal-empty">Nenhuma roda recorrente encontrada para os filtros. <a href="login.html">Entre</a> ou <a href="dashboard-usuario.html">cadastre uma roda</a>.</p>';
       return;
     }
     var hours = rodas.map(function (r) {
@@ -63,27 +70,10 @@
         var cell = rodas.filter(function (r) {
           return r.dia_semana === day && global.parseTimeHour(r.horario_inicio) === h;
         });
-        html += '<td class="cal-cell">';
+        var stack = cell.length > 1 ? ' cal-cell--stack' : '';
+        html += '<td class="cal-cell' + stack + '">';
         cell.forEach(function (r) {
-          var cls = 'cal-card';
-          if (r.tipo === 'permanente') cls += ' cal-card--perm';
-          else if (r.tipo === 'recorrente') cls += ' cal-card--rec';
-          var sd = r.status === 'confirmada' ? '✓' : '⏳';
-          html +=
-            '<button type="button" class="' +
-            cls +
-            '" title="' +
-            global.escapeHtml(r.nome) +
-            '">' +
-            '<div class="cal-card-name">' +
-            global.escapeHtml(r.nome.length > 36 ? r.nome.slice(0, 34) + '…' : r.nome) +
-            '</div>' +
-            '<div class="cal-card-meta">' +
-            global.fmtTime(r.horario_inicio) +
-            (r.horario_fim ? '–' + global.fmtTime(r.horario_fim) : '') +
-            ' ' +
-            sd +
-            '</div></button>';
+          html += global.renderRodaCardCompact(r);
         });
         html += '</td>';
       });
@@ -91,13 +81,16 @@
     }
     html += '</tbody></table></div>';
     desk.innerHTML = html;
+    if (global.attachRodaCardClickDelegate) global.attachRodaCardClickDelegate(desk);
   }
 
   function renderMobile(el, rodas) {
     var wrap = el.querySelector('[data-cal-mobile]');
     if (!wrap) return;
+    if (!global.renderRodaCardCompact) return;
     if (!rodas.length) {
-      wrap.innerHTML = '';
+      wrap.innerHTML =
+        '<p class="cal-empty">Nenhuma roda para estes filtros. <a href="login.html">Entre</a> para cadastrar.</p>';
       return;
     }
     var html = '';
@@ -112,38 +105,21 @@
       if (!dayRodas.length) return;
       html += '<div class="cal-day-block"><h3 class="cal-day-title">' + DAY_LABELS_LONG[i] + '</h3>';
       dayRodas.forEach(function (r) {
-        html +=
-          '<div class="cal-m-card"><h4>' +
-          global.escapeHtml(r.nome) +
-          '</h4>' +
-          '<div class="cal-m-meta">' +
-          global.escapeHtml(r.circunscricao || '') +
-          ' · ' +
-          global.fmtTime(r.horario_inicio) +
-          (r.horario_fim ? '–' + global.fmtTime(r.horario_fim) : '') +
-          '</div>' +
-          '<div class="cal-m-meta">' +
-          global.escapeHtml(r.endereco || '') +
-          '</div></div>';
+        html += '<div class="cal-m-slot">' + global.renderRodaCardCompact(r) + '</div>';
       });
       html += '</div>';
     });
     wrap.innerHTML = html || '<p class="cal-empty">Nenhuma roda nesta visualização.</p>';
+    if (global.attachRodaCardClickDelegate) global.attachRodaCardClickDelegate(wrap);
   }
 
-  function fillCircOptions(el, rows) {
+  function fillCircOptions(el) {
     var sel = el.querySelector('[data-filt-circ]');
     if (!sel) return;
-    var set = {};
-    rows.forEach(function (r) {
-      if (r.circunscricao) set[r.circunscricao] = true;
-    });
-    var opts = Object.keys(set).sort(function (a, b) {
-      return a.localeCompare(b, 'pt');
-    });
     var cur = sel.value;
-    sel.innerHTML = '<option value="">Todas as regiões</option>';
-    opts.forEach(function (c) {
+    var list = global.CIRCUNSCRICOES_DF || [];
+    sel.innerHTML = '<option value="">Todas as circunscrições</option>';
+    list.forEach(function (c) {
       sel.innerHTML += '<option value="' + global.escapeHtml(c) + '">' + global.escapeHtml(c) + '</option>';
     });
     sel.value = cur;
@@ -154,57 +130,85 @@
     if (!el) return;
     var sb = global.getSupabase();
     if (!sb) {
-      el.innerHTML = '<p class="cal-empty" style="padding:24px">Configure RODASDF_CONFIG (url + anonKey) para ver o calendário.</p>';
+      el.innerHTML =
+        '<p class="cal-empty" style="padding:24px">Configure RODASDF_CONFIG (url + anonKey) para ver o calendário.</p>';
       return;
     }
 
-    async function load() {
+    async function load(isInitial) {
       var res = await sb.from('rodas').select('*').order('horario_inicio', { ascending: true });
       if (res.error) {
         console.error(res.error);
-        if (global.toast) global.toast('Erro ao carregar rodas: ' + res.error.message, 'err');
         state.rows = [];
-      } else {
-        var DAY_ORDER = { segunda: 0, terca: 1, quarta: 2, quinta: 3, sexta: 4, sabado: 5, domingo: 6 };
-        state.rows = (res.data || []).slice().sort(function (a, b) {
-          var da = DAY_ORDER[a.dia_semana] != null ? DAY_ORDER[a.dia_semana] : 99;
-          var db = DAY_ORDER[b.dia_semana] != null ? DAY_ORDER[b.dia_semana] : 99;
-          if (da !== db) return da - db;
-          return global.parseTimeHour(a.horario_inicio) - global.parseTimeHour(b.horario_inicio);
-        });
+        var hint = global.formatSupabaseError ? global.formatSupabaseError(res.error) : res.error.message;
+        if (global.toast) global.toast('Rodas: ' + hint, 'err');
+        if (isInitial) {
+          el.innerHTML = global.supabaseErrorBox
+            ? global.supabaseErrorBox(res.error)
+            : '<div class="supabase-error" role="alert"><strong>Não foi possível carregar as rodas.</strong><p class="supabase-error-msg">' +
+              global.escapeHtml(hint) +
+              '</p></div>';
+          return false;
+        }
+        fillCircOptions(el);
+        renderDesktop(el, []);
+        renderMobile(el, []);
+        return false;
       }
-      fillCircOptions(el, state.rows);
+      var DAY_ORDER = { segunda: 0, terca: 1, quarta: 2, quinta: 3, sexta: 4, sabado: 5, domingo: 6 };
+      state.rows = (res.data || []).slice().sort(function (a, b) {
+        var da = DAY_ORDER[a.dia_semana] != null ? DAY_ORDER[a.dia_semana] : 99;
+        var db = DAY_ORDER[b.dia_semana] != null ? DAY_ORDER[b.dia_semana] : 99;
+        if (da !== db) return da - db;
+        return global.parseTimeHour(a.horario_inicio) - global.parseTimeHour(b.horario_inicio);
+      });
+      fillCircOptions(el);
       var rodas = applyFilters(state.rows);
       renderDesktop(el, rodas);
       renderMobile(el, rodas);
+      return true;
     }
 
     el.innerHTML =
       '<div class="cal-filters">' +
-      '<label>Região <select data-filt-circ><option value="">Todas</option></select></label>' +
+      '<label>Circunscrição <select data-filt-circ><option value="">Todas</option></select></label>' +
       '<label>Tipo <select data-filt-tipo>' +
       '<option value="">Todos</option><option value="permanente">Permanente</option><option value="recorrente">Recorrente</option>' +
       '</select></label>' +
       '<label>Status <select data-filt-status">' +
       '<option value="">Todos</option><option value="confirmada">Confirmada</option><option value="pendente">Pendente</option>' +
-      '</select></label></div>' +
+      '</select></label>' +
+      '<label class="cal-filters-check"><input type="checkbox" data-filt-quinzenal /> Semana atual (quinzenais)</label>' +
+      '</div>' +
       '<div class="cal-desktop" data-cal-desktop></div>' +
       '<div class="cal-mobile" data-cal-mobile></div>';
 
+    fillCircOptions(el);
+
     el.querySelector('[data-filt-circ]').addEventListener('change', function () {
       state.filtCirc = this.value;
-      load();
+      load(false);
     });
     el.querySelector('[data-filt-tipo]').addEventListener('change', function () {
       state.filtTipo = this.value;
-      load();
+      load(false);
     });
     el.querySelector('[data-filt-status]').addEventListener('change', function () {
       state.filtStatus = this.value;
-      load();
+      load(false);
     });
+    var qz = el.querySelector('[data-filt-quinzenal]');
+    if (qz) {
+      qz.addEventListener('change', function () {
+        state.filtQuinzenalWeek = !!this.checked;
+        var rodas = applyFilters(state.rows);
+        renderDesktop(el, rodas);
+        renderMobile(el, rodas);
+      });
+    }
 
-    await load();
+    var ok = await load(true);
+    if (!ok) return;
 
     if (state.channel) {
       try {
@@ -217,7 +221,7 @@
         'postgres_changes',
         { event: '*', schema: 'public', table: 'rodas' },
         function () {
-          load();
+          load(false);
         }
       )
       .subscribe();

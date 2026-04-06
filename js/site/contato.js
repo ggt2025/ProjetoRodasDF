@@ -19,7 +19,8 @@
       }
       var res = await sb.from('contatos').insert({ nome: nome, email: email, mensagem: mensagem });
       if (res.error) {
-        global.toast('Erro ao enviar: ' + res.error.message, 'err');
+        var msg = global.formatSupabaseError ? global.formatSupabaseError(res.error) : res.error.message;
+        global.toast('Erro ao enviar: ' + msg, 'err');
         return;
       }
       global.toast('Mensagem enviada. A gestão retornará quando possível.', 'ok');

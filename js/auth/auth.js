@@ -73,10 +73,22 @@
       return;
     }
     var nome = (profile && profile.nome) || user.email || 'Conta';
+    var role = (profile && profile.role) || 'comum';
+    var navGest =
+      role === 'gestao' || role === 'admin'
+        ? ' <span style="opacity:.6">·</span> <a href="dashboard-gestao.html">Gestão do projeto</a>'
+        : '';
+    var navAdmin =
+      role === 'admin'
+        ? ' <span style="opacity:.6">·</span> <a href="admin.html">Área administrativa</a>'
+        : '';
     slot.innerHTML =
       'Olá, <strong>' +
       global.escapeHtml(nome) +
-      '</strong> · <a href="perfil.html">Perfil</a> · <button type="button" class="link-btn" id="btnLogoutHeader">Sair</button>';
+      '</strong> · <a href="dashboard-usuario.html">Área do utilizador</a> · <a href="perfil.html">Perfil</a>' +
+      navGest +
+      navAdmin +
+      ' · <button type="button" class="link-btn" id="btnLogoutHeader">Sair</button>';
     var btn = global.qs('#btnLogoutHeader');
     if (btn)
       btn.addEventListener('click', async function () {

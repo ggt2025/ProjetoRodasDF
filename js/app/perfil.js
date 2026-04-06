@@ -1,9 +1,22 @@
 (function (global) {
   global.initPerfilPage = async function () {
-    var user = await global.requireAuth();
-    if (!user) return;
+    var loadEl = global.qs('#pf-loading');
+    var guestEl = global.qs('#pf-guest');
+    var regEl = global.qs('#pf-registered');
     var sb = global.getSupabase();
-    if (!sb) return;
+    var { user } = await global.getSessionUser();
+    if (loadEl) loadEl.hidden = true;
+    if (!user) {
+      if (guestEl) guestEl.hidden = false;
+      if (regEl) regEl.hidden = true;
+      return;
+    }
+    if (guestEl) guestEl.hidden = true;
+    if (regEl) regEl.hidden = false;
+    if (!sb) {
+      global.toast('Supabase não configurado.', 'err');
+      return;
+    }
 
     var res = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
     if (res.error || !res.data) {

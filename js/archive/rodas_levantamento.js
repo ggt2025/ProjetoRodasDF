@@ -1,6 +1,6 @@
 /**
  * Levantamento — Rodas de conversa e serviços de apoio grupal (DF 2025–2026)
- * Carregado por <script src="js/rodas_levantamento.js"> antes do script principal em index.html
+ * Arquivado em js/archive/ — não carregado pelo index atual. Ver js/archive/README.md.
  */
 (function () {
   'use strict';

@@ -3,17 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Área do usuário — Rede de Rodas do DF</title>
+<title>Área do utilizador — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/dashboard-shell.css">
+<link rel="stylesheet" href="css/forms.css">
+<link rel="stylesheet" href="css/landing.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/lib/constants.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/app/dashboard-nav.js" defer></script>
+<script src="js/app/rodas.js" defer></script>
+<script src="js/app/dashboard-usuario.js" defer></script>
 </head>
-<body>
+<body id="dash-usuario-root">
 <header class="site-header">
   <div class="site-header-inner">
     <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
@@ -22,22 +30,154 @@
 </header>
 <div class="dash-layout">
   <aside class="dash-sidebar">
-    <a href="dashboard-usuario.html" class="active">Rodas DF</a>
-    <a href="dashboard-usuario.html#proto">Protótipos e redes</a>
-    <a href="dashboard-usuario.html#rede">Rede DF</a>
-    <a href="dashboard-usuario.html#forum">Fórum público</a>
+    <p class="dash-app-title">C · Utilizador comum</p>
+    <p class="dash-sidebar-hint">Rodas, rede alargada e materiais de leitura. A <strong>gestão</strong> e o <strong>admin</strong> têm áreas próprias no cabeçalho.</p>
     <a href="perfil.html">Perfil</a>
+    <a href="#rodas" data-dash-tab="rodas">C.1 · Rodas DF</a>
+    <a href="#proto" data-dash-tab="proto">C.2 · Protótipos e redes</a>
+    <a href="#rede" data-dash-tab="rede">C.3 · Rede DF</a>
+    <a href="#forum" data-dash-tab="forum">C.4 · Fórum público</a>
+    <div class="dash-nav-divider"></div>
+    <a href="index.html">Site público</a>
   </aside>
   <div class="dash-main">
-    <p class="dash-placeholder">Conteúdo do <strong>Bloco 2</strong> (dashboard do usuário comum) será implementado aqui: calendário, cadastro de rodas, vínculos, protótipos, rede DF e placeholder do fórum.</p>
-    <p><a href="index.html">← Voltar ao site</a></p>
+    <p class="dash-area-label" style="margin-bottom:12px">C · Área do utilizador comum</p>
+    <section data-dash-panel="rodas">
+      <h1 class="dash-h1">Rodas DF <button type="button" class="help-btn" onclick="openHelp('Rodas DF (C.1)','Formulário grava na tabela «rodas» com o seu user_id. Novas ficam «pendentes» até a gestão confirmar; depois entram no calendário público. Edite ou apague só as suas, salvo exceções da gestão.',[{label:'Calendário público',href:'index.html#sec-calendario'},{label:'Perfil',href:'perfil.html',primary:false}])" title="Ajuda">?</button></h1>
+      <p class="dash-intro">Cadastre e edite rodas de conversa. Novas entradas ficam <strong>pendentes</strong> até confirmação da gestão.</p>
+      <div id="mount-minhas-rodas" class="dash-roda-lista"><p class="dash-placeholder">Carregando…</p></div>
+      <p style="margin:20px 0"><button type="button" class="btn btn-primary" id="btnNovaRoda">Cadastrar nova roda</button></p>
+      <section id="sec-form-roda" class="dash-form-section" hidden>
+        <h2 id="titulo-form-roda">Nova roda</h2>
+        <form id="form-roda" class="form-roda-dash">
+          <input type="hidden" name="id" id="roda-id" value="">
+          <div class="form-group">
+            <label for="roda-circunscricao">Circunscrição *</label>
+            <select id="roda-circunscricao" name="circunscricao" required></select>
+          </div>
+          <div class="form-group">
+            <label for="roda-nome">Nome da roda *</label>
+            <input id="roda-nome" name="nome" required maxlength="200" autocomplete="off">
+          </div>
+          <fieldset class="form-fieldset">
+            <legend>Tipo *</legend>
+            <label><input type="radio" name="tipo" value="permanente" checked> Permanente</label>
+            <label><input type="radio" name="tipo" value="recorrente"> Recorrente / itinerante</label>
+          </fieldset>
+          <div class="form-group">
+            <label for="roda-instituicao">Instituição</label>
+            <input id="roda-instituicao" name="instituicao" maxlength="300">
+          </div>
+          <div class="form-group">
+            <label for="roda-responsavel">Responsável</label>
+            <input id="roda-responsavel" name="responsavel" maxlength="200">
+          </div>
+          <div class="form-group">
+            <label for="roda-dia-semana">Dia da semana *</label>
+            <select id="roda-dia-semana" name="dia_semana" required>
+              <option value="segunda">Segunda-feira</option>
+              <option value="terca">Terça-feira</option>
+              <option value="quarta">Quarta-feira</option>
+              <option value="quinta">Quinta-feira</option>
+              <option value="sexta">Sexta-feira</option>
+              <option value="sabado">Sábado</option>
+              <option value="domingo">Domingo</option>
+            </select>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="roda-horario-inicio">Horário início *</label>
+              <input id="roda-horario-inicio" name="horario_inicio" type="time" required>
+            </div>
+            <div class="form-group">
+              <label for="roda-horario-fim">Horário fim</label>
+              <input id="roda-horario-fim" name="horario_fim" type="time">
+            </div>
+          </div>
+          <fieldset class="form-fieldset">
+            <legend>Frequência *</legend>
+            <label><input type="radio" name="frequencia" value="semanal" checked> Semanal</label>
+            <label><input type="radio" name="frequencia" value="quinzenal"> Quinzenal</label>
+          </fieldset>
+          <div class="form-group">
+            <label for="roda-obs-freq">Observação da frequência</label>
+            <input id="roda-obs-freq" name="observacao_frequencia" maxlength="300" placeholder="Ex.: última terça do mês; semanas pares">
+          </div>
+          <div class="form-group">
+            <label for="roda-endereco">Endereço completo *</label>
+            <input id="roda-endereco" name="endereco" required maxlength="500">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="roda-bairro">Bairro</label>
+              <input id="roda-bairro" name="bairro" maxlength="120">
+            </div>
+            <div class="form-group">
+              <label for="roda-cep">CEP</label>
+              <input id="roda-cep" name="cep" maxlength="12" placeholder="00000-000">
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="roda-telefone">Telefone</label>
+              <input id="roda-telefone" name="telefone" maxlength="40">
+            </div>
+            <div class="form-group">
+              <label for="roda-whatsapp">WhatsApp</label>
+              <input id="roda-whatsapp" name="whatsapp" maxlength="40">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="roda-email">E-mail</label>
+            <input id="roda-email" name="email" type="email" maxlength="200">
+          </div>
+          <div class="form-group">
+            <label for="roda-instagram">Instagram</label>
+            <input id="roda-instagram" name="instagram" maxlength="120" placeholder="@conta">
+          </div>
+          <div class="form-group">
+            <label for="roda-site">Site</label>
+            <input id="roda-site" name="site" type="url" maxlength="300" placeholder="https://">
+          </div>
+          <div class="form-group">
+            <label for="roda-descricao">Descrição (máx. 500)</label>
+            <textarea id="roda-descricao" name="descricao" maxlength="500" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="roda-historico">Histórico (máx. 300)</label>
+            <textarea id="roda-historico" name="historico" maxlength="300" rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btnSalvarRoda">Guardar</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelarForm">Cancelar</button>
+          </div>
+        </form>
+      </section>
+    </section>
+
+    <section data-dash-panel="proto" hidden>
+      <h1 class="dash-h1">Protótipos e redes</h1>
+      <p class="dash-panel-intro">Referências e modelos publicados pela equipa (leitura).</p>
+      <div id="mount-proto"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+
+    <section data-dash-panel="rede" hidden>
+      <h1 class="dash-h1">Rede DF <button type="button" class="help-btn" onclick="openHelp('Rede DF (C.3)','Vista alargada: equipamentos e pontos em «rede_df» (consulta). Complementa o mapeamento de rodas; a gestão edita dados e pontes no painel D.4.',[{label:'Gestão D.4',href:'dashboard-gestao.html#parceiros'}])" title="Ajuda">?</button></h1>
+      <p class="dash-panel-intro">Visão mais ampla que as rodas: equipamentos, articulação e pontos da rede de proteção (consulta).</p>
+      <div id="mount-rede-df"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+
+    <section data-dash-panel="forum" hidden>
+      <h1 class="dash-h1">Fórum público <button type="button" class="help-btn" onclick="openHelp('Fórum público (C.4)','Tópicos genéricos em «forum_topicos» (tipo público). Debate completo ainda não está implementado no front; textos vêm da base. O fórum privado da equipa é só na gestão.',[{label:'Site',href:'index.html'},{label:'Gestão — fórum privado',href:'dashboard-gestao.html#forum-priv',primary:false}])" title="Ajuda">?</button></h1>
+      <div id="mount-forum-pub"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+
+    <p style="margin-top:28px"><a href="index.html">← Voltar ao site</a></p>
   </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', async function () {
-  if (window.updateHeaderAuth) await updateHeaderAuth();
-  var u = await requireAuth();
-  if (!u) return;
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
 });
 </script>
 </body>

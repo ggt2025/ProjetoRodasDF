@@ -15,7 +15,9 @@
       .order('created_at', { ascending: false })
       .limit(lim);
     if (res.error) {
-      el.innerHTML = '<p class="empty-state">Erro ao carregar notícias.</p>';
+      el.innerHTML = global.supabaseErrorBox
+        ? global.supabaseErrorBox(res.error)
+        : '<p class="empty-state">' + global.escapeHtml(res.error.message) + '</p>';
       return;
     }
     var rows = res.data || [];

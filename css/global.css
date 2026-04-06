@@ -43,8 +43,11 @@ img{max-width:100%;height:auto;}
 /* Help (?) */
 .help-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--purple-300);background:var(--white);color:var(--purple-600);font-size:12px;font-weight:700;cursor:pointer;margin-left:6px;vertical-align:middle;font-family:inherit;line-height:1;}
 .help-btn:hover{background:var(--purple-50);}
-.help-popover{position:fixed;z-index:200;max-width:min(360px,92vw);padding:14px 16px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);font-size:13px;color:var(--gray-600);line-height:1.5;}
-.help-popover h4{margin:0 0 8px;font-size:14px;color:var(--gray-900);}
+.help-popover{position:fixed;z-index:200;max-width:min(400px,92vw);padding:36px 16px 14px 16px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);font-size:13px;color:var(--gray-600);line-height:1.5;}
+.help-popover-close{position:absolute;top:8px;right:8px;width:30px;height:30px;padding:0;border:none;border-radius:50%;background:var(--gray-100);color:var(--gray-700);font-size:1.1rem;line-height:1;cursor:pointer;font-family:inherit;}
+.help-popover-close:hover{background:var(--gray-200);color:var(--gray-900);}
+.help-popover h4{margin:0 0 8px;font-size:14px;color:var(--gray-900);padding-right:24px;}
+.help-pop-ctas{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
 .help-backdrop{position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.2);}
 
 /* Loading */
@@ -53,4 +56,11 @@ img{max-width:100%;height:auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Footer */
-.site-footer{margin-top:auto;padding:28px 20px;text-align:center;font-size:13px;color:var(--gray-500);border-top:1px solid var(--gray-200);background:var(--gray-50);}
+.site-footer{margin-top:auto;padding:28px 20px;text-align:center;font-size:13px;line-height:1.65;color:var(--gray-500);border-top:1px solid var(--gray-200);background:var(--gray-50);}
+.site-footer a{color:var(--purple-700);text-decoration:none;}
+.site-footer a:hover{text-decoration:underline;}
+
+/* Erros Supabase / API */
+.supabase-error{margin:16px 0;padding:16px 18px;border-radius:var(--radius-lg);border:1px solid #fecaca;background:#fef2f2;color:#7f1d1d;font-size:14px;line-height:1.45;}
+.supabase-error strong{display:block;margin-bottom:8px;font-size:15px;}
+.supabase-error-msg{margin:0;white-space:pre-wrap;word-break:break-word;}

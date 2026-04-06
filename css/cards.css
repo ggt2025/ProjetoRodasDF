@@ -7,6 +7,10 @@
 .card-n h3{font-size:16px;font-weight:700;line-height:1.35;color:var(--gray-900);}
 .card-n p{font-size:13px;color:var(--gray-600);line-height:1.5;flex:1;}
 .card-edital{border-left:4px solid var(--purple-600);}
+.card-edital--destaque{border-left-width:6px;border-color:var(--amber-600);background:linear-gradient(135deg,#fffbeb,#fff);}
+.edital-destaque-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--amber-700);margin:0 0 10px;}
+.editais-demais{margin-top:28px;padding-top:20px;border-top:1px solid var(--gray-200);}
+.editais-demais-h{font-size:1rem;font-weight:800;color:var(--gray-800);margin-bottom:14px;}
 .bases-list{display:flex;flex-direction:column;gap:10px;}
 .base-link{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);text-decoration:none;color:var(--gray-900);font-weight:600;}
 .base-link:hover{border-color:var(--purple-300);background:var(--purple-50);}

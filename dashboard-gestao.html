@@ -3,17 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão — Rede de Rodas do DF</title>
+<title>Gestão do projeto — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/dashboard-shell.css">
+<link rel="stylesheet" href="css/calendar.css">
+<link rel="stylesheet" href="css/roda-card.css">
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/forms.css">
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js" defer></script>
-<script src="js/helpers.js" defer></script>
-<script src="js/auth.js" defer></script>
+<script src="js/lib/supabase-client.js" defer></script>
+<script src="js/lib/helpers.js" defer></script>
+<script src="js/lib/constants.js" defer></script>
+<script src="js/site/roda-card.js" defer></script>
+<script src="js/auth/auth.js" defer></script>
+<script src="js/lib/analytics.js" defer></script>
+<script src="js/site/calendar.js" defer></script>
+<script src="js/app/dashboard-nav.js" defer></script>
+<script src="js/app/gestao-rede.js" defer></script>
+<script src="js/app/gestao-app.js" defer></script>
 </head>
-<body>
+<body id="dash-gestao-root">
 <header class="site-header">
   <div class="site-header-inner">
     <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
@@ -22,33 +34,78 @@
 </header>
 <div class="dash-layout">
   <aside class="dash-sidebar">
-    <a href="dashboard-gestao.html">Dashboard</a>
-    <a href="#">Encaminhamentos</a>
-    <a href="#">Equipe</a>
-    <a href="#">Parceiros / Pontes</a>
-    <a href="#">Site público</a>
-    <a href="#">Fórum privado</a>
-    <a href="#">Registro de atividades</a>
+    <p class="dash-app-title">D · Gestão do projeto</p>
+    <p class="dash-sidebar-hint">Acesso <strong>gestão</strong> ou <strong>admin</strong>. O analytics de participação está em <strong>Participação</strong>; papéis de utilizador na <strong>área administrativa</strong> (só admin).</p>
+    <a href="dashboard-usuario.html">Área do utilizador</a>
+    <a href="perfil.html">Perfil</a>
+    <div class="dash-nav-divider"></div>
+    <a href="#dashboard" data-dash-tab="dashboard">D.1 · Dashboard</a>
+    <a href="#participacao" data-dash-tab="participacao">Participação (analytics)</a>
+    <a href="#encaminhamentos" data-dash-tab="encaminhamentos">D.2 · Encaminhamentos</a>
+    <a href="#equipe" data-dash-tab="equipe">D.3 · Equipa</a>
+    <a href="#parceiros" data-dash-tab="parceiros">D.4 · Parceiros · pontes · levantamento</a>
+    <a href="#site" data-dash-tab="site">D.5 · Site público</a>
+    <a href="#forum-priv" data-dash-tab="forum-priv">D.6 · Fórum privado</a>
+    <a href="#registro" data-dash-tab="registro">D.7 · Registo de atividades</a>
+    <div class="dash-nav-divider"></div>
+    <a href="index.html">Site público</a>
   </aside>
   <div class="dash-main">
-    <p class="dash-placeholder">Área da gestão — <strong>Bloco 3</strong>. Acesso restrito a perfis <code>gestao</code> ou <code>admin</code>.</p>
-    <p><a href="index.html">← Site público</a></p>
+    <section data-dash-panel="dashboard">
+      <p class="dash-area-label">D · Gestão do projeto</p>
+      <h1 class="dash-h1">Dashboard <button type="button" class="help-btn" onclick="openHelp('Dashboard (D.1)','Indicadores (rodas pendentes, contactos, rascunhos), tabela de cronograma e o mesmo calendário semanal do site. Tudo num ecrã para alinhar confirmações.',[{label:'Participação (visitas)',href:'#participacao'},{label:'Área administrativa',href:'admin.html',primary:false}])" title="Ajuda">?</button></h1>
+      <p class="dash-panel-intro">D.1 — Indicadores, <strong>cronograma</strong> e <strong>calendário de rodas</strong> reunidos para evitar saltos entre ecrãs.</p>
+      <div id="mount-painel-kpi"><p class="dash-placeholder">Carregando…</p></div>
+      <h2 class="dash-h2">Cronograma</h2>
+      <div id="mount-cronograma"><p class="dash-placeholder">Carregando…</p></div>
+      <h2 class="dash-h2">Calendário de rodas</h2>
+      <p class="dash-muted" style="margin-top:0">Mesma vista semanal da página pública; alinhar com o cronograma e confirmações.</p>
+      <div id="mount-gestao-cal"><div class="loading-inline"><span class="spinner"></span> Carregando…</div></div>
+    </section>
+    <section data-dash-panel="participacao" hidden>
+      <h1 class="dash-h1">Participação <button type="button" class="help-btn" onclick="openHelp('Participação / analytics','Registo de caminhos visitados (analytics_page_views) quando cada página carrega analytics.js. Sem cookies de terceiros. Papéis de utilizadores só na área administrativa.',[{label:'Área administrativa',href:'admin.html'},{label:'Site público',href:'index.html',primary:false}])" title="Ajuda">?</button></h1>
+      <p class="dash-panel-intro">Visitas às páginas que carregam <code>analytics.js</code> (sem cookies de terceiros). Para alterar papéis de utilizadores, use a <a href="admin.html">área administrativa</a> (conta admin).</p>
+      <div id="mount-analytics-gestao"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <section data-dash-panel="encaminhamentos" hidden>
+      <h1 class="dash-h1">Encaminhamentos</h1>
+      <div id="mount-encaminhamentos"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <section data-dash-panel="equipe" hidden>
+      <h1 class="dash-h1">Equipa do projeto</h1>
+      <div id="mount-equipe"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <section data-dash-panel="parceiros" hidden>
+      <p class="dash-area-label">D.4 · Parceiros, rede e pontes</p>
+      <h1 class="dash-h1">Parceiros · levantamento · Rede DF · pontes</h1>
+      <p class="dash-panel-intro">Parceiros e levantamento; em seguida a <strong>Rede DF</strong> (equipamentos) e as <strong>pontes</strong> por equipamento — dados editáveis aqui e no Supabase.</p>
+      <h2 class="dash-h2" style="margin-top:0">Parceiros e levantamento</h2>
+      <div id="mount-parceiros-tab"><p class="dash-placeholder">Carregando…</p></div>
+      <div id="mount-rede-df-edit"><p class="dash-placeholder">Carregando…</p></div>
+      <div id="mount-pontes-edit"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <section data-dash-panel="site" hidden>
+      <h1 class="dash-h1">Gestão do site público</h1>
+      <p class="dash-panel-intro">Notícias e editais (edição completa pode ser feita no Supabase ou aqui em evolução).</p>
+      <h2 style="font-size:1rem;margin:16px 0 8px">Notícias</h2>
+      <div id="mount-site-noticias"><p class="dash-placeholder">…</p></div>
+      <h2 style="font-size:1rem;margin:16px 0 8px">Editais</h2>
+      <div id="mount-site-editais"><p class="dash-placeholder">…</p></div>
+    </section>
+    <section data-dash-panel="forum-priv" hidden>
+      <h1 class="dash-h1">Fórum privado do projeto</h1>
+      <div id="mount-forum-priv"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <section data-dash-panel="registro" hidden>
+      <h1 class="dash-h1">Registo de atividades</h1>
+      <div id="mount-registro"><p class="dash-placeholder">Carregando…</p></div>
+    </section>
+    <p style="margin-top:24px"><a href="index.html">← Site público</a></p>
   </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', async function () {
-  if (window.updateHeaderAuth) await updateHeaderAuth();
-  var x = await getSessionUser();
-  if (!x.user) {
-    location.href = 'login.html?next=' + encodeURIComponent(location.pathname);
-    return;
-  }
-  var r = x.profile && x.profile.role;
-  if (r !== 'gestao' && r !== 'admin') {
-    toast('Acesso restrito à gestão.', 'err');
-    location.href = 'dashboard-usuario.html';
-    return;
-  }
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.trackPageView) trackPageView();
 });
 </script>
 </body>
