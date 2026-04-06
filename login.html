@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Rede de Rodas do DF</title>
+<link rel="icon" href="assets/logotiporodas.png" type="image/png">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/forms.css">
+<script>
+window.RODASDF_CONFIG = {
+  url: 'https://YOUR_PROJECT.supabase.co',
+  anonKey: 'YOUR_SUPABASE_ANON_KEY'
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js" defer></script>
+<script src="js/helpers.js" defer></script>
+<script src="js/auth.js" defer></script>
+<script src="js/router.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-logo" href="index.html">← Voltar ao site</a>
+    <nav class="site-nav"><a href="index.html">Início</a></nav>
+  </div>
+</header>
+
+<main class="landing-wrap" style="max-width:440px">
+  <h1 style="font-size:1.5rem;margin-bottom:8px">Entrar</h1>
+  <p style="color:var(--gray-600);font-size:14px;margin-bottom:24px">Acesso com e-mail ou Google. Novo usuário? <a href="#cadastro" id="link-cad">Cadastre-se</a>.</p>
+
+  <form id="form-login" class="form-group">
+    <div class="form-group"><label for="lg-email">E-mail</label><input id="lg-email" type="email" required autocomplete="email"></div>
+    <div class="form-group"><label for="lg-pass">Senha</label><input id="lg-pass" type="password" required autocomplete="current-password"></div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Entrar</button>
+      <button type="button" class="btn btn-secondary" id="btn-google">Google</button>
+    </div>
+  </form>
+
+  <hr style="margin:28px 0;border:none;border-top:1px solid var(--gray-200)">
+
+  <div id="cadastro">
+    <h2 style="font-size:1.15rem;margin-bottom:12px">Cadastro</h2>
+    <form id="form-cadastro" class="form-group">
+      <div class="form-group"><label for="cd-email">E-mail</label><input id="cd-email" type="email" required autocomplete="email"></div>
+      <div class="form-group"><label for="cd-pass">Senha (mín. 6 caracteres)</label><input id="cd-pass" type="password" required minlength="6" autocomplete="new-password"></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Criar conta</button></div>
+    </form>
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (location.hash === '#cadastro') document.getElementById('cadastro').scrollIntoView();
+
+  document.getElementById('form-login').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    try {
+      await signInEmail(
+        document.getElementById('lg-email').value,
+        document.getElementById('lg-pass').value
+      );
+      toast('Login ok.', 'ok');
+      await redirectAfterLogin();
+    } catch (err) {
+      toast(err.message || String(err), 'err');
+    }
+  });
+
+  document.getElementById('form-cadastro').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    try {
+      await signUpEmail(
+        document.getElementById('cd-email').value,
+        document.getElementById('cd-pass').value
+      );
+      toast('Verifique seu e-mail para confirmar a conta, se o projeto exigir confirmação.', 'ok');
+    } catch (err) {
+      toast(err.message || String(err), 'err');
+    }
+  });
+
+  document.getElementById('btn-google').addEventListener('click', async function () {
+    try {
+      await signInGoogle();
+    } catch (err) {
+      toast(err.message || String(err), 'err');
+    }
+  });
+
+  (async function () {
+    var sb = getSupabase();
+    if (!sb) return;
+    var x = await sb.auth.getSession();
+    if (x.data && x.data.session) await redirectAfterLogin();
+  })();
+});
+</script>
+</body>
+</html>

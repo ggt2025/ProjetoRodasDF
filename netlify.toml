@@ -1,8 +1,14 @@
-# Site estático: um único index.html na raiz do repositório.
+# Site estático na raiz (várias páginas .html + assets).
 # https://docs.netlify.com/configure-builds/overview/
 
 [build]
   publish = "."
+
+# Fallback SPA: arquivos estáticos existentes têm prioridade sobre esta regra.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 [[headers]]
   for = "/index.html"

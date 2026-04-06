@@ -1,0 +1,27 @@
+/* Calendário semanal — desktop grid */
+.cal-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;align-items:center;}
+.cal-filters label{font-size:12px;font-weight:600;color:var(--gray-600);}
+.cal-filters select{padding:8px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:13px;min-width:160px;background:var(--white);}
+.cal-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -8px;padding:0 8px;}
+.cal-table{width:100%;border-collapse:separate;border-spacing:4px;min-width:720px;}
+.cal-th-time{width:48px;font-size:11px;font-weight:700;color:var(--gray-500);vertical-align:bottom;padding:4px;}
+.cal-th-day{text-align:center;font-size:11px;font-weight:700;color:var(--purple-800);padding:6px 4px;background:var(--purple-50);border-radius:6px;}
+.cal-time-cell{font-size:11px;font-weight:600;color:var(--gray-500);vertical-align:top;padding:6px 4px;width:48px;}
+.cal-cell{vertical-align:top;min-height:48px;padding:4px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-200);}
+.cal-card{display:block;padding:6px 8px;margin-bottom:4px;border-radius:6px;font-size:11px;cursor:pointer;border-left:3px solid var(--purple-600);background:var(--white);text-align:left;font-family:inherit;width:100%;}
+.cal-card--perm{border-left-color:var(--green-600);background:#f0fdf4;}
+.cal-card--rec{border-left-color:var(--amber-600);background:#fffbeb;}
+.cal-card-name{font-weight:700;color:var(--gray-900);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.cal-card-meta{font-size:10px;color:var(--gray-500);margin-top:2px;}
+.cal-empty{padding:24px;text-align:center;color:var(--gray-500);font-size:14px;background:var(--gray-50);border-radius:var(--radius);}
+/* Mobile lista por dia */
+.cal-mobile{display:none;}
+@media(max-width:768px){
+  .cal-desktop{display:none;}
+  .cal-mobile{display:block;}
+}
+.cal-day-block{margin-bottom:20px;}
+.cal-day-title{font-size:14px;font-weight:800;color:var(--purple-800);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--purple-100);}
+.cal-m-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:12px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.cal-m-card h4{font-size:15px;margin-bottom:6px;color:var(--gray-900);}
+.cal-m-meta{font-size:12px;color:var(--gray-600);}

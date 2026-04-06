@@ -1,9 +1,9 @@
-# SQL — Rede de Rodas do DF
+# SQL — Projeto Rodas DF
 
-## Arquivo principal
+Use **apenas** [`schema_completo.sql`](schema_completo.sql) no Supabase SQL Editor (Run).
 
-- **`00_schema_final_completo.sql`** — schema único para Supabase (PostgreSQL 15+): tabelas base, fórum, rede, site público (`public_rodas_site`, `public_edital_site`), pontes, RLS, grants e seeds. Rode este arquivo no SQL Editor quando for configurar ou atualizar o banco.
+- Migrações antigas (`00_*`, `01_*`, `02_*`, `legacy/`) são históricas; o esquema ativo é o do ficheiro único acima.
+- Após rodar o SQL: Authentication → URL configuration → adicione a URL do site (Netlify) e `http://localhost:*` para testes.
+- Google OAuth: ative o provider em Authentication → Providers.
 
-## Pasta `legacy/`
-
-Scripts antigos ou incrementais, mantidos só para histórico ou referência. O conteúdo relevante foi incorporado ao `00_schema_final_completo.sql`. Não é necessário rodar os arquivos de `legacy/` em um projeto novo que já use o schema final.
+Não há tabelas nem scripts de analytics neste esquema.

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área do usuário — Rede de Rodas do DF</title>
+<link rel="icon" href="assets/logotiporodas.png" type="image/png">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script>
+window.RODASDF_CONFIG = { url: 'https://YOUR_PROJECT.supabase.co', anonKey: 'YOUR_SUPABASE_ANON_KEY' };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js" defer></script>
+<script src="js/helpers.js" defer></script>
+<script src="js/auth.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <nav class="site-nav" data-auth-slot></nav>
+  </div>
+</header>
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <a href="dashboard-usuario.html" class="active">Rodas DF</a>
+    <a href="dashboard-usuario.html#proto">Protótipos e redes</a>
+    <a href="dashboard-usuario.html#rede">Rede DF</a>
+    <a href="dashboard-usuario.html#forum">Fórum público</a>
+    <a href="perfil.html">Perfil</a>
+  </aside>
+  <div class="dash-main">
+    <p class="dash-placeholder">Conteúdo do <strong>Bloco 2</strong> (dashboard do usuário comum) será implementado aqui: calendário, cadastro de rodas, vínculos, protótipos, rede DF e placeholder do fórum.</p>
+    <p><a href="index.html">← Voltar ao site</a></p>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+  if (window.updateHeaderAuth) await updateHeaderAuth();
+  var u = await requireAuth();
+  if (!u) return;
+});
+</script>
+</body>
+</html>
