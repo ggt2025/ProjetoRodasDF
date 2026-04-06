@@ -93,4 +93,12 @@
     }
     return user;
   };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var sb = global.getSupabase();
+    if (!sb) return;
+    sb.auth.onAuthStateChange(function () {
+      if (typeof global.updateHeaderAuth === 'function') global.updateHeaderAuth();
+    });
+  });
 })(window);

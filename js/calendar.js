@@ -165,7 +165,13 @@
         if (global.toast) global.toast('Erro ao carregar rodas: ' + res.error.message, 'err');
         state.rows = [];
       } else {
-        state.rows = res.data || [];
+        var DAY_ORDER = { segunda: 0, terca: 1, quarta: 2, quinta: 3, sexta: 4, sabado: 5, domingo: 6 };
+        state.rows = (res.data || []).slice().sort(function (a, b) {
+          var da = DAY_ORDER[a.dia_semana] != null ? DAY_ORDER[a.dia_semana] : 99;
+          var db = DAY_ORDER[b.dia_semana] != null ? DAY_ORDER[b.dia_semana] : 99;
+          if (da !== db) return da - db;
+          return global.parseTimeHour(a.horario_inicio) - global.parseTimeHour(b.horario_inicio);
+        });
       }
       fillCircOptions(el, state.rows);
       var rodas = applyFilters(state.rows);

@@ -12,13 +12,7 @@
 <link rel="stylesheet" href="css/calendar.css">
 <link rel="stylesheet" href="css/cards.css">
 <link rel="stylesheet" href="css/forms.css">
-<script>
-/* Preencha com URL e anon key do Supabase (Settings → API). Sem analytics. */
-window.RODASDF_CONFIG = {
-  url: 'https://YOUR_PROJECT.supabase.co',
-  anonKey: 'YOUR_SUPABASE_ANON_KEY'
-};
-</script>
+<script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js" defer></script>
 <script src="js/helpers.js" defer></script>
@@ -114,7 +108,7 @@ window.RODASDF_CONFIG = {
   </section>
 </main>
 
-<footer class="site-footer">Rede de Rodas do DF · Distrito Federal</footer>
+<footer class="site-footer">Rede de Rodas do DF · DF · <a href="login.html">Entrar</a> · <a href="perfil.html">Perfil</a> (após login)</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

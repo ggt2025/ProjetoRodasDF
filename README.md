@@ -1,24 +1,36 @@
-# Rede de Rodas do DF — site e painel SAAD
+# Rede de Rodas do DF
 
-Site estático (página pública + painel de gestão) com backend opcional em [Supabase](https://supabase.com).
+Site estático multi-página (HTML + CSS + JS) com [Supabase](https://supabase.com) (Auth, Postgres, Realtime). Deploy recomendado: Netlify (raiz do repositório).
 
-## Estrutura do repositório
+## Configuração rápida
+
+1. **Supabase** — Criar projeto → SQL Editor → executar [`sql/schema_completo.sql`](sql/schema_completo.sql) (schema único; ver [`sql/README.md`](sql/README.md)).
+2. **Chaves** — Editar [`js/config.js`](js/config.js): `url` do projeto e `anon` key (Settings → API). Pode copiar de [`js/config.example.js`](js/config.example.js).
+3. **Auth** — Authentication → URL configuration: adicionar URL do site (ex.: `https://seu-site.netlify.app`) e `http://localhost:8080` para testes locais. Ativar Google OAuth se usar o botão Google.
+4. **Deploy** — Publicar a raiz (`publish = "."` no `netlify.toml`).
+
+## Estrutura principal
 
 | Caminho | Descrição |
 |--------|-----------|
-| `index.html` | Aplicação completa (HTML, CSS, JavaScript). Ponto de entrada do deploy. |
-| `js/rodas_levantamento.js` | Dados do levantamento «Rodas DF» (tabelas por partes); expõe `window.RODAS_LEV`. |
-| `assets/` | Imagens: logotipo (`logotiporodas.png`) e QR codes de referência institucional. |
-| `sql/00_schema_final_completo.sql` | Schema PostgreSQL/Supabase (rodar no SQL Editor). Ver `sql/README.md`. |
-| `sql/legacy/` | Migrações antigas (referência). |
-| `netlify.toml` / `_redirects` | Configuração de deploy Netlify (site estático na raiz). |
+| `index.html` | Landing pública (hero, calendário de rodas, notícias, editais, bases, contato) |
+| `login.html` | Login e cadastro (e-mail + Google) |
+| `perfil.html` | Perfil do utilizador e rodas vinculadas |
+| `dashboard-usuario.html` / `dashboard-gestao.html` / `admin.html` | Áreas internas (stubs expandidos nos blocos seguintes) |
+| `css/` | Estilos globais e por área |
+| `js/config.js` | **Único** ficheiro de configuração Supabase |
+| `js/` | Cliente Supabase, auth, calendário, conteúdos, módulos futuros |
+| `sql/schema_completo.sql` | Schema completo (sem analytics) |
+| `assets/` | Logotipo e recursos estáticos |
 
-## Deploy
+Não há scripts de analytics nem rastreamento de terceiros no código base.
 
-Publicar a **raiz** do repositório como site estático (já configurado no `netlify.toml` com `publish = "."`).
+## Desenvolvimento local
 
-## Banco de dados
+Servir a raiz com qualquer servidor estático, por exemplo:
 
-1. Criar projeto no Supabase.  
-2. Executar `sql/00_schema_final_completo.sql` no SQL Editor.  
-3. Colar URL do projeto e chave `anon` em `index.html` (constantes `RODASDF_SUPABASE_*`).
+```bash
+npx serve .
+```
+
+Abrir `http://localhost:3000` (ou a porta indicada).

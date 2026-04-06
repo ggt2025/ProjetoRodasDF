@@ -25,6 +25,12 @@
   }
 
   global.getSupabase = function () {
+    var cfg = global.RODASDF_CONFIG || {};
+    var ver = String(cfg.url || '') + '|' + String(cfg.anonKey || '').slice(0, 12);
+    if (global._sbCacheVer !== ver) {
+      global._sb = null;
+      global._sbCacheVer = ver;
+    }
     if (!global._sb) global._sb = ensureClient();
     return global._sb;
   };

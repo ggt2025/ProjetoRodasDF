@@ -11,7 +11,7 @@
       .from('editais')
       .select('id,titulo,descricao,arquivo_url,data_abertura,data_encerramento')
       .eq('publicado', true)
-      .order('data_abertura', { ascending: false });
+      .order('created_at', { ascending: false });
     if (res.error) {
       el.innerHTML = '<p class="empty-state">Erro ao carregar editais.</p>';
       return;

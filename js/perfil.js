@@ -18,7 +18,7 @@
     var bio = global.qs('#pf-bio');
     var roleEl = global.qs('#pf-role');
     if (nome) nome.value = p.nome || '';
-    if (email) email.value = p.email || user.email || '';
+    if (email) email.value = (p.email || user.email || '').trim();
     if (tel) tel.value = p.telefone || '';
     if (circ) circ.value = p.circunscricao || '';
     if (bio) bio.value = p.bio || '';

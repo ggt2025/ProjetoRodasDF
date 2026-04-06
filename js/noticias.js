@@ -10,9 +10,9 @@
     var lim = limit || 6;
     var res = await sb
       .from('noticias')
-      .select('id,titulo,resumo,conteudo,imagem_url,data_publicacao')
+      .select('id,titulo,resumo,conteudo,imagem_url,data_publicacao,created_at')
       .eq('publicado', true)
-      .order('data_publicacao', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(lim);
     if (res.error) {
       el.innerHTML = '<p class="empty-state">Erro ao carregar notícias.</p>';

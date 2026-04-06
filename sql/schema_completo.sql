@@ -296,9 +296,8 @@ CREATE TABLE IF NOT EXISTS public.forum_topicos (
 
 ALTER TABLE public.forum_topicos ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "forum_pub_select" ON public.forum_topicos FOR SELECT USING (
-  tipo = 'publico' AND auth.uid() IS NOT NULL
-);
+-- Fórum público: leitura para qualquer um (incl. visitante anon), só tópicos tipo público
+CREATE POLICY "forum_pub_select" ON public.forum_topicos FOR SELECT USING (tipo = 'publico');
 CREATE POLICY "forum_priv_select" ON public.forum_topicos FOR SELECT USING (
   tipo = 'privado' AND EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('gestao','admin'))
 );
@@ -430,6 +429,32 @@ CREATE POLICY "reg_ativ_gestao" ON public.registro_atividades FOR ALL USING (
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('gestao','admin'))
 );
 
+-- Índices (consultas e filtros)
+CREATE INDEX IF NOT EXISTS idx_rodas_circ ON public.rodas (circunscricao);
+CREATE INDEX IF NOT EXISTS idx_rodas_dia ON public.rodas (dia_semana);
+CREATE INDEX IF NOT EXISTS idx_rodas_status ON public.rodas (status);
+CREATE INDEX IF NOT EXISTS idx_rodas_horario ON public.rodas (horario_inicio);
+CREATE INDEX IF NOT EXISTS idx_noticias_pub ON public.noticias (publicado);
+CREATE INDEX IF NOT EXISTS idx_noticias_created ON public.noticias (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_editais_pub ON public.editais (publicado);
+CREATE INDEX IF NOT EXISTS idx_editais_created ON public.editais (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_usuario_rodas_user ON public.usuario_rodas (user_id);
+CREATE INDEX IF NOT EXISTS idx_usuario_rodas_roda ON public.usuario_rodas (roda_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles (role);
+CREATE INDEX IF NOT EXISTS idx_rede_df_circ ON public.rede_df (circunscricao);
+CREATE INDEX IF NOT EXISTS idx_rede_df_tipo ON public.rede_df (tipo_equipamento);
+
+-- Perfis em falta (utilizadores auth criados antes do trigger / migrações)
+INSERT INTO public.profiles (id, email, nome, role)
+SELECT
+  u.id,
+  u.email,
+  COALESCE(u.raw_user_meta_data->>'full_name', split_part(COALESCE(u.email, 'user'), '@', 1)),
+  CASE WHEN u.email = 'giselle.trevizo@gmail.com' THEN 'admin' ELSE 'comum' END
+FROM auth.users u
+WHERE NOT EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = u.id)
+ON CONFLICT (id) DO NOTHING;
+
 -- GRANTS (Supabase REST + anon)
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
@@ -509,3 +534,11 @@ SELECT
   'Ferramenta',
   true
 WHERE NOT EXISTS (SELECT 1 FROM public.bases_conhecimento WHERE titulo ILIKE '%NotebookLM%');
+
+-- ----------------------------------------------------------------
+-- Fim do schema. Verificações úteis (SQL Editor):
+--   SELECT tablename, policyname FROM pg_policies WHERE schemaname='public' ORDER BY tablename;
+--   SELECT COUNT(*) FROM public.profiles;
+--   SELECT COUNT(*) FROM public.rodas;
+-- Se o trigger on_auth_user_created falhar: em PG antigo use EXECUTE PROCEDURE em vez de EXECUTE FUNCTION.
+-- ----------------------------------------------------------------
