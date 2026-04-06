@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Rede de Rodas do DF — mapeamento semanal de rodas de conversa, notícias, edital de capacitação e contato com a gestão.">
+<meta name="description" content="Mapeamento semanal de rodas de conversa para mulheres em situação de violência no DF — calendário em tempo real, notícias, edital, bases de conhecimento e contato com a gestão.">
 <meta name="theme-color" content="#5b21b6">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <title>Rede de Rodas do DF</title>
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/nav-history.css">
 <link rel="stylesheet" href="css/landing.css">
 <link rel="stylesheet" href="css/calendar.css">
 <link rel="stylesheet" href="css/roda-card.css">
@@ -18,6 +20,7 @@
 <script src="js/lib/supabase-client.js" defer></script>
 <script src="js/lib/helpers.js" defer></script>
 <script src="js/lib/constants.js" defer></script>
+<script src="js/lib/nav-history.js" defer></script>
 <script src="js/site/roda-card.js" defer></script>
 <script src="js/auth/auth.js" defer></script>
 <script src="js/lib/analytics.js" defer></script>
@@ -27,25 +30,36 @@
 <script src="js/site/bases-conhecimento.js" defer></script>
 <script src="js/site/contato.js" defer></script>
 </head>
-<body>
+<body class="landing-page" data-nav-home="true">
+<a href="#main-content" class="skip-to-main-landing">Saltar para o conteúdo principal</a>
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <div class="site-brand">
+      <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+      <span class="site-tagline">Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</span>
+    </div>
     <nav class="site-nav" data-auth-slot>
       <span class="loading-inline"><span class="spinner"></span> Carregando…</span>
     </nav>
   </div>
+  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+    <div class="nav-history-inner">
+      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
+      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
+      <a class="nav-history-home" href="index.html">Início</a>
+    </div>
+  </div>
 </header>
 
-<main class="landing-wrap">
+<main class="landing-wrap" id="main-content">
   <!-- 1. Hero: projeto + funcionalidades + CTA -->
   <section class="hero" id="sec-hero" aria-labelledby="hero-title">
-    <h1 id="hero-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Rede de Rodas do DF<button type="button" class="help-btn" onclick="openHelp('Este site','Página pública: calendário semanal alimentado pelo Supabase (Realtime), notícias, editais, bases de conhecimento e contacto com a gestão. Com login acede à área do utilizador (rodas, materiais, Rede DF, fórum público). Equipa de gestão e admin usam painéis dedicados.',[{label:'Ver mapeamento',href:'#sec-calendario'},{label:'Entrar',href:'login.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda sobre o site">?</button></h1>
-    <p class="hero-lead">Articulamos rodas de conversa multidisciplinares para mulheres no Distrito Federal — mapeamento semanal de encontros recorrentes, notícias da rede, edital de capacitação de facilitadoras, bases de conhecimento e canal direto com a gestão.</p>
+    <h1 id="hero-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="brand-name" aria-label="Rede de Rodas do DF"><span class="brand-core">Rede de R</span><img src="assets/logotiporodas.png" alt="" class="brand-o-img" width="30" height="30"><span class="brand-core">das do DF</span></span><button type="button" class="help-btn" onclick="openHelp('Este site','Mapeamento semanal de rodas de conversa para mulheres em situação de violência no Distrito Federal. Calendário Seg–Dom (Supabase + tempo real), notícias, edital de capacitação, bases de conhecimento e contato com a gestão. Com login: área do utilizador (cadastro de rodas, materiais, fórum público). Gestão e administração têm painéis dedicados.',[{label:'Ver calendário',href:'#sec-calendario'},{label:'Entrar',href:'login.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda sobre o site">?</button></h1>
+    <p class="hero-lead">Mapeamento semanal de rodas de conversa para mulheres vítimas ou em situação de violência no Distrito Federal — grade por dia e horário, notícias da rede, edital de capacitação de facilitadoras, bases de conhecimento e canal direto com a gestão.</p>
     <ul class="hero-features">
-      <li>Calendário semanal (Seg–Dom) alimentado pelo Supabase, com filtros e atualização em tempo real.</li>
-      <li>Cadastro de novas rodas após login (status pendente até confirmação da gestão).</li>
-      <li>Notícias, editais, materiais de referência e formulário de contato institucional.</li>
+      <li>Calendário semanal (Seg–Dom) preenchido automaticamente a partir dos dados cadastrados, com filtros e atualização em tempo real.</li>
+      <li>Após login, cadastro de novas rodas (entram como pendentes até confirmação pela gestão).</li>
+      <li>Notícias, editais, materiais de referência e formulário para contatar a gestão.</li>
     </ul>
     <div class="hero-ctas">
       <a class="btn btn-primary" href="#sec-calendario">Ver mapeamento semanal</a>
@@ -54,7 +68,8 @@
   </section>
 
   <nav class="landing-quick-nav" aria-label="Secções da página">
-    <a href="#sec-calendario">Mapeamento</a>
+    <a href="#sec-hero">Início</a>
+    <a href="#sec-calendario">Calendário</a>
     <a href="#sec-noticias">Notícias</a>
     <a href="#sec-editais">Edital</a>
     <a href="#sec-bases">Conhecimento</a>
@@ -65,8 +80,8 @@
   <section class="section" id="sec-calendario" aria-labelledby="cal-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="cal-title">Mapeamento semanal das rodas <button type="button" class="help-btn" onclick="openHelp('Mapeamento semanal','Grade Seg–Dom com horários. Inclui rodas permanentes ou recorrentes (não pontuais) com estado diferente de encerrado. Filtros: circunscrição, tipo e status. Quinzenais podem alinhar-se à semana atual. Dados em tempo real (Supabase).',[{label:'Cadastrar ou gerir rodas',href:'dashboard-usuario.html'},{label:'Entrar',href:'login.html',primary:false}])" title="Ajuda">?</button></h2>
-        <p class="section-lead">Visualização tipo calendário: cada card é uma roda no dia e horário cadastrados. Toque num card para ver detalhes completos.</p>
+        <h2 class="section-title" id="cal-title">Mapeamento semanal das rodas <button type="button" class="help-btn" onclick="openHelp('Mapeamento semanal','Grade Seg–Dom com faixas horárias: cada card é uma roda no dia e horário cadastrados (permanentes e recorrentes; não inclui pontuais). Filtros: circunscrição, tipo, status e opção para alinhar quinzenais à semana atual. Atualização em tempo real (Supabase).',[{label:'Cadastrar ou gerir rodas',href:'dashboard-usuario.html'},{label:'Entrar',href:'login.html',primary:false}])" title="Ajuda">?</button></h2>
+        <p class="section-lead">O calendário preenche-se automaticamente com as rodas cadastradas. Toque num card para ver circunscrição, instituição, endereço, contatos e descrição.</p>
       </div>
     </div>
     <div id="mount-calendario"><div class="loading-inline"><span class="spinner"></span> Carregando calendário…</div></div>
@@ -102,12 +117,41 @@
   <section class="section" id="sec-bases" aria-labelledby="bases-title">
     <div class="section-hdr">
       <div>
-        <h2 class="section-title" id="bases-title">Bases de conhecimento <button type="button" class="help-btn" onclick="openHelp('Bases de conhecimento','Links e descrições na tabela «bases_conhecimento». Úteis para facilitadoras e equipa. A gestão mantém a lista.',[{label:'Contato',href:'#sec-contato'},{label:'Início da página',href:'#sec-hero',primary:false}])" title="Ajuda">?</button></h2>
-        <p class="section-lead">Material de apoio e referências.</p>
+        <h2 class="section-title" id="bases-title">Bases de conhecimento <button type="button" class="help-btn" onclick="openHelp('Bases de conhecimento','Dois notebooks públicos no Google NotebookLM (círculos de mulheres; redes e governança) com botões para abrir. Abaixo: links extra na tabela «bases_conhecimento» (gestão).',[{label:'NotebookLM',href:'#sec-notebooklm'},{label:'Contato',href:'#sec-contato',primary:false}])" title="Ajuda">?</button></h2>
+        <p class="section-lead">Material de apoio, notebooks com inteligência artificial (NotebookLM) e referências.</p>
       </div>
     </div>
+
+    <div class="notebooklm-block" id="sec-notebooklm">
+      <h3 class="notebooklm-h">Notebooks no NotebookLM</h3>
+      <p class="notebooklm-intro">
+        O <strong>NotebookLM</strong> é um assistente de inteligência artificial gratuito do Google que funciona como um «leitor inteligente» pessoal:
+        envia PDFs, links, documentos ou vídeos do YouTube, e ele resume, organiza e responde com base <em>só</em> nesse material.
+        Para usar: aceda ao site, crie um projeto, carregue as fontes e depois converse no chat, peça resumos, quizzes ou áudios estilo podcast — com indicação de onde cada trecho veio.
+        É útil para estudar textos longos, reunir notas ou pesquisar rápido dentro dos ficheiros que carregou. Pode ser necessário iniciar sessão com uma conta Google.
+      </p>
+      <div class="notebooklm-grid" role="list">
+        <article class="card-n card-notebook" role="listitem">
+          <span class="meta">NotebookLM · Google</span>
+          <h3>Círculos de Mulheres e Transversalização de Gênero</h3>
+          <p>Notebook com fontes sobre círculos de mulheres e transversalização de gênero — explore perguntas e resumos a partir dos documentos carregados no projeto.</p>
+          <div class="card-n__actions">
+            <a class="btn btn-primary" href="https://notebooklm.google.com/notebook/254d4c54-badd-451c-b445-6cd76abc59a4" target="_blank" rel="noopener noreferrer">Abrir este notebook</a>
+          </div>
+        </article>
+        <article class="card-n card-notebook" role="listitem">
+          <span class="meta">NotebookLM · Google</span>
+          <h3>Redes e Governança</h3>
+          <p>Notebook sobre redes e governança: use o chat do NotebookLM para extrair ideias, sínteses e esclarecimentos a partir das fontes definidas neste projeto.</p>
+          <div class="card-n__actions">
+            <a class="btn btn-primary" href="https://notebooklm.google.com/notebook/9c2e5cc3-c3dc-408c-b6c5-fdc06bf2c6d8" target="_blank" rel="noopener noreferrer">Abrir este notebook</a>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <h3 class="bases-supabase-h" id="sec-bases-outros">Outros materiais (lista da gestão)</h3>
     <div id="mount-bases"><div class="loading-inline"><span class="spinner"></span> Carregando…</div></div>
-    <div class="section-cta"><a class="btn btn-primary" href="#sec-bases">Acessar biblioteca</a></div>
   </section>
 
   <!-- 6. Contato -->
@@ -127,7 +171,32 @@
   </section>
 </main>
 
-<footer class="site-footer">Rede de Rodas do DF · <a href="login.html">Entrar</a> · <a href="dashboard-usuario.html">Área do utilizador (C)</a> · <a href="dashboard-gestao.html">Gestão (D)</a> · <a href="admin.html">Admin (B)</a> · <a href="perfil.html">Perfil (A)</a></footer>
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer-extras">
+    <div class="site-footer-extras-col">
+      <strong>Canais MPDFT</strong>
+      <p>Ouvidoria das Mulheres e site institucional — QR Codes para partilha em rodas e materiais.</p>
+      <p style="margin:0;font-size:12px"><a href="https://www.mpdf.mp.br" target="_blank" rel="noopener noreferrer">www.mpdf.mp.br</a></p>
+    </div>
+    <div class="site-footer-qr">
+      <img src="assets/qrcode_ouvidoria_mpdft.png" alt="QR Code Ouvidoria das Mulheres MPDFT" width="108" height="108" loading="lazy" onerror="this.style.display='none'">
+      <span>Ouvidoria</span>
+    </div>
+    <div class="site-footer-qr">
+      <img src="assets/qrcode_www_mpdft.png" alt="QR Code site MPDFT" width="108" height="108" loading="lazy" onerror="this.style.display='none'">
+      <span>Site MPDFT</span>
+    </div>
+  </div>
+  <p style="margin:0">Rede de Rodas do DF · Distrito Federal · 2026</p>
+  <p style="margin:8px 0 0;font-size:12px">Ligue <strong>180</strong> (24h) para informações oficiais sobre direitos e serviços.</p>
+  <p style="margin:12px 0 0">
+    <a href="login.html">Entrar</a> ·
+    <a href="dashboard-usuario.html">Área do utilizador</a> ·
+    <a href="dashboard-gestao.html">Gestão</a> ·
+    <a href="admin.html">Admin</a> ·
+    <a href="perfil.html">Perfil</a>
+  </p>
+</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

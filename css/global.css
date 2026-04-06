@@ -12,9 +12,10 @@
   --shadow:0 1px 3px rgba(28,25,23,.08);
   --shadow-md:0 4px 12px rgba(28,25,23,.08);
   --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --content-max: 1100px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;scroll-padding-top:100px;}
+html{scroll-behavior:smooth;scroll-padding-top:calc(120px + env(safe-area-inset-top,0px));}
 body{font-family:var(--font);background:var(--gray-100);color:var(--gray-900);line-height:1.55;min-height:100vh;}
 a{color:var(--purple-700);font-weight:600;}
 a:hover{text-decoration:underline;}
@@ -23,8 +24,13 @@ img{max-width:100%;height:auto;}
 
 /* Header global */
 .site-header{background:linear-gradient(135deg,var(--purple-900),var(--purple-700));color:var(--white);padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top));box-shadow:var(--shadow-md);position:sticky;top:0;z-index:100;}
-.site-header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.site-logo{color:var(--white);text-decoration:none;font-weight:800;font-size:1.05rem;}
+.site-header-inner{max-width:var(--content-max);margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.site-brand{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.site-logo{color:var(--white);text-decoration:none;font-weight:800;font-size:1.05rem;line-height:1.15;}
+.site-tagline{font-size:12px;font-weight:500;opacity:.9;line-height:1.35;max-width:32rem;}
+@media (max-width:720px){
+  .site-tagline{font-size:11px;max-width:none;}
+}
 .site-logo:hover{text-decoration:none;opacity:.95;}
 .site-nav{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:14px;}
 .site-nav a{color:var(--white);text-decoration:none;font-weight:600;padding:8px 12px;border-radius:var(--radius);}
@@ -43,6 +49,7 @@ img{max-width:100%;height:auto;}
 /* Help (?) */
 .help-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--purple-300);background:var(--white);color:var(--purple-600);font-size:12px;font-weight:700;cursor:pointer;margin-left:6px;vertical-align:middle;font-family:inherit;line-height:1;}
 .help-btn:hover{background:var(--purple-50);}
+.help-btn:focus-visible{outline:2px solid var(--purple-500);outline-offset:2px;}
 .help-popover{position:fixed;z-index:200;max-width:min(400px,92vw);padding:36px 16px 14px 16px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);font-size:13px;color:var(--gray-600);line-height:1.5;}
 .help-popover-close{position:absolute;top:8px;right:8px;width:30px;height:30px;padding:0;border:none;border-radius:50%;background:var(--gray-100);color:var(--gray-700);font-size:1.1rem;line-height:1;cursor:pointer;font-family:inherit;}
 .help-popover-close:hover{background:var(--gray-200);color:var(--gray-900);}
@@ -56,9 +63,17 @@ img{max-width:100%;height:auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Footer */
-.site-footer{margin-top:auto;padding:28px 20px;text-align:center;font-size:13px;line-height:1.65;color:var(--gray-500);border-top:1px solid var(--gray-200);background:var(--gray-50);}
+.site-footer{margin-top:auto;padding:32px 24px 40px;text-align:center;font-size:13px;line-height:1.65;color:var(--gray-500);border-top:1px solid var(--gray-200);background:var(--gray-50);}
+.site-footer strong{color:var(--gray-700);}
 .site-footer a{color:var(--purple-700);text-decoration:none;}
 .site-footer a:hover{text-decoration:underline;}
+.site-footer-extras{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;align-items:flex-start;max-width:880px;margin:0 auto 20px;text-align:left;}
+.site-footer-extras-col{flex:1;min-width:220px;}
+.site-footer-extras-col strong{color:var(--gray-800);display:block;margin-bottom:8px;}
+.site-footer-extras-col p{margin:0 0 10px;font-size:13px;line-height:1.5;}
+.site-footer-qr{text-align:center;}
+.site-footer-qr img{display:block;border-radius:8px;border:1px solid var(--gray-200);margin:0 auto;}
+.site-footer-qr span{font-size:11px;color:var(--gray-500);display:block;margin-top:4px;}
 
 /* Erros Supabase / API */
 .supabase-error{margin:16px 0;padding:16px 18px;border-radius:var(--radius-lg);border:1px solid #fecaca;background:#fef2f2;color:#7f1d1d;font-size:14px;line-height:1.45;}

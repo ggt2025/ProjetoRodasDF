@@ -21,3 +21,69 @@
 .landing-quick-nav a{color:var(--purple-700);font-weight:600;text-decoration:none;padding:4px 8px;border-radius:8px;}
 .landing-quick-nav a:hover{background:var(--purple-50);text-decoration:underline;}
 .section-cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:14px;}
+
+body.landing-page{
+  min-height:100vh;
+  background:linear-gradient(180deg,var(--purple-50) 0%,var(--gray-100) 45%);
+}
+body.page-login{
+  min-height:100vh;
+  background:linear-gradient(180deg,var(--purple-50) 0%,var(--gray-100) 45%);
+  padding:0 max(20px,env(safe-area-inset-left)) 48px max(20px,env(safe-area-inset-right));
+}
+.login-panel.landing-wrap,
+main.login-panel{
+  max-width:420px;
+  width:100%;
+  margin:24px auto 0;
+  background:var(--white);
+  border-radius:20px;
+  padding:36px 28px 40px;
+  box-shadow:var(--shadow-md);
+  border:1px solid var(--gray-200);
+}
+@media (max-width:480px){
+  .login-panel.landing-wrap,main.login-panel{padding:28px 20px 32px;border-radius:var(--radius-lg);}
+}
+.brand-name{display:inline-flex;align-items:center;flex-wrap:wrap;gap:0;line-height:1.15;font-weight:800;letter-spacing:-.02em;}
+.brand-name .brand-core{display:inline;}
+.brand-o-img{height:0.92em;width:auto;max-height:26px;object-fit:contain;margin:0 1px;vertical-align:middle;display:inline-block;}
+.hero h1 .brand-o-img{max-height:1.05em;}
+body.landing-page .section{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  padding:24px;
+  box-shadow:var(--shadow-sm);
+  margin-bottom:20px;
+}
+body.landing-page .section .cal-scroll{
+  margin-left:-24px;
+  margin-right:-24px;
+  padding-left:24px;
+  padding-right:24px;
+}
+body.landing-page .section .notebooklm-block{
+  border-bottom:none;
+  padding-bottom:0;
+  margin-bottom:22px;
+}
+.skip-to-main-landing{
+  position:absolute;
+  left:-9999px;
+  top:0;
+  z-index:400;
+  padding:10px 16px;
+  background:var(--purple-800);
+  color:var(--white);
+  font-weight:700;
+  font-size:14px;
+  text-decoration:none;
+  border-radius:0 0 var(--radius) 0;
+}
+.skip-to-main-landing:focus{
+  left:8px;
+  top:8px;
+  outline:2px solid var(--white);
+  outline-offset:2px;
+}

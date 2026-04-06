@@ -6,6 +6,7 @@
 <title>Gestão do projeto — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/nav-history.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/dashboard-shell.css">
 <link rel="stylesheet" href="css/calendar.css">
@@ -17,6 +18,7 @@
 <script src="js/lib/supabase-client.js" defer></script>
 <script src="js/lib/helpers.js" defer></script>
 <script src="js/lib/constants.js" defer></script>
+<script src="js/lib/nav-history.js" defer></script>
 <script src="js/site/roda-card.js" defer></script>
 <script src="js/auth/auth.js" defer></script>
 <script src="js/lib/analytics.js" defer></script>
@@ -26,10 +28,21 @@
 <script src="js/app/gestao-app.js" defer></script>
 </head>
 <body id="dash-gestao-root">
+<a href="#main-content" class="skip-to-main">Saltar para o conteúdo principal</a>
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <div class="site-brand">
+      <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+      <span class="site-tagline">Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</span>
+    </div>
     <nav class="site-nav" data-auth-slot></nav>
+  </div>
+  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+    <div class="nav-history-inner">
+      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
+      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
+      <a class="nav-history-home" href="index.html">Início</a>
+    </div>
   </div>
 </header>
 <div class="dash-layout">
@@ -50,7 +63,7 @@
     <div class="dash-nav-divider"></div>
     <a href="index.html">Site público</a>
   </aside>
-  <div class="dash-main">
+  <div class="dash-main" id="main-content">
     <section data-dash-panel="dashboard">
       <p class="dash-area-label">D · Gestão do projeto</p>
       <h1 class="dash-h1">Dashboard <button type="button" class="help-btn" onclick="openHelp('Dashboard (D.1)','Indicadores (rodas pendentes, contactos, rascunhos), tabela de cronograma e o mesmo calendário semanal do site. Tudo num ecrã para alinhar confirmações.',[{label:'Participação (visitas)',href:'#participacao'},{label:'Área administrativa',href:'admin.html',primary:false}])" title="Ajuda">?</button></h1>

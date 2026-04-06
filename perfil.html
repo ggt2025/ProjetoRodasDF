@@ -6,6 +6,7 @@
 <title>Meu perfil — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/nav-history.css">
 <link rel="stylesheet" href="css/landing.css">
 <link rel="stylesheet" href="css/forms.css">
 <link rel="stylesheet" href="css/dashboard-shell.css">
@@ -13,19 +14,32 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/lib/supabase-client.js" defer></script>
 <script src="js/lib/helpers.js" defer></script>
+<script src="js/lib/constants.js" defer></script>
+<script src="js/lib/nav-history.js" defer></script>
 <script src="js/auth/auth.js" defer></script>
 <script src="js/lib/analytics.js" defer></script>
 <script src="js/app/perfil.js" defer></script>
 </head>
 <body>
+<a href="#main-content" class="skip-to-main">Saltar para o conteúdo principal</a>
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <div class="site-brand">
+      <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+      <span class="site-tagline">Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</span>
+    </div>
     <nav class="site-nav" data-auth-slot><span class="loading-inline">…</span></nav>
+  </div>
+  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+    <div class="nav-history-inner">
+      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
+      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
+      <a class="nav-history-home" href="index.html">Início</a>
+    </div>
   </div>
 </header>
 
-<main class="landing-wrap" style="max-width:640px" aria-label="Perfil do utilizador">
+<main class="landing-wrap" id="main-content" style="max-width:640px" aria-label="Perfil do utilizador">
   <p class="dash-area-label">A · Perfil</p>
   <nav class="dash-crumb" aria-label="Navegação">
     <a href="index.html">Site público</a> · <a href="dashboard-usuario.html">Área do utilizador</a> · <span aria-current="page">Perfil</span>

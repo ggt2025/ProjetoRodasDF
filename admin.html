@@ -6,6 +6,7 @@
 <title>Área administrativa — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/nav-history.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/dashboard-shell.css">
 <link rel="stylesheet" href="css/landing.css">
@@ -13,15 +14,28 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/lib/supabase-client.js" defer></script>
 <script src="js/lib/helpers.js" defer></script>
+<script src="js/lib/constants.js" defer></script>
+<script src="js/lib/nav-history.js" defer></script>
 <script src="js/auth/auth.js" defer></script>
 <script src="js/lib/analytics.js" defer></script>
 <script src="js/app/admin-app.js" defer></script>
 </head>
 <body id="admin-root">
+<a href="#main-content" class="skip-to-main">Saltar para o conteúdo principal</a>
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <div class="site-brand">
+      <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+      <span class="site-tagline">Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</span>
+    </div>
     <nav class="site-nav" data-auth-slot></nav>
+  </div>
+  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+    <div class="nav-history-inner">
+      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
+      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
+      <a class="nav-history-home" href="index.html">Início</a>
+    </div>
   </div>
 </header>
 <div class="dash-layout" style="grid-template-columns:220px 1fr;max-width:1200px;margin:0 auto">
@@ -37,7 +51,7 @@
     <div class="dash-nav-divider"></div>
     <a href="index.html">Site público</a>
   </aside>
-  <div class="dash-main" style="padding:24px 20px 40px">
+  <div class="dash-main" id="main-content" style="padding:24px 20px 40px">
     <h1 class="dash-h1">Área administrativa <button type="button" class="help-btn" onclick="openHelp('Área administrativa (B)','Apenas perfil «admin»: altera papéis (comum / gestão / admin) em qualquer linha de «profiles» e consulta a tabela de visitas. Não confundir com o painel de gestão de projeto (D).',[{label:'Gestão do projeto',href:'dashboard-gestao.html'},{label:'Área do utilizador',href:'dashboard-usuario.html',primary:false}])" title="Ajuda">?</button></h1>
     <p class="dash-panel-intro">Atribua papéis: <strong>comum</strong> (utilizadores externos), <strong>gestão</strong> (equipa do projeto) e <strong>admin</strong> (poucas contas). As visitas às páginas são registadas automaticamente para acompanhar participação.</p>
 

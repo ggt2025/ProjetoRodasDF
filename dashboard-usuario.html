@@ -6,6 +6,7 @@
 <title>Área do utilizador — Rede de Rodas do DF</title>
 <link rel="icon" href="assets/logotiporodas.png" type="image/png">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/nav-history.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/dashboard-shell.css">
 <link rel="stylesheet" href="css/forms.css">
@@ -15,6 +16,7 @@
 <script src="js/lib/supabase-client.js" defer></script>
 <script src="js/lib/helpers.js" defer></script>
 <script src="js/lib/constants.js" defer></script>
+<script src="js/lib/nav-history.js" defer></script>
 <script src="js/auth/auth.js" defer></script>
 <script src="js/lib/analytics.js" defer></script>
 <script src="js/app/dashboard-nav.js" defer></script>
@@ -22,10 +24,21 @@
 <script src="js/app/dashboard-usuario.js" defer></script>
 </head>
 <body id="dash-usuario-root">
+<a href="#main-content" class="skip-to-main">Saltar para o conteúdo principal</a>
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+    <div class="site-brand">
+      <a class="site-logo" href="index.html">Rede de Rodas do DF</a>
+      <span class="site-tagline">Rede de rodas multidisciplinares para mulheres em situação de vulnerabilidade no Distrito Federal</span>
+    </div>
     <nav class="site-nav" data-auth-slot></nav>
+  </div>
+  <div class="site-header-nav-history" role="navigation" aria-label="Histórico: voltar e avançar">
+    <div class="nav-history-inner">
+      <button type="button" class="nav-history-btn" id="nav-history-back">← Voltar</button>
+      <button type="button" class="nav-history-btn" id="nav-history-forward">Avançar →</button>
+      <a class="nav-history-home" href="index.html">Início</a>
+    </div>
   </div>
 </header>
 <div class="dash-layout">
@@ -40,7 +53,7 @@
     <div class="dash-nav-divider"></div>
     <a href="index.html">Site público</a>
   </aside>
-  <div class="dash-main">
+  <div class="dash-main" id="main-content">
     <p class="dash-area-label" style="margin-bottom:12px">C · Área do utilizador comum</p>
     <section data-dash-panel="rodas">
       <h1 class="dash-h1">Rodas DF <button type="button" class="help-btn" onclick="openHelp('Rodas DF (C.1)','Formulário grava na tabela «rodas» com o seu user_id. Novas ficam «pendentes» até a gestão confirmar; depois entram no calendário público. Edite ou apague só as suas, salvo exceções da gestão.',[{label:'Calendário público',href:'index.html#sec-calendario'},{label:'Perfil',href:'perfil.html',primary:false}])" title="Ajuda">?</button></h1>
